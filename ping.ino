@@ -59,3 +59,46 @@
             
         }
     }
+
+
+
+
+
+    
+   void mode_ping(){
+      Serial.println("<---------------------------------------- New Mode_Ping ---------------------------------------->");
+      radio.powerUp();
+      uint32_t idTask = g_clipID*1000;
+      uint32_t SendMsg[8] = {idTask, micros(), 0, 0, 0, 0, 0, 0};
+      uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+      uint32_t timestamp = micros();
+      
+      while ((micros()-timestamp) < (g_maxPing)){
+
+          SendMsg[1] = micros();
+          radio.write(&SendMsg, sizeof(SendMsg));
+          
+          if ( radio.isAckPayloadAvailable() ) {
+              radio.read(&RcvMsg, sizeof(RcvMsg));
+
+               // Calculate the Ping
+               uint32_t ping = SendMsg[1] - RcvMsg[1];
+               Serial.println(ping);
+               // Calculate the Task
+               uint32_t task = RcvMsg[0]%1000;
+               Serial.println(task);
+               //Calculate the ID
+               uint32_t id = (RcvMsg[0]-task)/1000;
+               Serial.println(id);
+
+               if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
+                  Serial.println("i do");
+               }
+
+
+         }
+
+
+      }
+   }
+
