@@ -86,7 +86,7 @@ void GetRadioConnection()
   actualMicros = micros();
   uint32_t counter = 0;
 
-  uint32_t SendMessage[8] = {0};
+  uint32_t SendMessage[8] = {0,0,0,0,0,0,0,0};
   SendMessage[0] = UINT32_MAX;
   uint32_t AckPayload[4] = {0};
 

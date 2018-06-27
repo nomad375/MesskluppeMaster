@@ -6,7 +6,7 @@ int32_t g_maxPing = 1000000;                               // Maximum time diffe
 int32_t g_maxMeasurement = 1000*10;                        // Maximum log time is 5 Minutes
 int32_t g_timeout = 1000*20;
 uint8_t g_logInterval = 15;                               // 15.625  milliseconds between analog entries (64Hz)
-char g_FileName[13];                                      //file name to exchange 
+char g_FileName[15];                                      //file name to exchange 
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint32_t g_SendMsg[8]= {0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -73,7 +73,7 @@ void setup() {
   /*======= Radio Setup =======*/   
   radio.begin();
   radio.enableDynamicPayloads();
-  radio.setChannel(77); //125 in the past
+  radio.setChannel(77); //77 in the past
   radio.setPALevel (RF24_PA_LOW); 
   radio.setDataRate (RF24_1MBPS);
   radio.setAutoAck(1);                        // Ensure autoACK is enabled
@@ -132,7 +132,6 @@ while(!Serial);
 
 void loop(){
     mode_ping();
-    Serial.println("======= Change Mode ============");
     
       switch (g_task) {
           case 0:
@@ -159,4 +158,3 @@ void loop(){
     
   }
 }
-

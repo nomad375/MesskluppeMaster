@@ -8,7 +8,7 @@ void SendOnline()
 
   uint32_t StartTime =millis();
   uint32_t LineNumber = 0;
-  uint32_t SendMessage[8] = {0};
+  uint32_t SendMessage[8] = {0,0,0,0,0,0,0,0};
   SendMessage[0] = g_clipID*1000+30; // 30(!?!)= Online mode for RPI
   uint32_t RecievedMessage[8] = {};
 

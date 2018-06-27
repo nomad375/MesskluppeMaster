@@ -17,13 +17,13 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   actTime = millis();
 
 
-  char Fname[] = "00000000.csv";                       //create a new file
+  char Fname[] = "0000000000.csv";                       //create a new file
   DateTime now = rtc.now();
-  sprintf(Fname, "%08d.csv", now.unixtime() - 1514764800); // name file as a seconds() since 01.01.2018. valid untill 2021 year in case of 8.3 file name.
+  sprintf(Fname, "%10u.csv", now.unixtime()); // name file as a seconds() since 01.01.1970. 
   if (sd.exists(Fname)) {
-    sprintf(Fname, "%08d.csv", now.unixtime() - 1514764800 + 1); // add one second if Fname already exist
+    sprintf(Fname, "%10u.csv", now.unixtime()+1); // add one second if Fname already exist
   }
-
+Serial.println("file created: ");
   logfile.open(Fname);                                // open created file if creted new Fname
   if (!logfile.is_open()) {
     digitalWrite(8, HIGH);
