@@ -10,6 +10,12 @@ SdCardErrorsCheck();
   actTime = startTime;
   uint32_t LineNumber = 0;
 
+while (millis()-startTime < g_timeout && IamInOven == false) ;
+  if (IamInOven == false) { return;  }
+
+  startTime = millis();
+  actTime = millis();
+
 
   char Fname[] = "00000000.csv";                       //create a new file
   DateTime now = rtc.now();
@@ -29,6 +35,7 @@ SdCardErrorsCheck();
   cout << F("Logging to: ") << Fname << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
 
   obufstream bout(buf, sizeof(buf));                                                    // format the buffer
+  bout << F("Clip ID + Mode ");
   bout << F("Time ");                                                                  // name the column for time in buffer
   bout << F(";Microseconds "); 
   bout << F(";Line Number "); 
@@ -45,8 +52,8 @@ SdCardErrorsCheck();
     }
 
     while (actTime % g_logInterval);    // wait for time to be a multiple of interval
-    detachInterrupt(5); // Stop interrupt to prevent freezing
-    detachInterrupt(9); // Stop interrupt to prevent freezing
+    detachInterrupt(20); // Stop interrupt to prevent freezing
+    detachInterrupt(21); // Stop interrupt to prevent freezing
 
 
     obufstream bout(buf, sizeof(buf));                // use buffer to format line
@@ -62,8 +69,8 @@ SdCardErrorsCheck();
 
     logfile << buf;               //move data from buffer to file. DONT use flush HERE -> slow down saving data
 
-   attachInterrupt(9, IRQ1, FALLING);
-   attachInterrupt(5, IRQ2, FALLING);
+   attachInterrupt(20, IRQ1, FALLING);
+   attachInterrupt(21, IRQ2, FALLING);
 
     if (!logfile) {
       //error("write logfile data failed");   //check for errors in logfile
@@ -87,5 +94,6 @@ if (IamInOven == false) { break;  }
 
   strncpy(g_FileName, Fname, sizeof(Fname) - 1); // Get FileName value for external use
   //
-
+  
+  
 } // ENF of StartMesurment

@@ -3,7 +3,8 @@
 =============================================== */
 int32_t g_clipID = 01;                                   // Clip ID
 int32_t g_maxPing = 1000000;                               // Maximum time difference (µs) for successful ping
-int32_t g_maxMeasurement = 300000;                        // Maximum log time is 5 Minutes
+int32_t g_maxMeasurement = 1000*10;                        // Maximum log time is 5 Minutes
+int32_t g_timeout = 1000*20;
 uint8_t g_logInterval = 15;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[13];                                      //file name to exchange 
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
@@ -11,6 +12,8 @@ uint32_t g_SendMsg[8]= {0, 0, 0, 0, 0, 0, 0, 0};
 
 volatile bool IamInOven=false;
 volatile bool IamAtInlet= false ;
+
+uint16_t g_task = 0;
 
 /*=========================================================================
     Sensor config
@@ -116,7 +119,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 //=======place to test functions ===========////
 
-//while(!Serial);
+while(!Serial);
 //CreateFileList();
 
 } //end SETUP()
@@ -128,8 +131,10 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
     -----------------------------------------------------------------------*/
 
 void loop(){
-  if (ping()>0) {
-      switch (g_RcvMsg[2]) {
+    mode_ping();
+    Serial.println("======= Change Mode ============");
+    
+      switch (g_task) {
           case 0:
               break;
           
@@ -138,9 +143,11 @@ void loop(){
               
           /*======= Logging Mode ============*/    
           case 20:
-              synctime(g_RcvMsg[3]);
-              StartMesurmentCSV();
-              g_RcvMsg[2] = 0;
+          Serial.println("======= Logging Mode ============");
+              synctime(g_RcvMsg[2]);
+
+              StartMesurment();
+              g_task = 0;
               break;
               
           case 30:
@@ -149,8 +156,6 @@ void loop(){
            default:
            
               break;
-        
-      }
     
   }
 }
