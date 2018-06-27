@@ -35,8 +35,8 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   cout << F("Logging to: ") << Fname << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
 
   obufstream bout(buf, sizeof(buf));                                                    // format the buffer
-  bout << F("Clip ID + Mode ");
-  bout << F("Time ");                                                                  // name the column for time in buffer
+  bout << F("ID + Mode");
+  bout << F(";Time ");                                                                  // name the column for time in buffer
   bout << F(";Microseconds "); 
   bout << F(";Line Number "); 
   for (uint8_t i = 1; i <= 4; i++) { // 4 analog inputs to read values
