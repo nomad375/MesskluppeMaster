@@ -2,7 +2,7 @@
  * global variables
 =============================================== */
 int32_t g_clipID = 01;                                   // Clip ID
-int32_t g_maxPing = 1000000;                               // Maximum time difference (µs) for successful ping
+int32_t g_maxPing = 50;                               // Maximum time difference (µs) for successful ping
 int32_t g_maxMeasurement = 1000*10;                        // Maximum log time is 5 Minutes
 int32_t g_timeout = 1000*20;
 uint8_t g_logInterval = 15;                               // 15.625  milliseconds between analog entries (64Hz)
@@ -131,6 +131,7 @@ while(!Serial);
     -----------------------------------------------------------------------*/
 
 void loop(){
+    g_task = 0;
     mode_ping();
     
       switch (g_task) {
