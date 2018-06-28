@@ -8,7 +8,8 @@ SdCardErrorsCheck();
   uint32_t ii = 0;
 
   char NameOfFile[15], NameOfFile10[10]; //variables to read filename and to get only digital part of it.
-  uint32_t ClipID_Task = 1030;
+  uint32_t ClipID_Task = g_clipID * 1000 + 30; //case 30 "======= Get List============");
+            
 
 
   SdFile AllFiles, OneFile;
@@ -48,7 +49,7 @@ SdCardErrorsCheck();
           pch = strtok (line, ";");                                    //first iteration
           numberOfLines = atol(pch);                                   //TEMPORAL value for numberOfLines
 
-          for (uint8_t i = 1; i < 3; i++ ) {
+          for (uint8_t i = 1; i < 4; i++ ) {
             pch = strtok (NULL, ";");                                 //getting next values from strig befor separator ";"
             numberOfLines = atol(pch);                                //our target - value at position #3 (<3)
           } //end FOR

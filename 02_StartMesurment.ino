@@ -23,12 +23,12 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   if (sd.exists(Fname)) {
     sprintf(Fname, "%10u.csv", now.unixtime()+1); // add one second if Fname already exist
   }
-Serial.println("file created: ");
+//Serial.println("file created: ");
   logfile.open(Fname);                                // open created file if creted new Fname
   if (!logfile.is_open()) {
     digitalWrite(8, HIGH);
     //error("file.open");       //if file not open -> error
-    Serial.println("file.open");       //if file not open -> error
+    Serial.println("ERROR file.open");       //if file not open -> error
     exit;
       }
 
@@ -44,7 +44,7 @@ Serial.println("file created: ");
   }
   logfile << buf << endl;                                                               //save buffer on sd
   
-  while ((actTime - startTime) <= g_maxMeasurement) {  //collect datas as long as defined in line 13
+  while ((actTime - startTime) <= g_maxMeasurement) {  //collect datas as long as defined in glabal
 
     LineNumber ++;
     do {
@@ -59,7 +59,7 @@ Serial.println("file created: ");
     obufstream bout(buf, sizeof(buf));                // use buffer to format line
                                 
     DateTime now = rtc.now();
-    bout << g_clipID*1000+20; // 20(!?!)= SenfFile mode for RPI
+    bout << g_clipID * 1000 + 60; // 60= SenfFile mode for RPI
     bout << ';' << now.unixtime();
     bout << ';' << millis()%1000; 
     bout << ';' << LineNumber;
