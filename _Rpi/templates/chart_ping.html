@@ -1,0 +1,64 @@
+{% extends "index.html" %}
+{% block extra %}
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script src="{{ url_for('serveStaticResource', resource='js/chartjs-plugin-streaming.min.js')}}"></script>
+	
+
+
+<div class="row">
+	<div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="ct-chart ct-perfect-fourth"></div>
+            </div>
+            <canvas id="myChart" style="height: 600px;"></canvas>
+        </div>
+    </div>
+	
+</div>
+
+<script>
+	var ctx = $("#myChart");
+	
+	var chart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			datasets: [{
+				data: []
+			},{
+				data: []
+			}]
+		},
+		options: {
+			scales: {
+				xAxes: [{
+					type: 'realtime'
+				}],
+				yAxes: [{
+					ticks: {
+						suggestedMax:100
+					}
+				}]
+				
+			},
+			plugins: {
+				streaming: {
+					onRefresh: function(chart) {
+						chart.data.datasets.forEach(function(dataset) {
+							dataset.data.push({
+							x: Date.now(),
+							y: $("#ping").html()
+							});
+						});
+					},
+					delay:1000
+				}
+			}
+		}
+	});
+
+
+</script>
+{% endblock %}
