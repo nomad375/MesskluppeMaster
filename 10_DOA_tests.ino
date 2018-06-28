@@ -10,17 +10,17 @@ void DOAtests() {
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
-//CreateFileList();
-//SendFile("files/file.dir", 1,65535);
+CreateFileList();
+SendFile("files/file.dir", 1,65535);
 
-      for (int i = 1; i <= 300; i++) {
-        IamInOven = true;
-        g_timeout = 1000 * 1;
-        g_maxMeasurement = 1000 * int(random(7, 60));
-        StartMesurment();
-        delay(1000);
-      }
-
+//      for (int i = 1; i <= 300; i++) {
+//        IamInOven = true;
+//        g_timeout = 1000 * 1;
+//        g_maxMeasurement = 1000 * int(random(3, 60));
+//        StartMesurment();
+//        delay(1000);
+//      }
+//
 
   //CreateFileList();
 

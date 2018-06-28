@@ -152,7 +152,7 @@ void loop(){
           case 30:
             Serial.println("======= Get List============");
             CreateFileList();
-            SendFile("files/file.dir", 1, 65535);
+            SendFile("files/file.dir", 1, -65535);
             
               break;
               
@@ -169,8 +169,8 @@ void loop(){
             break;
               
            default:
-           
-              break;
+            break;
+      
     
   }
 }
