@@ -8,12 +8,12 @@
       uint32_t SendMsg[8] = {idTask, millis(), 0, 0, 0, 0, 0, 0};
       uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
       uint32_t timestamp = millis();
-    uint32_t i = 0;
+
       while (true){
         Serial.print(".");
 
           SendMsg[1] = millis();
-          SendMsg[5] = i++;
+
           radio.write(&SendMsg, sizeof(SendMsg));
           
           if ( radio.isAckPayloadAvailable() ) {
@@ -32,23 +32,23 @@
 //               // Calculate the Ping
                uint32_t ping = SendMsg[1] - RcvMsg[1];
                cout << "ping :" << ping << endl;
-//
-//               
-//
-//               if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
-//                  Serial.println("i do");
-//                  
-//                  g_RcvMsg[0] = RcvMsg[0];    // Clip idTask
-//                  g_RcvMsg[1] = RcvMsg[1];    // Ping Timestamp
-//                  g_RcvMsg[2] = RcvMsg[2];    // Real Time
-//                  g_RcvMsg[3] = RcvMsg[3];    
-//                  g_RcvMsg[4] = RcvMsg[4];
-//                  g_RcvMsg[5] = RcvMsg[5];
-//                  g_RcvMsg[6] = RcvMsg[6];
-//                  g_RcvMsg[7] = RcvMsg[7];
-//                  g_task = task;
-//                  return;
-//               }
+
+               
+
+               if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
+                  Serial.println("i do");
+                  
+                  g_RcvMsg[0] = RcvMsg[0];    // Clip idTask
+                  g_RcvMsg[1] = RcvMsg[1];    // Ping Timestamp
+                  g_RcvMsg[2] = RcvMsg[2];    // Real Time
+                  g_RcvMsg[3] = RcvMsg[3];    
+                  g_RcvMsg[4] = RcvMsg[4];
+                  g_RcvMsg[5] = RcvMsg[5];
+                  g_RcvMsg[6] = RcvMsg[6];
+                  g_RcvMsg[7] = RcvMsg[7];
+                  g_task = task;
+                  return;
+               }
 
 
          }
