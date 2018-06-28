@@ -5,9 +5,10 @@ SdCardErrorsCheck();
   int i = 0;
   uint32_t numberOfLines, n;
   char line[64] = {}; // char[48] enough for 7 sensors to read in buffer
+  uint32_t ii = 0;
 
   char NameOfFile[15], NameOfFile10[10]; //variables to read filename and to get only digital part of it.
-  uint32_t ClipID_Task = 1003;
+  uint32_t ClipID_Task = 1030;
 
 
   SdFile AllFiles, OneFile;
@@ -57,11 +58,11 @@ SdCardErrorsCheck();
       } // end of read file line by line untill endOfFile-----------------------------------
       
       OneFile.close();
-
+      ii++;
     // cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
-      ListOfFiles << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+      ListOfFiles << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
 
-
+      
     } //end of IF for no hidden files or directory
 
     AllFiles.close();

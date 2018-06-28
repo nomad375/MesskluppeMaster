@@ -120,7 +120,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 //=======place to test functions ===========////
 
-DOAtests();
+//DOAtests();
 
 } //end SETUP()
 
@@ -132,31 +132,45 @@ DOAtests();
 
 void loop(){
 
-//    g_task = 0;
-//    mode_ping();
-//    
-//      switch (g_task) {
-//          case 0:
-//              break;
-//          
-//          case 10:
-//              break;
-//              
-//          /*======= Logging Mode ============*/    
-//          case 20:
-//          Serial.println("======= Logging Mode ============");
-//              synctime(g_RcvMsg[2]);
-//
-//              StartMesurment();
-//              g_task = 0;
-//              break;
-//              
-//          case 30:
-//              break;
-//              
-//           default:
-//           
-//              break;
-//    
-//  }
+    g_task = 0;
+    mode_ping();
+    
+      switch (g_task) {
+          case 0:
+              break;
+          
+          case 10:
+              break;
+              
+          /*======= Logging Mode ============*/    
+          case 20:
+          Serial.println("======= Logging Mode ============");
+              synctime(g_RcvMsg[2]);
+              StartMesurment();
+              break;
+              
+          case 30:
+            Serial.println("======= Get List============");
+            CreateFileList();
+            SendFile("files/file.dir", 1, -1);
+            
+              break;
+              
+          case 40:
+            Serial.println("======= Send Online ============");
+            break;
+
+          case 50:
+            Serial.println("======= Send file ============");
+            break;
+
+          case 60:
+            Serial.println("======= del file ============");
+            break;
+              
+           default:
+           
+              break;
+    
+  }
 }
