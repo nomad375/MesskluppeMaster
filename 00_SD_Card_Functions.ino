@@ -5,7 +5,7 @@
 
 void SdCardErrorsCheck() {   /* SD card SETUP */
 
-Serial.println("SdCardErrorsCheck()");
+//Serial.println("SdCardErrorsCheck()");
 
   if (!sd.begin(SD_CHIP_SELECT, SPI_FULL_SPEED)) {    //Initialize the highest speed supported by the board (!sd.begin(SD_CHIP_SELECT, SD_SCK_MHZ(50)))
     
@@ -30,11 +30,11 @@ void DeleteFile(char *g_FileName){
 SdCardErrorsCheck();
     if (sd.exists(g_FileName)){ 
         //  Serial.print ("This file: " ); Serial.print(g_FileName);
-          if (!sd.remove(g_FileName)) {   error("remove failed");  exit;   }
-        //  Serial.println (" . Deleted " );
-   }
-
- //else{Serial.print(g_FileName);Serial.println (" file not exists" ); ;} 
+          if (!sd.remove(g_FileName)) {   
+             // error("remove failed"); 
+              exit;   
+              } //end if ERROR
+   } //end IF exists
 
 }// End of DeleteFile()
 

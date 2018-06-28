@@ -31,7 +31,7 @@ radio.write(&SendMessage, sizeof(SendMessage));
           
                 DateTime now = rtc.now();
                 LineNumber ++;
-                SendMessage[0] = g_clipID*1000+00; //изменить идентификатор в1010 RPI
+                SendMessage[0] = g_clipID*1000+30; 
                 SendMessage[1] = now.unixtime();
                 SendMessage[2] = millis()%1000;
                 SendMessage[3] = LineNumber;

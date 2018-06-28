@@ -55,6 +55,7 @@ SdCardErrorsCheck();
         }//end if
       
       } // end of read file line by line untill endOfFile-----------------------------------
+      
       OneFile.close();
 
     // cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
@@ -67,7 +68,7 @@ SdCardErrorsCheck();
 
   }
   ListOfFiles.close();
-  cout << "\nDone!" << endl;
+
   Serial.print("file list done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
 
 } //Enf of function

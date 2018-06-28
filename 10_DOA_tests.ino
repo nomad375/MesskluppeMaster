@@ -2,11 +2,19 @@
                          Test functions()
     -----------------------------------------------------------------------*/
 void DOAtests(){
-   while(!Serial);
-   CreateFileList();
-//SendOnline();
-StartMesurment();
-SendFile(g_FileName, 1,65535);
-g_task = 0;
+//  while(!Serial);
+//  CreateFileList();
+  SendOnline();
+//  StartMesurment();
+//  SendFile(g_FileName, 1,65535);
+
+
+/*======================================================================================
+ *      Reboot Arduino Zero
+======================================================================================== */
+
+NVIC_SystemReset(); //reset CPU function
+
+
 
 }//end of DOAtests()

@@ -23,29 +23,28 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend)
   SdFile rdfile(g_FileName, O_READ);
   if (!rdfile.isOpen()) {
    // error("Fgets ERROR");
-   Serial.println("Fgets ERROR");
     SdCardErrorsCheck(); 
     exit; //exit from function if SD file cannot be opened
-   // NVIC_SystemReset(); //reset CPU function
   }
 
   // read lines from the file
   
-  rdfile.seekSet(FirstLine*35); //TAKE care that 38 is smaller than and average sting volume in bytes 
+  rdfile.seekSet(FirstLine*35); //TAKE care that 35 is smaller than and average srting volume in bytes but close enough to it
   
   while ((n = rdfile.fgets(line, sizeof(line))) > 0) { // START read file line by line untill endOfFile
   
     ConvertStringToArray(line, g_SendMsg);
   
-    if (g_SendMsg[3] >= FirstLine){
+    if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
            if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
     }//END if
 
-if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}   
+if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}   // break if reach desied number of lines
 
 if (IamAtInlet == true) { // Stop if come to Oven
  break;
-}
+} //end IF
+
   } // enf of read file line by line untill endOfFile
 
   Serial.print("SendFile done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
