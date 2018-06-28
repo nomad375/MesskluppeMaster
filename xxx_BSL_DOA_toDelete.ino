@@ -76,7 +76,7 @@ void StartMesurmentCSV() {
                          GetRadioConnection()
     -----------------------------------------------------------------------*/
 void GetRadioConnection()
-{ //Start SendData() - based on fgets example from SdFat library
+{ //S
 
   radio.powerUp();
   digitalWrite(8, HIGH);
@@ -96,7 +96,7 @@ void GetRadioConnection()
   while ( radio.write(&SendMessage, sizeof(SendMessage))) {
 
 
-    //for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
+    for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
 
 
     if ( radio.isAckPayloadAvailable() ) {
@@ -108,19 +108,13 @@ void GetRadioConnection()
  
       counter ++;
       actualMicros = micros(); //update time
-      delay (199 - counter * 2); //simulation of moving Clips to RPI reciever
+  //    delay (199 - counter * 2); //simulation of moving Clips to RPI reciever
       
-/* Update time from RPI if differnce > 1 sec */
+
 
  DateTime now = rtc.now();
- 
- if (AckPayload[3] != now.unixtime()){ //take care that inside AckPayload[3] yoy already have RPIs unix time.
- rtc.adjust(AckPayload[3]);
-  
-  } 
 
 
-/* END Update time from RPI if differnce > 1 sec */
 
       
 
@@ -138,9 +132,7 @@ void GetRadioConnection()
 
 
 
-      if ((micros() - AckPayload[1]) / 1000 <= 70) {
-        break;
-      }
+   //   if ((micros() - AckPayload[1]) / 1000 <= 70) {  break;  }
 
     }
     else {

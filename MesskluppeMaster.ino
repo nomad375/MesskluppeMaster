@@ -49,12 +49,12 @@ ArduinoOutStream cout(Serial);  // Serial print stream
 /*=========================================================================
     RADIO RF24
     -----------------------------------------------------------------------*/
-#include "nRF24L01.h" //libry modified from original. tale care to use needed one
+#include "nRF24L01.h" //libry modified from original. take care to use needed one
 #include "RF24.h"
 RF24 radio(6, 10); // pin 9 powered by 2V. so i deside avoid it. tested pins - 5,6,9,10 with no diffrence found
 //#include<SPI.h>
 //#include<RF24.h>
-//const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
+const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 
 /*=========================================================================
@@ -73,14 +73,15 @@ void setup() {
   /*======= Radio Setup =======*/   
   radio.begin();
   radio.enableDynamicPayloads();
-  radio.setChannel(77); //77 in the past
-  radio.setPALevel (RF24_PA_LOW); 
+  radio.setChannel(77); 
+  radio.setPALevel (RF24_PA_HIGH); 
   radio.setDataRate (RF24_1MBPS);
   radio.setAutoAck(1);                        // Ensure autoACK is enabled
   radio.enableAckPayload();                   //dual side communication for PING mode
   radio.setRetries(2, 15);                    // Optionally, increase the delay between retries in 250us & # of retries up to 15
   radio.setCRCLength(RF24_CRC_8);             // Use 8-bit CRC for performance)
-  radio.openWritingPipe(0xABCDABCD71LL);            // Where we send data out
+  radio.openWritingPipe(pipes[0]);            // Where we send data out. Defoult Pipes[0]!!!!!
+
   radio.startListening();
   radio.stopListening();
 
@@ -130,31 +131,32 @@ DOAtests();
     -----------------------------------------------------------------------*/
 
 void loop(){
-    g_task = 0;
-    mode_ping();
-    
-      switch (g_task) {
-          case 0:
-              break;
-          
-          case 10:
-              break;
-              
-          /*======= Logging Mode ============*/    
-          case 20:
-          Serial.println("======= Logging Mode ============");
-              synctime(g_RcvMsg[2]);
 
-              StartMesurment();
-              g_task = 0;
-              break;
-              
-          case 30:
-              break;
-              
-           default:
-           
-              break;
-    
-  }
+//    g_task = 0;
+//    mode_ping();
+//    
+//      switch (g_task) {
+//          case 0:
+//              break;
+//          
+//          case 10:
+//              break;
+//              
+//          /*======= Logging Mode ============*/    
+//          case 20:
+//          Serial.println("======= Logging Mode ============");
+//              synctime(g_RcvMsg[2]);
+//
+//              StartMesurment();
+//              g_task = 0;
+//              break;
+//              
+//          case 30:
+//              break;
+//              
+//           default:
+//           
+//              break;
+//    
+//  }
 }
