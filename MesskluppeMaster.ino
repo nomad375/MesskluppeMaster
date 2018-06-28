@@ -119,9 +119,9 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));      //Set the time to compiled time
 
 //=======place to test functions ===========////
-
-DOAtests();
-
+while(!Serial);
+//DOAtests();
+Serial.println("aaaaaaaaaaaaaa");
 } //end SETUP()
 
 
@@ -131,7 +131,7 @@ DOAtests();
     -----------------------------------------------------------------------*/
 
 void loop(){
-
+Serial.println("bbbbbbbbbbbbbbbbbbb");
     g_task = 0;
     mode_ping();
     
@@ -152,7 +152,7 @@ void loop(){
           case 30:
             Serial.println("======= Get List============");
             CreateFileList();
-            SendFile("files/file.dir", 1, -65535);
+            SendFile("1530200409.csv", 1, 65535);
             
               break;
               
@@ -160,11 +160,11 @@ void loop(){
             Serial.println("======= Send Online ============");
             break;
 
-          case 50:
+          case 60:
             Serial.println("======= Send file ============");
             break;
 
-          case 60:
+          case 50:
             Serial.println("======= del file ============");
             break;
               
