@@ -120,10 +120,14 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 //=======place to test functions ===========////
 
+<<<<<<< HEAD
 //DOAtests();
 
 while(!Serial);
 //DOAtests();
+=======
+DOAtests();
+>>>>>>> parent of 7b4fa31... blu
 
 } //end SETUP()
 
@@ -158,6 +162,7 @@ void loop(){
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             SendFile("1530200409.csv", 1, 65535);
 =======
             SendFile("files/file.dir", 1, 65535);
@@ -168,6 +173,9 @@ void loop(){
 =======
             SendFile("files/file.dir", 1, 65535);
 >>>>>>> parent of b6a41f1... lasf for now
+=======
+            SendFile("files/file.dir", 1, -65535);
+>>>>>>> parent of 7b4fa31... blu
             
               break;
               
@@ -175,11 +183,11 @@ void loop(){
             Serial.println("======= Send Online ============");
             break;
 
-          case 60:
+          case 50:
             Serial.println("======= Send file ============");
             break;
 
-          case 50:
+          case 60:
             Serial.println("======= del file ============");
             break;
               

@@ -5,8 +5,12 @@
 
 void SdCardErrorsCheck() {   /* SD card SETUP */
 
+<<<<<<< HEAD
 
 Serial.println("SdCardErrorsCheck()");
+=======
+//Serial.println("SdCardErrorsCheck()");
+>>>>>>> parent of 7b4fa31... blu
 
 
   if (!sd.begin(SD_CHIP_SELECT, SPI_FULL_SPEED)) {    //Initialize the highest speed supported by the board (!sd.begin(SD_CHIP_SELECT, SD_SCK_MHZ(50)))
