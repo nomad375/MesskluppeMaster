@@ -120,7 +120,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 //=======place to test functions ===========////
 
-DOAtests();
+//DOAtests();
 
 } //end SETUP()
 

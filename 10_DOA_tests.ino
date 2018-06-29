@@ -10,17 +10,17 @@ void DOAtests() {
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
-CreateFileList();
-SendFile("files/file.dir", 1,65535);
+//CreateFileList();
+//SendFile("files/file.dir", 1,65535);
 
-//      for (int i = 1; i <= 300; i++) {
+//      for (int i = 1; i <= 99; i++) {
 //        IamInOven = true;
 //        g_timeout = 1000 * 1;
-//        g_maxMeasurement = 1000 * int(random(3, 60));
+//        g_maxMeasurement = 1000 * int(random(10, 180));
 //        StartMesurment();
 //        delay(1000);
 //      }
-//
+
 
   //CreateFileList();
 
@@ -31,7 +31,7 @@ SendFile("files/file.dir", 1,65535);
 
   //GetRadioConnection();
 
-
+//DeleteAllFiles();
   Serial.println("end of DOA");
   /*======================================================================================
           Reboot Arduino Zero
