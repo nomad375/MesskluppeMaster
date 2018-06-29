@@ -155,7 +155,11 @@ void loop(){
           case 30:
             Serial.println("======= Get List============");
             CreateFileList();
+<<<<<<< HEAD
             SendFile("1530200409.csv", 1, 65535);
+=======
+            SendFile("files/file.dir", 1, 65535);
+>>>>>>> parent of b6a41f1... lasf for now
             
               break;
               
@@ -172,8 +176,8 @@ void loop(){
             break;
               
            default:
-            break;
-      
+           
+              break;
     
   }
 }
