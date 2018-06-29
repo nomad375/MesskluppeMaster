@@ -122,7 +122,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 
 while(!Serial);
-DOAtests();
+//DOAtests();
 
 } //end SETUP()
 
@@ -143,8 +143,7 @@ void loop(){
           
           case 10:
               break;
-              
-          /*======= Logging Mode ============*/    
+                 
           case 20:
           Serial.println("======= Logging Mode ============");
               synctime(g_RcvMsg[2]);
@@ -154,19 +153,22 @@ void loop(){
           case 30:
             Serial.println("======= Get List============");
             CreateFileList();
-            SendFile("files/file.dir", 1, 65535);
+            SendFile("files/file.dir", 1, 65535, g_task);
               break;
-      
+
           case 40:
-            Serial.println("======= Send Online ============");
+            Serial.println("======= Send file ============");
+            sprintf(g_FileName, "%10u.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. 
+            SendFile(g_FileName, 1, 65535, g_task);
             break;
 
           case 50:
-            Serial.println("======= Send file ============");
-            break;
-
-          case 60:
             Serial.println("======= del file ============");
+            break;
+            
+          case 60:
+            Serial.println("======= Send Online ============");
+            SendOnline();
             break;
               
            default:

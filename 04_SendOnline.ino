@@ -9,17 +9,17 @@ void SendOnline()
   uint32_t StartTime = millis();
   uint32_t LineNumber = 0;
   uint32_t SendMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-  SendMessage[0] = g_clipID * 1000 + 40; // 30(!?!)= Online mode for RPI
+  SendMessage[0] = g_clipID * 1000 + 60; // 30(!?!)= Online mode for RPI
   uint32_t RecievedMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
   Serial.println ("Online transfering... " );
 
   delay(250);
-  RecievedMessage[0] = 30;
 
 
 
-  while ((RecievedMessage[0] % 1000 == 30) || (millis() - StartTime < 300000) ) { //run 3000 milliseconds in any case, and then untill task changed
+
+  while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 3000) ) { //run 3000 milliseconds in any case, and then untill task changed
     //Serial.print ("Line to send: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
@@ -31,7 +31,7 @@ void SendOnline()
 
       DateTime now = rtc.now();
       LineNumber ++;
-      SendMessage[0] = g_clipID * 1000 + 40;
+      SendMessage[0] = g_clipID * 1000 + 60;
       SendMessage[1] = now.unixtime();
       SendMessage[2] = millis() % 1000;
       SendMessage[3] = LineNumber;

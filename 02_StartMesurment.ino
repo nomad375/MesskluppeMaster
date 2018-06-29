@@ -35,7 +35,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   cout << F("Logging to: ") << Fname << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
 
   obufstream bout(buf, sizeof(buf));                                                    // format the buffer
-  bout << F("ID + Mode");
+  bout << F("ID");
   bout << F(";Time ");                                                                  // name the column for time in buffer
   bout << F(";Microseconds "); 
   bout << F(";Line Number "); 
@@ -59,7 +59,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     obufstream bout(buf, sizeof(buf));                // use buffer to format line
                                 
     DateTime now = rtc.now();
-    bout << g_clipID * 1000 + 60; // 60= SenfFile mode for RPI
+    bout << g_clipID; 
     bout << ';' << now.unixtime();
     bout << ';' << millis()%1000; 
     bout << ';' << LineNumber;
