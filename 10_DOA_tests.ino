@@ -10,7 +10,7 @@ void DOAtests() {
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
-//CreateFileList();
+CreateFileList();
 //SendFile("files/file.dir", 1,65535);
 
 
@@ -32,7 +32,7 @@ void DOAtests() {
 
   //GetRadioConnection();
 
-//DeleteAllFiles();
+DeleteAllFiles();
   Serial.println("end of DOA");
   /*======================================================================================
           Reboot Arduino Zero

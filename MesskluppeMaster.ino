@@ -122,7 +122,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 
 while(!Serial);
-//DOAtests();
+DOAtests();
 
 } //end SETUP()
 
@@ -135,7 +135,7 @@ while(!Serial);
 void loop(){
 
     g_task = 0;
-  mode_ping();
+    mode_ping();
     
       switch (g_task) {
           case 0:
@@ -155,7 +155,7 @@ void loop(){
             Serial.println("======= Get List============");
             CreateFileList();
             SendFile("files/file.dir", 1, 65535);
-           SendFile("1530200409.csv", 1, 65535);
+            SendFile("1530200409.csv", 1, 65535);
 
               break;
               

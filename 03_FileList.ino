@@ -7,7 +7,7 @@ SdCardErrorsCheck();
   char line[64] = {}; // char[48] enough for 7 sensors to read in buffer
   uint32_t ii = 0;
 
-  char NameOfFile[15], NameOfFile10[10]; //variables to read filename and to get only digital part of it.
+  char NameOfFile[256], NameOfFile10[10]; //variables to read filename and to get only digital part of it.
   uint32_t ClipID_Task = g_clipID * 1000 + 30; //case 30 "======= Get List============");
             
 
@@ -28,8 +28,8 @@ SdCardErrorsCheck();
 
     // Skip directories and hidden files.
     if (!AllFiles.isSubDir() && !AllFiles.isHidden()) {//check if file hidden or dir
-      AllFiles.getName(NameOfFile, 15); //last number is a filename size in bytes
-      strncpy(NameOfFile10, NameOfFile, 10); // Get FileName value for external use
+      AllFiles.getName(NameOfFile, 256); //Save full filename into NameOfFile
+      strncpy(NameOfFile10, NameOfFile, 10); // Get FileName10 value for external use
 
 
       // open  file to find number of lines inside it
@@ -60,7 +60,7 @@ SdCardErrorsCheck();
       
       OneFile.close();
       ii++;
-    // cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+    cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
       ListOfFiles << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
 
       

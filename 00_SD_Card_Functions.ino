@@ -44,28 +44,30 @@ void DeleteFile(char *g_FileName) {
                          Delete ALL Files
     -----------------------------------------------------------------------*/
 
-//void DeleteAllFiles() {
-//
-//  char NameOfFile[15];
-//  SdFile AllFilesInDir;
-//  
-//  SdCardErrorsCheck();
-//  sd.vwd()->rewind();
-//
-//  // open next file in root directory.  The volume working directory, vwd, is root
-//  while (AllFilesInDir.openNext(sd.vwd(), O_READ)) {
-//      
-//      if (!AllFiles.isSubDir() && !AllFiles.isHidden()) {//check if file hidden or dir
-//            AllFilesInDir.getName(NameOfFile, 15); //last number is a filename size in bytes
-//            if (!sd.remove(NameOfFile)) {
-//              //error("remove failed");
-//              Serial.println (NameOfFile);
-//              exit;
-//      } //end IF
-//    Serial.print (NameOfFile); Serial.println (" deleted");
-//    AllFilesInDir.close();
-//
-//  } //end While
-//
-//}// End of DeleteAllFiles()
+void DeleteAllFiles() {
+
+  char NameOfFile[256];
+  SdFile AllFilesInDir;
+  
+  SdCardErrorsCheck();
+  sd.vwd()->rewind();
+
+  // open next file in root directory.  The volume working directory, vwd, is root
+  while (AllFilesInDir.openNext(sd.vwd(), O_READ)) {
+      
+      if (!AllFilesInDir.isSubDir()) {//check if file hidden or dir
+            AllFilesInDir.getName(NameOfFile, 256); //last number is a filename size in bytes
+                          if (!sd.remove(NameOfFile)) {
+                            //error("remove failed");
+                            Serial.print ("Cannot delete ");Serial.println (NameOfFile);
+                    
+                            exit;
+                          } //end IF SD error
+         
+            Serial.print (NameOfFile); Serial.println (" deleted");
+      } // end IF //check if file hidden or dir
+         AllFilesInDir.close();
+  } //end While
+
+}// End of DeleteAllFiles()
 
