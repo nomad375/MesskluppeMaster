@@ -156,7 +156,11 @@ void loop(){
             Serial.println("======= Get List============");
             CreateFileList();
 <<<<<<< HEAD
+<<<<<<< HEAD
             SendFile("1530200409.csv", 1, 65535);
+=======
+            SendFile("files/file.dir", 1, 65535);
+>>>>>>> parent of b6a41f1... lasf for now
 =======
             SendFile("files/file.dir", 1, 65535);
 >>>>>>> parent of b6a41f1... lasf for now

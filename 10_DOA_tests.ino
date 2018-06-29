@@ -14,6 +14,7 @@ void DOAtests() {
 //SendFile("files/file.dir", 1,65535);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //      for (int i = 1; i <= 99; i++) {
 //        IamInOven = true;
 //        g_timeout = 1000 * 1;
@@ -22,6 +23,8 @@ void DOAtests() {
 //        delay(1000);
 //      }
 =======
+=======
+>>>>>>> parent of b6a41f1... lasf for now
       for (int i = 1; i <= 300; i++) {
         IamInOven = true;
         g_timeout = 1000 * 1;
@@ -29,6 +32,9 @@ void DOAtests() {
         StartMesurment();
         delay(1000);
       }
+<<<<<<< HEAD
+>>>>>>> parent of b6a41f1... lasf for now
+=======
 >>>>>>> parent of b6a41f1... lasf for now
 
 
