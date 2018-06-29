@@ -120,14 +120,9 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 //=======place to test functions ===========////
 
-<<<<<<< HEAD
-//DOAtests();
 
 while(!Serial);
 //DOAtests();
-=======
-DOAtests();
->>>>>>> parent of 7b4fa31... blu
 
 } //end SETUP()
 
@@ -140,7 +135,7 @@ DOAtests();
 void loop(){
 
     g_task = 0;
- //   mode_ping();
+  mode_ping();
     
       switch (g_task) {
           case 0:
@@ -159,24 +154,9 @@ void loop(){
           case 30:
             Serial.println("======= Get List============");
             CreateFileList();
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-            SendFile("1530200409.csv", 1, 65535);
-=======
             SendFile("files/file.dir", 1, 65535);
->>>>>>> parent of b6a41f1... lasf for now
-=======
-            SendFile("files/file.dir", 1, 65535);
->>>>>>> parent of b6a41f1... lasf for now
-=======
-            SendFile("files/file.dir", 1, 65535);
->>>>>>> parent of b6a41f1... lasf for now
-=======
-            SendFile("files/file.dir", 1, -65535);
->>>>>>> parent of 7b4fa31... blu
-            
+           SendFile("1530200409.csv", 1, 65535);
+
               break;
               
           case 40:
