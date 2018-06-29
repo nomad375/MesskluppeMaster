@@ -60,7 +60,7 @@ SdCardErrorsCheck();
       
       OneFile.close();
       ii++;
-    cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+      //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
       ListOfFiles << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
 
       

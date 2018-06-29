@@ -5,7 +5,7 @@
 void SdCardErrorsCheck() {   /* SD card SETUP */
 
 
-Serial.println("SdCardErrorsCheck()");
+//Serial.println("SdCardErrorsCheck()");
 
 
 

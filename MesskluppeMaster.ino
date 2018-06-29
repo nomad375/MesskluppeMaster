@@ -44,7 +44,7 @@ char buf[80];               //buffer to format data - easier to echo to serial
     Serial Monitoring
     -----------------------------------------------------------------------*/
 ArduinoOutStream cout(Serial);  // Serial print stream
-#define ECHO_TO_SERIAL  0   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
+#define ECHO_TO_SERIAL  1   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
 
 /*=========================================================================
     RADIO RF24
@@ -121,7 +121,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 //=======place to test functions ===========////
 
 
-while(!Serial);
+//while(!Serial);
 //DOAtests();
 
 } //end SETUP()
