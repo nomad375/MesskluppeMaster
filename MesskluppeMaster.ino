@@ -136,7 +136,7 @@ while(!Serial);
 void loop(){
 
     g_task = 0;
-    mode_ping();
+ //   mode_ping();
     
       switch (g_task) {
           case 0:
