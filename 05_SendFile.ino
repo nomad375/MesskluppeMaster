@@ -37,7 +37,7 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend)
  // Serial.println("TEST");
     Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
     if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
-           if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
+           if (!radio.write(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
     }//END if
 
 if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}   // break if reach desied number of lines
