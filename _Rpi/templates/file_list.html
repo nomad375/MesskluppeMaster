@@ -1,0 +1,52 @@
+{% extends "index.html" %}
+{% block extra %}
+
+<div class="row">
+    <div class="col-lg-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                File List
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Size(byte)</th>
+                                <th>Number of Lines</th>
+                                <th></th>
+                                <th></th>
+                                <th>DEL-PI</th>
+                                <th>DEL-AD</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for file in g_buffer %}
+                            <tr>
+                                <td>{{file[3]}}</td>
+                                <td>{{file[4]}}.csv</td>
+                                <td>{{file[5]}}</td>
+                                <td>{{file[6]}}</td>
+                                <td><button type="button" class="btn btn-info btn-circle"><i class="fa fa-download" onclick='$.get("/file_download?name={{file[4]}}")'></i></button></td>                                
+                                <td><button type="button" class="btn btn-info btn-circle"><i class="fa fa-bar-chart-o"></i></button></td>
+                                <td><button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button></td>
+                                <td><button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button></td>
+                            </tr>
+                        {% endfor %}
+  
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-6 -->
+   
+</div>
+{% endblock %}

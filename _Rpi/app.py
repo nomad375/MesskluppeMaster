@@ -1,18 +1,46 @@
 #!/usr/bin/env python
+#============================================================================#
+#   Includes
+#============================================================================#
+#Flask
+from flask import *
+import jinja2.exceptions
+#Others
+from subprocess import call
+from random import sample
+import _thread
+from multiprocessing import Process, Array
+from messkluppe_nrf24 import *
 
 #============================================================================#
-#   lib_nrf24
+#   globals
+#============================================================================#
+global g_clip_modus_pi
+g_clip_modus_pi = 0
+global g_clip_modus_ad
+g_clip_modus_ad = 0
+global g_ping
+g_ping = 0
+global g_buffer
+g_buffer = []
+global g_clip_files
+g_clip_files = 0
+global g_clip_filename
+g_clip_filename = 0
+global g_com_clip
+
+
+#============================================================================#
+#   lib_nrf24 Setup
 #============================================================================#
 import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
 import time
 import spidev
-
 GPIO.setmode(GPIO.BCM)
-
+GPIO.setwarnings(False)
 global pipes
 global radio
-
 pipes = [0xAB, 0xCD, 0xAB, 0xCD, 0x71]
 radio = NRF24(GPIO, spidev.SpiDev())
 radio.begin(0, 22)
@@ -26,71 +54,15 @@ radio.enableAckPayload()
 radio.setCRCLength(NRF24.CRC_8)
 radio.openReadingPipe(1,pipes)
 radio.startListening()
-#============================================================================#
-#============================================================================#
-#   translate radio Msq from byte to int
-#============================================================================#
-def translate_from_radio(msg, size):
-    translated_msg=[]
-    for i in range (0, size, 4):
-        translated_msg.append(int.from_bytes([msg[i+3], msg[i+2], msg[i+1], msg[i]], byteorder='big')) 
-        
-    #print("Translate FROM Radio: " + str(msg) + " --> " + str(translated_msg))
-    return translated_msg
-#============================================================================#
-#============================================================================#
-#   Split the msg element in 4 bytes and add it to translated msg
-#============================================================================#   
-def translate_to_radio(msg):
-    translated_msg=[]
-    for i in range (0, len(msg)):
-        x=msg[i].to_bytes(4, byteorder='big')
-        for g in reversed(x):
-            translated_msg.append(g)        
-        
-    #print("Translate TO Radio: " + str(msg) + " --> " + str(translated_msg))
-    return translated_msg
-#============================================================================#
-#============================================================================#
-#   Seperates the Clip ID and the Task | idTask[ID, Task] ID = 22 * 1000 + Task
-#============================================================================#
-def idTask (idTask):
-    if type(idTask) is int:
-        create_task = int(idTask%1000)
-        create_id = int((idTask-create_task)/1000)
-        new = [create_id, create_task]
-        return new
-		
-    if type(idTask) is list:
-        new = idTask[0] * 1000 + idTask[1]
-        return new
-        
-#============================================================================#
-
-        
-
-#Flask
-from flask import *
-import jinja2.exceptions
-
-#Others
-from subprocess import call
-from random import sample
 
 #============================================================================#
-#   global variables
+#   Flask Routs
 #============================================================================#
-global clip_modus
-clip_modus = 0
-g_ping = 50
-
-
-
-
-
 app = Flask(__name__)
+
 @app.route('/')
 def index():
+    change_clip_modus(0)
     return render_template('index.html')
 
 @app.route('/<pagename>')
@@ -101,138 +73,55 @@ def admin(pagename):
 def serveStaticResource(resource):
 	return send_from_directory('static/', resource)
 
-    
-    
-#============================================================================#
-#   ping the clip Test
-#============================================================================# 
-def clip_ping_test():
-    receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
-    RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
-    SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
-    last_timestamp = 0
-    while 1:
-        if (radio.available()):
-            size = radio.getDynamicPayloadSize()
-            radio.read(receivedMessage, size)
-            #print(str(receivedMessage))
-            RcvMsg = translate_from_radio(receivedMessage, size)
-            #print (str(RcvMsg))
-            print ("RcvMsg " + str(RcvMsg))
-            
-            # Lets check what we get
-            got_idTask = idTask(RcvMsg[0])
-
-            if (got_idTask[0] > 0 and got_idTask[0] < 100 and got_idTask[1] < 100):
-                #What I got looks good so check the ping
-                ping = RcvMsg[1] - last_timestamp
-                last_timestamp = RcvMsg[1]
-                print ("ping: " + str(ping))
-                if (ping < 100 and ping > 0):
-                
-                    # Ping is good -> answer
-
-                    SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,RcvMsg[5],0,0,0]
-                    SndMsg = translate_to_radio(SndMsg)
-                    radio.writeAckPayload(1, SndMsg, len(SndMsg))
-                    
-                else:
-                    # Bad Ping
-                    print(":(")
-                    
-                
-                
-            
-           
-            
-            #print ("RcvMsg " + str(RcvMsg) + " SndMsg " +str(translate_from_radio(SndMsg, len(SndMsg))))
-        #else:
-            #time.sleep(2)
-
-#============================================================================#
-#   ping the clip
-#============================================================================# 
-
-def clip_ping():
-    
-    start_time = int(round(time.time() * 1000))
-    act_time = start_time
-    time_from_arduino = 0
-    receivedMessage=[]   
-    SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
-    radio.writeAckPayload(1, SndMsg, len(SndMsg))    
-    
-    
-    while 1:
-        start_time = int(round(time.time() * 1000))
-        act_time = start_time
-        
-        while (act_time - start_time < 500):
-            act_time = int(round(time.time() * 1000))
-            #print("Act_Time = " + str(act_time) + " Start Time = " + str(start_time) + "->> " + str(act_time-start_time))
-
-            
-            if (radio.available()):
-                size = radio.getDynamicPayloadSize()
-                radio.read(receivedMessage, size)
-                print("receivedMessage: " + str(receivedMessage))
-                RcvMsg = translate_from_radio(receivedMessage, size)
-                if RcvMsg[0] != 0:
-                    old_idTask = idTask(RcvMsg[0])
-                    new_idTask = idTask([old_idTask[0], clip_modus])
-                    
-                    SndMsg = [new_idTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                    SndMsg = translate_to_radio(SndMsg)
-                    radio.writeAckPayload(1, SndMsg, len(SndMsg))
-                
-                    print ("RcvMsg " + str(RcvMsg) + " SndMsg " +str(translate_from_radio(SndMsg, len(SndMsg))))
-                
-                    ping = RcvMsg[1] - time_from_arduino
-            
-                
-                   # if (ping < 100 and ping > 0):
-                    # return str(ping)
-                # else:
-                    # time_from_arduino = RcvMsg[1]
-            
-        #else:
-           # print ("Timeout!")
-            #ping = -1
-           # return str(ping)
-#============================================================================# 
-
 @app.route('/start_logging')
 def start_logging():
 	change_clip_modus(20)
-	return str(clip_modus)	
+	return str(g_clip_modus_pi)	
 	
 @app.route('/stop_logging')
 def stop_logging():
 	change_clip_modus(0)
-	return str(clip_modus)	
+	return str(g_clip_modus_pi)	
 
 @app.route('/get_globals')
 def get_globals():	
-	return jsonify(
-		clip_modus = clip_modus,
-		silvo	= 1)
-        
-@app.route('/ping')
-def ping():
-	ping = 10
-	return ping	
-	
-def change_clip_modus(new):
-	global clip_modus
-	print("change_clip_modus: " + str(clip_modus) + " --> " + str(new))
-	clip_modus = new	
+    global g_com_clip
+    return jsonify(
+		g_clip_modus_pi = g_clip_modus_pi,
+        g_clip_modus_ad = g_clip_modus_ad,
+        g_clip_files = len(g_buffer),
+        g_ping = 0)
+          
+@app.route('/file_list')
+def get_file_list():
+    change_clip_modus(30)
+    return("n")
     
+#@app.route('/file_list')
+#def get_file_list():
+#    global g_buffer
+#    g_buffer.clear()
+#    change_clip_modus(30)
+#    return("n")
+  
+@app.route('/file_list_show')
+def get_file_list_show():
+    global g_buffer
+    return render_template('file_list.html', g_buffer=g_buffer)
     
-clip_ping_test()
-		
-		
-		
-		
+@app.route('/file_download')
+def file_download():
+    global g_clip_filename
+    g_clip_filename = int(request.args.get('name'))
+    print (str(g_clip_filename))
+    change_clip_modus(40)
+    return("n")
+    
+@app.route('/reset_send_clip_modus')
+def reset_send_clip_modus():
+    change_clip_modus(0)
+    return ("n")
+
 @app.errorhandler(jinja2.exceptions.TemplateNotFound)
 def template_not_found(e):
     return not_found(e)
@@ -241,6 +130,117 @@ def template_not_found(e):
 def not_found(e):
     return '<strong>Page Not Found!</strong>', 404
 
+
+#============================================================================#
+#   Change the global variable to new mode
+#============================================================================#
+def change_clip_modus(new):
+    global g_com_clip
+    print(g_com_clip)
+    print("change_clip_modus: " + str(g_clip_modus_pi) + " --> " + str(new))
+    g_com_clip[1] = new	                                                     # Clip Modus Pi
+
+#============================================================================#
+def test():
+    global p
+    p.terminate()
+    receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
+    RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
+    SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
+    while 1:
+         if (radio.available()):
+            size = radio.getDynamicPayloadSize()
+            if (size == 32):
+                #correct size of the payload
+                radio.read(receivedMessage, size)
+                RcvMsg = translate_from_radio(receivedMessage, size)
+                print (str(RcvMsg))
+                
+                SndMsg = [1030, RcvMsg[1], int(time.time()),0,0,0,0,0]
+                SndMsg = translate_to_radio(SndMsg)
+                radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                
+            if (RcvMsg[3] == 44):
+                break
+
+  
+#============================================================================#
+def com_clip (g_com_clip):   
+    receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
+    RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
+    SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
+    last_timestamp = 0
+     
+    while 1:
+        if (radio.available()):
+            #print("Radio Available")
+            size = radio.getDynamicPayloadSize()
+            if (size == 32):
+                #print("Size == 32")
+                radio.read(receivedMessage, size)
+                RcvMsg = translate_from_radio(receivedMessage, size)
+                Rcv_idTask = idTask(RcvMsg[0])
+                
+                if (0 < Rcv_idTask[0] < 100 ):                               # ID must be smaller then 100
+                    g_com_clip[2] = Rcv_idTask[1]                            # Save Arduino Mode 
+                    
+                    #---------- Ping Mode -----------------------------------#
+                    if (g_com_clip[1] == 0):                                 # Clip Modus Pi 
+                        ping = RcvMsg[1] - last_timestamp                    # Calculate the Ping
+                        last_timestamp = RcvMsg[1]                           # Save the last Timestamp 
+                        
+                        if (0 < ping < 100):                                 # Good Ping 
+                            SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
+                            SndMsg = translate_to_radio(SndMsg)
+                            radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                            g_com_clip[0] = ping                             # Clip ping 
+                            
+                    #---------- Start Logging -------------------------------#
+                    if (g_com_clip[1] == 20):                                # Clip Modus Pi 
+                        #print("g_clip_modus_pi == 20")
+                        newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])   # Clip Modus PI
+                        SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
+                        SndMsg = translate_to_radio(SndMsg)
+                        radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                     
+                    #---------- Get File List -------------------------------#
+                    if (g_com_clip[1] == 30):
+                        #print("g_clip_modus_pi == 30")
+                        newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
+                        SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
+                        SndMsg = translate_to_radio(SndMsg)
+                        radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                        if (Rcv_idTask[1] == 30):
+                            print(RcvMsg)
+                    
+                    # if (g_com_clip[1] == 30):
+                        # while 1:
+                            # if (radio.available()):
+                                # size = radio.getDynamicPayloadSize()
+                                # if (size == 32):
+                                    # #correct size of the payload
+                                    # radio.read(receivedMessage, size)
+                                    # RcvMsg = translate_from_radio(receivedMessage, size)
+                                    # print (str(RcvMsg))
+                                    
+                                    # SndMsg = [1030, RcvMsg[1], int(time.time()),0,0,0,0,0]
+                                    # SndMsg = translate_to_radio(SndMsg)
+                                    # radio.writeAckPayload(1, SndMsg, len(SndMsg))
+
+		
+#============================================================================#
+#   start Flask Server
+#============================================================================# 		
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+        app.run(host='0.0.0.0', port=5001, debug=True)
+        
+        g_com_clip = Array('i', 5)
+
+        p = Process(target=com_clip, args=(g_com_clip,))
+        p.start()
+        p.join()
+        		
+#============================================================================# 	
+
+
     

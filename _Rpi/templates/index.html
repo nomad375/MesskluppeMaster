@@ -37,15 +37,17 @@
                                     <i class="fa fa-folder-open fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge" id="total_logfiles">0</div>
+                                    <button type="button" class="btn btn-default btn-circle" id="file_list" ><i class="fa fa-refresh"></i></button> 
+                                    <span class="huge" id="g_clip_files">0</span>
+
                                     <div>Log files</div>
                                 </div>
                             </div>
                         </div>
-                        <a href="/">
+                        <a href="/file_list_show">
                             <div class="panel-footer">
-                                <span class="pull-left">Refresh</span>
-                                <span class="pull-right"><i class="fa fa-refresh"></i></span>
+                                <span class="pull-left">Show</span>
+                                <span class="pull-right"><i class="fa fa-th-list"></i></span>
                                 <div class="clearfix"></div>
                             </div>
                         </a>
@@ -64,7 +66,7 @@
 									</div>
                                     <div>Start logging</div>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <a href="/">
                             <div class="panel-footer">
@@ -75,6 +77,28 @@
                         </a>
                     </div>
                 </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Info Panel
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-8">Send Clip Modus: </div>
+                                <div class="col-xs-2" id="g_clip_modus_pi">0</div>
+                                <div class="col-xs-2"><button type="button" class="btn btn-danger btn-circle" data-toggle="tooltip" title="Reset Clip Modus to 0" id="reset_send_clip_modus"><i class="fa fa-times"></i></button></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8">Received Clip Modus: </div>
+                                <div class="col-xs-2" id="g_clip_modus_ad">0</div>
+                                <div class="col-xs-2"></div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                
             </div>
 		
     </div>
@@ -84,7 +108,7 @@
 
 		$.getJSON("/get_globals", function(result){
 
-			if (result.clip_modus == 20) {
+			if (result.g_clip_modus == 20) {
 
 				$('#start_logging').prop('checked', true).change()
 			}
@@ -93,9 +117,22 @@
 	
 	$(document).ready(function(){
 		setInterval(function(){
-			$("#ping").load('/clip_ping')
+            $.getJSON("/get_globals", function(result){
+                $("#ping").text(result.g_ping);
+                $("#g_clip_modus_pi").text(result.g_clip_modus_pi);
+                $("#g_clip_modus_ad").text(result.g_clip_modus_ad);
+                $("#g_clip_files").text(result.g_clip_files);
+            })
 		}, 1000);
 	});
+    $('#reset_send_clip_modus').click(function() {
+        $.get("/reset_send_clip_modus");
+        });
+    $('#file_list').click(function() {
+        $.get("/file_list");
+        });
+        
+     
 
 
 	$('#start_logging').change(function() {

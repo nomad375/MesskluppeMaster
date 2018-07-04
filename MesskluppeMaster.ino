@@ -78,7 +78,7 @@ void setup() {
   radio.setDataRate (RF24_1MBPS);
   radio.setAutoAck(1);                        // Ensure autoACK is enabled
   radio.enableAckPayload();                   //dual side communication for PING mode
-  radio.setRetries(2, 15);                    // Optionally, increase the delay between retries in 250us & # of retries up to 15
+  radio.setRetries(1, 5);                    // Optionally, increase the delay between retries in 250us & # of retries up to 15
   radio.setCRCLength(RF24_CRC_8);             // Use 8-bit CRC for performance)
   radio.openWritingPipe(pipes[0]);            // Where we send data out. Defoult Pipes[0]!!!!!
 
@@ -121,7 +121,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 //=======place to test functions ===========////
 
 
-//while(!Serial);
+while(!Serial);
 //DOAtests();
 
 } //end SETUP()
