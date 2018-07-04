@@ -10,7 +10,7 @@
       uint32_t timestamp = millis();
 
       while (true){
-        //Serial.print(".");
+        Serial.print(".");
 
           SendMsg[1] = millis();
 

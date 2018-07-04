@@ -121,7 +121,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 //=======place to test functions ===========////
 
 
-while(!Serial);
+//while(!Serial);
 //DOAtests();
 
 } //end SETUP()
