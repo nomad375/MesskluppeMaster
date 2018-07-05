@@ -30,8 +30,8 @@
                                 <td>{{file[4]}}.csv</td>
                                 <td>{{file[5]}}</td>
                                 <td>{{file[6]}}</td>
-                                <td><button type="button" class="btn btn-info btn-circle"><i class="fa fa-download" onclick='$.get("/file_download?name={{file[4]}}")'></i></button></td>                                
-                                <td><button type="button" class="btn btn-info btn-circle"><i class="fa fa-bar-chart-o"></i></button></td>
+                                <td><button type="button" class="btn btn-info btn-circle" onclick="$.get('/file_download/{{file[4]}}/{{file[6]}}');"><i class="fa fa-download"  ></i></button></td>                                
+                                <td><a href="/file_show/{{file[4]}}"><button type="button" class="btn btn-info btn-circle" onclick=""><i class="fa fa-bar-chart-o"></i></button></a></td>
                                 <td><button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button></td>
                                 <td><button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button></td>
                             </tr>

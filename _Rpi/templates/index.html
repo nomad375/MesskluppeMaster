@@ -93,6 +93,11 @@
                                 <div class="col-xs-2" id="g_clip_modus_ad">0</div>
                                 <div class="col-xs-2"></div>
                             </div>
+                            <div class="row">
+                                <div class="col-xs-8">Received Lines: </div>
+                                <div class="col-xs-2" id="g_clip_file">0</div>
+                                <div class="col-xs-2"></div>
+                            </div>
                             
                         </div>
                     </div>
@@ -122,6 +127,7 @@
                 $("#g_clip_modus_pi").text(result.g_clip_modus_pi);
                 $("#g_clip_modus_ad").text(result.g_clip_modus_ad);
                 $("#g_clip_files").text(result.g_clip_files);
+                $("#g_clip_file").text(result.g_clip_file);
             })
 		}, 1000);
 	});

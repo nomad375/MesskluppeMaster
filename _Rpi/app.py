@@ -24,7 +24,7 @@ global g_clip_files     # can be deleted
 g_clip_files = 0        # can be deleted
 
 global g_com_clip
-g_com_clip = [0, 0, 0, 0, 0]
+g_com_clip = [0, 0, 0, 0, 0,0 ,0 ,0 ,0 ,0 ,0]
 global g_com_clip_files
 g_com_clip_files = []
 global g_com_clip_filename
@@ -91,6 +91,7 @@ def get_globals():
 		g_clip_modus_pi = g_com_clip[1],
         g_clip_modus_ad = g_com_clip[2],
         g_clip_files = len(g_com_clip_files),
+        g_clip_file = len(g_com_clip_file),
         g_ping = g_com_clip[0])
           
 @app.route('/file_list')
@@ -98,13 +99,6 @@ def get_file_list():
     g_com_clip_files.clear()
     change_clip_modus(30)
     return("n")
-    
-#@app.route('/file_list')
-#def get_file_list():
-#    global g_buffer
-#    g_buffer.clear()
-#    change_clip_modus(30)
-#    return("n")
   
 @app.route('/file_list_show')
 def get_file_list_show():
@@ -114,13 +108,16 @@ def get_file_list_show():
 def get_file_show():
     return render_template('file.html', g_buffer=g_com_clip_file)
     
-@app.route('/file_download/<name>')
-def file_download(name):
-    print ("Request: " + name)
-    g_com_clip_filename = int(name)
-    print ("Request now : " + str(g_com_clip_filename))
+@app.route('/file_download/<name>/<lines>')
+def file_download(name, lines):
+    g_com_clip_file.clear()
+    g_com_clip[3] = int(name)                   # Filename
+    g_com_clip[4] = 1                           # Download from     (1)
+    g_com_clip[5] = int(lines)                  # Download until    (last line)
+    g_com_clip[6] = int(lines)                  # File Lines
     change_clip_modus(40)
     return("n")
+    
     
 @app.route('/reset_send_clip_modus')
 def reset_send_clip_modus():
@@ -142,6 +139,12 @@ def not_found(e):
 def change_clip_modus(new):
     print("change_clip_modus: " + str(g_com_clip[1]) + " --> " + str(new))
     g_com_clip[1] = new	                                                     # Clip Modus Pi
+
+#============================================================================#
+#   notify the user that something happened
+#============================================================================#
+def notification(text, type):
+    
 
 #============================================================================#
 def test():
@@ -173,6 +176,8 @@ def com_clip ():#(g_com_clip):
     RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
     SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
     last_timestamp = 0
+    download_started = False
+    download_finished = False
     #global g_com_clip
     
     while 1:
@@ -183,7 +188,7 @@ def com_clip ():#(g_com_clip):
             if (size == 32):
                 #print("Size == 32")
                 radio.read(receivedMessage, size)
-                RcvMsg = translate_from_radio(receivedMessage, size, True)
+                RcvMsg = translate_from_radio(receivedMessage, size, False)
                 Rcv_idTask = idTask(RcvMsg[0])
                 
                 if (0 < Rcv_idTask[0] < 100 ):                               # ID must be smaller then 100
@@ -198,7 +203,8 @@ def com_clip ():#(g_com_clip):
                             SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
                             SndMsg = translate_to_radio(SndMsg)
                             radio.writeAckPayload(1, SndMsg, len(SndMsg))
-                            g_com_clip[0] = ping                             # Clip ping 
+                            g_com_clip[0] = ping                             # Clip ping
+                            download_finished = True
                             
                     #---------- Start Logging -------------------------------#
                     if (g_com_clip[1] == 20):                                # Clip Modus Pi 
@@ -208,7 +214,7 @@ def com_clip ():#(g_com_clip):
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))                                 
                    
                     #---------- Start Get File List -------------------------#
-                    if (g_com_clip[1] == 30):
+                    if (g_com_clip[1] == 30):                                # Clip Modus Pi
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
                         SndMsg = translate_to_radio(SndMsg)
@@ -216,22 +222,34 @@ def com_clip ():#(g_com_clip):
                         change_clip_modus(0)
                                     
                     #---------- Collect File List ---------------------------#     
-                    if (Rcv_idTask[1] == 30):
+                    if (Rcv_idTask[1] == 30):                                # Clip Modus Arduino
                         g_com_clip_files.append(RcvMsg) 
                             
-                    #---------- Start Get File List -------------------------#
-                    if (g_com_clip[1] == 40):
-                        print("40: " + str(g_com_clip_filename))
+                    #---------- Start Get File ------------------------------#
+                    if (g_com_clip[1] == 40):                                # Clip Modus Pi
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
-                        SndMsg = [newIdTask, RcvMsg[1], int(time.time()),1530200409 ,0,0,0,0]
+                        SndMsg = [newIdTask, RcvMsg[1], int(time.time()),g_com_clip[3] ,g_com_clip[4], g_com_clip[5],0,0]
                         SndMsg = translate_to_radio(SndMsg)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
+                        download_finished = False
                         
-                    #---------- Collect File List ---------------------------#     
-                    if (Rcv_idTask[1] == 40):
+                    #---------- Collect File --------------------------------#     
+                    if (Rcv_idTask[1] == 40):                                # Clip Modus Arduino
+                        download_started = True
+                        download_finished = False
                         g_com_clip_file.append(RcvMsg) 
-                            
+                        
+                    #print("download_started: " + str(download_started) + " download_finished: " + str(download_finished) + " max lines " + str(g_com_clip[6]) + " downloaded: " + str(len(g_com_clip_file)))
+                    if (download_started == True and download_finished == True):
+                        if (g_com_clip[6] == len(g_com_clip_file)):              # Check if we get all lines
+                            print("All lines downloaded")
+                        else:
+                            print("Something missing")
+
+                        download_finished = False
+                        download_started = False
+                    
             else:
                 g_com_clip[0] = -1
                                     

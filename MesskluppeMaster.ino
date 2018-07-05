@@ -159,7 +159,7 @@ void loop(){
           case 40:
             Serial.println("======= Send file ============");
             sprintf(g_FileName, "%10u.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. 
-            SendFile(g_FileName, 1, 65535, g_task);
+            SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
             break;
 
           case 50:
