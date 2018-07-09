@@ -32,14 +32,15 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint32
   rdfile.seekSet(FirstLine*35); //TAKE care that 35 is smaller than and average srting volume in bytes but close enough to it
   
   while ((n = rdfile.fgets(line, sizeof(line))) > 0) { // START read file line by line untill endOfFile
-  
-    ConvertStringToArray(line, g_SendMsg);
+
+     ConvertStringToArray(line, g_SendMsg);
     g_SendMsg[0] = g_clipID*1000+task;
 
-    //Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
+
+   // Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
     if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
-      
-           //if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
+
+         //  if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
            if (!radio.write(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
 
     }//END if
@@ -61,7 +62,7 @@ if (IamAtInlet == true) { // Stop if come to Oven
 
   radio.powerDown();
 
-//strncpy(g_FileName, "", 13); //delete filname from memory 13
+//strncpy(g_FileName, "", 15); //delete filname from memory 13
   digitalWrite(8, LOW);
 }// End of SendFile()
 
