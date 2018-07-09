@@ -14,14 +14,14 @@ def translate_from_radio(msg, size, debug=False):
 #============================================================================#
 #   Split the msg element in 4 bytes and add it to translated msg
 #============================================================================#   
-def translate_to_radio(msg):
+def translate_to_radio(msg, debug=False):
     translated_msg=[]
     for i in range (0, len(msg)):
         x=msg[i].to_bytes(4, byteorder='big')
         for g in reversed(x):
             translated_msg.append(g)        
-        
-    #print("Translate TO Radio: " + str(msg) + " --> " + str(translated_msg))
+    if (debug):    
+	    print("Translate TO Radio: " + str(msg) + " --> " + str(translated_msg))
     return translated_msg
 #============================================================================#
 #============================================================================#

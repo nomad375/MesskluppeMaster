@@ -25,6 +25,8 @@ g_clip_files = 0        # can be deleted
 
 global g_com_clip
 g_com_clip = [0, 0, 0, 0, 0,0 ,0 ,0 ,0 ,0 ,0]
+global g_com_clip_live
+g_com_clip_live = [0, 0, 0, 0]
 global g_com_clip_files
 g_com_clip_files = []
 global g_com_clip_filename
@@ -92,7 +94,11 @@ def get_globals():
         g_clip_modus_ad = g_com_clip[2],
         g_clip_files = len(g_com_clip_files),
         g_clip_file = len(g_com_clip_file),
-        g_ping = g_com_clip[0])
+        g_ping = g_com_clip[0],
+        g_live_x = g_com_clip_live[0],
+        g_live_y = g_com_clip_live[1],
+        g_live_z = g_com_clip_live[2],
+        g_live_w = g_com_clip_live[3])
           
 @app.route('/file_list')
 def get_file_list():
@@ -102,6 +108,7 @@ def get_file_list():
   
 @app.route('/file_list_show')
 def get_file_list_show():
+    #get_file_list()
     return render_template('file_list.html', g_buffer=g_com_clip_files)
     
 @app.route('/file_show')
@@ -117,8 +124,12 @@ def file_download(name, lines):
     g_com_clip[6] = int(lines)                  # File Lines
     change_clip_modus(40)
     return("n")
-    
-    
+
+@app.route('/live_data')
+def live_data():    
+       change_clip_modus(60)
+       return render_template('live_data.html')
+       
 @app.route('/reset_send_clip_modus')
 def reset_send_clip_modus():
     change_clip_modus(0)
@@ -144,7 +155,7 @@ def change_clip_modus(new):
 #   notify the user that something happened
 #============================================================================#
 def notification(text, type):
-    
+    pass
 
 #============================================================================#
 def test():
@@ -188,7 +199,7 @@ def com_clip ():#(g_com_clip):
             if (size == 32):
                 #print("Size == 32")
                 radio.read(receivedMessage, size)
-                RcvMsg = translate_from_radio(receivedMessage, size, False)
+                RcvMsg = translate_from_radio(receivedMessage, size, True)
                 Rcv_idTask = idTask(RcvMsg[0])
                 
                 if (0 < Rcv_idTask[0] < 100 ):                               # ID must be smaller then 100
@@ -201,7 +212,7 @@ def com_clip ():#(g_com_clip):
                         
                         if (0 < ping < 100):                                 # Good Ping 
                             SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
-                            SndMsg = translate_to_radio(SndMsg)
+                            SndMsg = translate_to_radio(SndMsg, True)
                             radio.writeAckPayload(1, SndMsg, len(SndMsg))
                             g_com_clip[0] = ping                             # Clip ping
                             download_finished = True
@@ -210,14 +221,14 @@ def com_clip ():#(g_com_clip):
                     if (g_com_clip[1] == 20):                                # Clip Modus Pi 
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])   # Clip Modus PI
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                        SndMsg = translate_to_radio(SndMsg)
+                        SndMsg = translate_to_radio(SndMsg, True)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))                                 
                    
                     #---------- Start Get File List -------------------------#
                     if (g_com_clip[1] == 30):                                # Clip Modus Pi
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                        SndMsg = translate_to_radio(SndMsg)
+                        SndMsg = translate_to_radio(SndMsg, True)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
                                     
@@ -229,7 +240,7 @@ def com_clip ():#(g_com_clip):
                     if (g_com_clip[1] == 40):                                # Clip Modus Pi
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),g_com_clip[3] ,g_com_clip[4], g_com_clip[5],0,0]
-                        SndMsg = translate_to_radio(SndMsg)
+                        SndMsg = translate_to_radio(SndMsg, True)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
                         download_finished = False
@@ -249,7 +260,21 @@ def com_clip ():#(g_com_clip):
 
                         download_finished = False
                         download_started = False
+                        
+                    #---------- Live Data -----------------------------------#
+                    if (g_com_clip[1] == 60):                                # Clip Modus Pi    
+                        newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
+                        SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
+                        SndMsg = translate_to_radio(SndMsg, True)
+                        radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                        
+                    if (Rcv_idTask[1] == 60): 
+                       g_com_clip_live[0] = RcvMsg[4]
+                       g_com_clip_live[1] = RcvMsg[5]
+                       g_com_clip_live[2] = RcvMsg[6]
+                       g_com_clip_live[3] = RcvMsg[7]
                     
+                        
             else:
                 g_com_clip[0] = -1
                                     

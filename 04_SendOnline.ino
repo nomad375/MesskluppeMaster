@@ -20,7 +20,7 @@ void SendOnline()
 
 
   while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 3000) ) { //run 3000 milliseconds in any case, and then untill task changed
-    //Serial.print ("Line to send: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
+    Serial.print ("Line to send: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));

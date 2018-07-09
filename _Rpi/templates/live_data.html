@@ -7,7 +7,7 @@
 	
 
 
-       <div class="row">
+    <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -20,6 +20,8 @@
             </div>
         </div>
     </div>
+	
+
 
 <script>
 	var ctx = $("#myChart");
@@ -41,7 +43,7 @@
 				}],
 				yAxes: [{
 					ticks: {
-						suggestedMax:100
+						suggestedMax:1000
 					}
 				}]
 				
@@ -52,11 +54,12 @@
 						chart.data.datasets.forEach(function(dataset) {
 							dataset.data.push({
 							x: Date.now(),
-							y: $("#ping").html()
+							y: Math.random()
+                            
 							});
 						});
 					},
-					delay:1500
+					delay:2000
 				}
 			}
 		}

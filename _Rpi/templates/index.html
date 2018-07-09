@@ -68,10 +68,10 @@
                                 </div>
                             </div> 
                         </div>
-                        <a href="/">
+                        <a href="/live_data">
                             <div class="panel-footer">
-                                <span class="pull-left">Refresh</span>
-                                <span class="pull-right"><i class="fa fa-refresh"></i></span>
+                                <span class="pull-left">Live Data</span>
+                                <span class="pull-right"><i class="fa fa-eye"></i></span>
                                 <div class="clearfix"></div>
                             </div>
                         </a>
@@ -96,6 +96,21 @@
                             <div class="row">
                                 <div class="col-xs-8">Received Lines: </div>
                                 <div class="col-xs-2" id="g_clip_file">0</div>
+                                <div class="col-xs-2"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8">Live X: </div>
+                                <div class="col-xs-2" id="g_live_x">0</div>
+                                <div class="col-xs-2"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8">Live Y: </div>
+                                <div class="col-xs-2" id="g_live_y">0</div>
+                                <div class="col-xs-2"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8">Live Z: </div>
+                                <div class="col-xs-2" id="g_live_z">0</div>
                                 <div class="col-xs-2"></div>
                             </div>
                             
@@ -128,6 +143,9 @@
                 $("#g_clip_modus_ad").text(result.g_clip_modus_ad);
                 $("#g_clip_files").text(result.g_clip_files);
                 $("#g_clip_file").text(result.g_clip_file);
+                $("#g_live_x").text(result.g_live_x);
+                $("#g_live_y").text(result.g_live_y);
+                $("#g_live_z").text(result.g_live_z);
             })
 		}, 1000);
 	});
