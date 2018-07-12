@@ -64,11 +64,15 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 void setup() {
   Serial.begin(115200);
  // while (!Serial);
-  analogReadCorrection(8, 2053); //done for CURRENT m0 board
+  analogReadCorrection(8, 2053); //done for CURRENT m0 board at 12.07.2018
+  analogReadResolution(12); //12-bit resolution for analog inputs
+  analogWriteResolution(10); //10-bit resolution for analog output A0
+  
   pinMode(8, OUTPUT); //GreenLED on board
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
+  //pinMode(A0, OUTPUT); //if in use - output of pin A0 has half of voltage :(
 
   /*======= Radio Setup =======*/   
   radio.begin();
@@ -122,7 +126,7 @@ SdCardErrorsCheck(); // Setup SD card an check if is it in
 
 
 //while(!Serial);
-//DOAtests();
+DOAtests();
 
 } //end SETUP()
 
