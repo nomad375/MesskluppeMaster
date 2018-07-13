@@ -6,7 +6,7 @@ void DOAtests() {
 
   radio.setChannel(77); //77 in the past
   radio.openWritingPipe(pipes[1]);            // Where we send data out DOA pipes[1]. Default Pipes[0]!!!!!
-  radio.setPALevel (RF24_PA_LOW); 
+  radio.setPALevel (RF24_PA_HIGH); 
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
@@ -26,8 +26,9 @@ void DOAtests() {
 
   //CreateFileList();
 
- analogWrite(A0, 1023); //output for A0 in 0-1023 bits (0 to 3,3v)
+ analogWrite(A0, 0); //output for A0 in 0-1023 bits (0 to 3,3v)
  SendOnline();
+// mode_ping();
 
   // StartMesurment();
   //SendFile(g_FileName, 1,65535);

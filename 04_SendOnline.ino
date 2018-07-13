@@ -11,7 +11,7 @@ void SendOnline()
   uint32_t SendMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
   SendMessage[0] = g_clipID * 1000 + 60; // 30(!?!)= Online mode for RPI
   uint32_t RecievedMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-  
+ 
   Serial.println ("Online transfering... " );
 
   delay(250);
@@ -34,10 +34,12 @@ void SendOnline()
       SendMessage[0] = g_clipID * 1000 + 60;
       SendMessage[1] = now.unixtime();
       SendMessage[2] = millis() % 1000;
-      //SendMessage[3] = LineNumber;
-      SendMessage[3] = analogRead(A7)*2*3.3/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12 bits /1024 for 10 bits analog input
+      SendMessage[3] = analogRead(A7)*2*3.3/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+      //SendMessage[3] = LineNumber; //Counter for lines since starting of function
+
+  
       for (uint16_t ia = 1; ia <= 4; ia++) {
-        SendMessage[ia + 3] = analogRead(ia);   // 4 analog inputs to read values
+        SendMessage[ia + 3] = analogRead(ia)*3.3/4096*1000;   // 4 analog inputs to read values in mVolts
       }
 
 
