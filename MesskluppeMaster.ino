@@ -72,7 +72,6 @@ void setup() {
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
-  //pinMode(A0, OUTPUT); //if in use - output of pin A0 has half of voltage :(
 
   /*======= Radio Setup =======*/   
   radio.begin();

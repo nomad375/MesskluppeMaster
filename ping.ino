@@ -14,7 +14,7 @@
 
           SendMsg[1] = millis();
           SendMsg[4] = analogRead(A7)*2*3.3/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
-          SendMsg[5] = analogRead(A5)*3.3/4096*1000; //Actual Output voltage of Clip in mV. Used for perifery devices.
+         // SendMsg[5] = analogRead(A5)*3.3/4096*1000; //Actual Output voltage of Clip in mV. Used for perifery devices.
         
           radio.write(&SendMsg, sizeof(SendMsg));
           

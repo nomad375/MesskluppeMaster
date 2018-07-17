@@ -27,8 +27,8 @@ void DOAtests() {
   //CreateFileList();
 
  analogWrite(A0, 0); //output for A0 in 0-1023 bits (0 to 3,3v)
- SendOnline();
-// mode_ping();
+ //SendOnline();
+ //mode_ping();
 
   // StartMesurment();
   //SendFile(g_FileName, 1,65535);
