@@ -11,11 +11,11 @@
 // read the analog value B
 
 // Enter you own analog values here
-float loadA = 10; // kg
-int analogvalA = 200; // analog reading taken with load A on the load cell
+float loadA = 0; // kg
+int analogvalA = 416; // analog reading taken with load A on the load cell
 
-float loadB = 30; // kg 
-int analogvalB = 600; // analog reading taken with load B on the load cell
+float loadB = 0.89; // kg 
+int analogvalB = 706; // analog reading taken with load B on the load cell
 
 // Upload the sketch again, and confirm, that the kilo-reading from the serial output now is correct, using your known loads
 
@@ -23,19 +23,19 @@ float analogValueAverage = 0;
 
 // How often do we do readings?
 long time = 0; // 
-int timeBetweenReadings = 2000; // We want a reading every 200 ms;
+int timeBetweenReadings = 500; // We want a reading every 200 ms;
 
 void setup() {
   Serial.begin(9600);
  analogReadCorrection(26, 2062);
  analogReadResolution(12); //12-bit resolution for analog inputs
  analogWriteResolution(10); //10-bit resolution for analog output A0
-// analogReference(AR_EXTERNAL);// external signal for analog reference
+ analogReference(AR_EXTERNAL);// external signal for analog reference
   
 }
 
 void loop() {
-  int analogValue = analogRead(A4);
+  int analogValue = analogRead(A1);
 
   // running average - We smooth the readings a little bit
   analogValueAverage = 0.99*analogValueAverage + 0.01*analogValue;
@@ -44,8 +44,9 @@ void loop() {
   if(millis() > time + timeBetweenReadings){
     float load = analogToLoad(analogValueAverage);
 
-    Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*3.3/4096*1000);
-    Serial.print("             load: ");Serial.println(load,5);
+   Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*2.4/4096*1000);
+   Serial.print("        analogValue abs: ");Serial.print(analogValueAverage);
+    Serial.print("       load: ");Serial.println(load,5);
 
     
     time = millis();
