@@ -11,6 +11,7 @@ from random import sample
 import threading
 from multiprocessing import Process, Array
 from messkluppe_nrf24 import *
+import csv
 
 #============================================================================#
 #   globals
@@ -112,8 +113,12 @@ def get_file_list_show():
     #get_file_list()
     return render_template('file_list.html', g_buffer=g_com_clip_files)
     
-@app.route('/file_show')
-def get_file_show():
+@app.route('/file_show/<name>')
+def get_file_show(name):
+    f = open('_csv/'+str(name)+'.csv', 'r')
+    with f:
+        reader = csv.reader(f)
+    print(reader)
     return render_template('file.html', g_buffer=g_com_clip_file)
     
 @app.route('/file_download/<name>/<lines>')
@@ -151,6 +156,15 @@ def not_found(e):
 def change_clip_modus(new):
     print("change_clip_modus: " + str(g_com_clip[1]) + " --> " + str(new))
     g_com_clip[1] = new	                                                     # Clip Modus Pi
+#============================================================================#
+#============================================================================#
+#   Create CSV
+#============================================================================#
+def create_csv(name, data):
+    f = open('_csv/'+str(name)+'.csv', 'w')
+    with f:
+        writer = csv.writer(f)
+        writer.writerows(data)    
 
 #============================================================================#
 #   notify the user that something happened
@@ -190,7 +204,7 @@ def com_clip ():#(g_com_clip):
                         print ("Start Logging")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])   # Clip Modus PI
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                        SndMsg = translate_to_radio(SndMsg, True)
+                        SndMsg = translate_to_radio(SndMsg, False)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))                                 
                    
                     #---------- Start Get File List -------------------------#
@@ -198,7 +212,7 @@ def com_clip ():#(g_com_clip):
                         print ("Start get file list")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                        SndMsg = translate_to_radio(SndMsg, True)
+                        SndMsg = translate_to_radio(SndMsg, False)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
                                     
@@ -211,7 +225,7 @@ def com_clip ():#(g_com_clip):
                         print ("start get file")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),g_com_clip[3] ,g_com_clip[4], g_com_clip[5],0,0]
-                        SndMsg = translate_to_radio(SndMsg, True)
+                        SndMsg = translate_to_radio(SndMsg, False)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
                         download_finished = False
@@ -227,7 +241,7 @@ def com_clip ():#(g_com_clip):
                     if (download_started == True and download_finished == True):
                         if (g_com_clip[6] == len(g_com_clip_file)):              # Check if we get all lines
                             print("All lines downloaded")
-                            radio.setAutoAck(True)
+                            create_csv(g_com_clip[3], g_com_clip_file)
                         else:
                             print("Something missing")
 
@@ -238,7 +252,7 @@ def com_clip ():#(g_com_clip):
                     if (g_com_clip[1] == 60):                                # Clip Modus Pi    
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                        SndMsg = translate_to_radio(SndMsg, True)
+                        SndMsg = translate_to_radio(SndMsg, False)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         
                     if (Rcv_idTask[1] == 60): 
@@ -255,7 +269,7 @@ def com_clip ():#(g_com_clip):
                         if (0 < ping < 100):                                 # Good Ping
                             #print ("Ping")
                             SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
-                            SndMsg = translate_to_radio(SndMsg, True)
+                            SndMsg = translate_to_radio(SndMsg, False)
                             radio.writeAckPayload(1, SndMsg, len(SndMsg))
                             g_com_clip[0] = ping                             # Clip ping
                             download_finished = True
