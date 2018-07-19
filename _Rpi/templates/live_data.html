@@ -24,47 +24,119 @@
 
 
 <script>
-	var ctx = $("#myChart");
+    var timestamps = []; // timestamp array
+    var data = []; // two dimensional array (data[row][column])
+    var cursor = 0; // next refreshing row
+
+    // receive data from a client
+    function inputMessage(unix_timestamp, values) {
+      timestamps.push(unix_timestamp);
+      data.push(values);
+    }
+
+    // refresh function to be set to options.plugins.streaming.onRefresh option 
+    function refresh(chart) {
+      length = data.length;
+      Array.prototype.push.apply(
+        chart.data.labels, timestamps.slice(cursor, length)
+      );
+      for (var i = cursor; i < length; i++) {
+        for (var j = 0; j < data[i].length; j++) {
+          chart.data.datasets[j].data.push(data[i][j]);
+        }
+      }
+      cursor = length;
+    }
+
+    // create a chart
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+      labels: [],
+      data: { datasets: [
+        {
+            label: 'x',
+            fill: false,
+            borderColor: 'rgb(192, 80, 77)',            
+            data: []
+        },{ 
+            label: 'y',
+            fill: false,
+            borderColor: 'rgb(78, 129, 189)',             
+            data: []
+        },{
+            label: 'z',
+            fill: false,
+            borderColor: 'rgb(155, 187, 89)',             
+            data: []
+        }]},
+      options: {
+        maintainAspectRatio: false,
+        scales: { xAxes: [{ type: 'realtime' }] },
+        elements: { point: { radius: 0 } },
+        tooltips: {enabled: false},
+        plugins: { 
+            streaming: { 
+                onRefresh: refresh,
+                duration: 40000,
+                frameRate: 50,
+                delay: 1000 } }
+      }
+    });
+
+    // Call inputMessage() every 100ms
+    setInterval(function() {
+        $.getJSON("/get_globals", function(result){
+            inputMessage(Date.now(), [result.g_live_x, result.g_live_y, result.g_live_z]);
+            })
+    }, 100);
+
+
+
+	<!-- var ctx = $("#myChart"); -->
 	
-	var chart = new Chart(ctx, {
-		type: 'line',
-		data: {
-			datasets: [{
-				data: []
-			},{
-				data: []
-			}]
-		},
-		options: {
-            maintainAspectRatio: false,
-			scales: {
-				xAxes: [{
-					type: 'realtime'
-				}],
-				yAxes: [{
-					ticks: {
-						suggestedMax:1000
-					}
-				}]
+	<!-- var chart = new Chart(ctx, { -->
+		<!-- type: 'line', -->
+		<!-- data: { -->
+			<!-- datasets: [{ -->
+				<!-- data: [] -->
+			<!-- },{ -->
+				<!-- data: [] -->
+            <!-- },{ -->
+				<!-- data: [] -->
+            <!-- },{ -->
+				<!-- data: [] -->
+			<!-- }] -->
+		<!-- }, -->
+		<!-- options: { -->
+            <!-- maintainAspectRatio: false, -->
+			<!-- scales: { -->
+				<!-- xAxes: [{ -->
+					<!-- type: 'realtime' -->
+				<!-- }], -->
+				<!-- yAxes: [{ -->
+					<!-- ticks: { -->
+						<!-- suggestedMax:1000 -->
+					<!-- } -->
+				<!-- }] -->
 				
-			},
-			plugins: {
-				streaming: {
-					onRefresh: function(chart) {
-						chart.data.datasets.forEach(function(dataset) {
-							dataset.data.push({
-							x: Date.now(),
-							y: Math.random()
-                            
-							});
-						});
-					},
-					delay:2000
-				}
-			}
-		}
-	});
+			<!-- }, -->
+			<!-- plugins: { -->
+				<!-- streaming: { -->
+					<!-- onRefresh: function(chart) { -->
+						<!-- chart.data.datasets.forEach(function(dataset) { -->
+							<!-- dataset.data.push({ -->
+                                <!-- x: Date.now(), -->
+                                <!-- y: Math.random()*100 -->
+							<!-- }); -->
+						<!-- }); -->
+					<!-- }, -->
+					<!-- delay:2000 -->
+				<!-- } -->
+			<!-- } -->
+		<!-- } -->
+	<!-- }); -->
 
-
+<!-- alert(Math.random()) -->
 </script>
 {% endblock %}

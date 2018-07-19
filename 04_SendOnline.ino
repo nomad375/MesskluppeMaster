@@ -46,8 +46,9 @@ void SendOnline()
     } //enf If radio.isAckPayloadAvailable() ) {
 
     else {
-     // Serial.println("  Acknowledge but no data ");   
-     Serial.print(".");
+     Serial.println("  Acknowledge but no data ");
+     break;   
+     //Serial.print(".");
     }
 
 

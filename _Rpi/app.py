@@ -71,6 +71,7 @@ def index():
 
 @app.route('/<pagename>')
 def admin(pagename):
+    change_clip_modus(0)
     return render_template(pagename+'.html')
 
 @app.route('/<path:resource>')
@@ -158,29 +159,6 @@ def notification(text, type):
     pass
 
 #============================================================================#
-def test():
-    global p
-    p.terminate()
-    receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
-    RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
-    SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
-    while 1:
-         if (radio.available()):
-            size = radio.getDynamicPayloadSize()
-            if (size == 32):
-                #correct size of the payload
-                radio.read(receivedMessage, size)
-                RcvMsg = translate_from_radio(receivedMessage, size)
-                print (str(RcvMsg))
-                
-                SndMsg = [1030, RcvMsg[1], int(time.time()),0,0,0,0,0]
-                SndMsg = translate_to_radio(SndMsg)
-                radio.writeAckPayload(1, SndMsg, len(SndMsg))
-                
-            if (RcvMsg[3] == 44):
-                break
-
-  
 #============================================================================#
 def com_clip ():#(g_com_clip):   
     receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
@@ -199,26 +177,17 @@ def com_clip ():#(g_com_clip):
             if (size == 32):
                 #print("Size == 32")
                 radio.read(receivedMessage, size)
-                RcvMsg = translate_from_radio(receivedMessage, size, True)
+                RcvMsg = translate_from_radio(receivedMessage, size, False)
                 Rcv_idTask = idTask(RcvMsg[0])
                 
                 if (0 < Rcv_idTask[0] < 100 ):                               # ID must be smaller then 100
                     g_com_clip[2] = Rcv_idTask[1]                            # Save Arduino Mode 
                     
-                    #---------- Ping Mode -----------------------------------#
-                    if (g_com_clip[1] == 0):                                 # Clip Modus Pi 
-                        ping = RcvMsg[1] - last_timestamp                    # Calculate the Ping
-                        last_timestamp = RcvMsg[1]                           # Save the last Timestamp 
-                        
-                        if (0 < ping < 100):                                 # Good Ping 
-                            SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
-                            SndMsg = translate_to_radio(SndMsg, True)
-                            radio.writeAckPayload(1, SndMsg, len(SndMsg))
-                            g_com_clip[0] = ping                             # Clip ping
-                            download_finished = True
+                   
                             
                     #---------- Start Logging -------------------------------#
                     if (g_com_clip[1] == 20):                                # Clip Modus Pi 
+                        print ("Start Logging")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])   # Clip Modus PI
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
                         SndMsg = translate_to_radio(SndMsg, True)
@@ -226,6 +195,7 @@ def com_clip ():#(g_com_clip):
                    
                     #---------- Start Get File List -------------------------#
                     if (g_com_clip[1] == 30):                                # Clip Modus Pi
+                        print ("Start get file list")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),0,0,0,0,0]
                         SndMsg = translate_to_radio(SndMsg, True)
@@ -238,6 +208,7 @@ def com_clip ():#(g_com_clip):
                             
                     #---------- Start Get File ------------------------------#
                     if (g_com_clip[1] == 40):                                # Clip Modus Pi
+                        print ("start get file")
                         newIdTask = idTask([Rcv_idTask[0], g_com_clip[1]])
                         SndMsg = [newIdTask, RcvMsg[1], int(time.time()),g_com_clip[3] ,g_com_clip[4], g_com_clip[5],0,0]
                         SndMsg = translate_to_radio(SndMsg, True)
@@ -249,12 +220,14 @@ def com_clip ():#(g_com_clip):
                     if (Rcv_idTask[1] == 40):                                # Clip Modus Arduino
                         download_started = True
                         download_finished = False
-                        g_com_clip_file.append(RcvMsg) 
+                        g_com_clip_file.append(RcvMsg)
+                        continue                        
                         
                     #print("download_started: " + str(download_started) + " download_finished: " + str(download_finished) + " max lines " + str(g_com_clip[6]) + " downloaded: " + str(len(g_com_clip_file)))
                     if (download_started == True and download_finished == True):
                         if (g_com_clip[6] == len(g_com_clip_file)):              # Check if we get all lines
                             print("All lines downloaded")
+                            radio.setAutoAck(True)
                         else:
                             print("Something missing")
 
@@ -273,6 +246,19 @@ def com_clip ():#(g_com_clip):
                        g_com_clip_live[1] = RcvMsg[5]
                        g_com_clip_live[2] = RcvMsg[6]
                        g_com_clip_live[3] = RcvMsg[7]
+                       
+                     #---------- Ping Mode -----------------------------------#
+                    if (g_com_clip[1] == 0):                                 # Clip Modus Pi 
+                        ping = RcvMsg[1] - last_timestamp                    # Calculate the Ping
+                        last_timestamp = RcvMsg[1]                           # Save the last Timestamp 
+                        
+                        if (0 < ping < 100):                                 # Good Ping
+                            #print ("Ping")
+                            SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
+                            SndMsg = translate_to_radio(SndMsg, True)
+                            radio.writeAckPayload(1, SndMsg, len(SndMsg))
+                            g_com_clip[0] = ping                             # Clip ping
+                            download_finished = True
                     
                         
             else:
@@ -288,10 +274,6 @@ def activate_job():
 #============================================================================# 		
 if __name__ == '__main__':
         
-    print("Im here")
-    print(str(threading.active_count()))
-    print(str(threading.enumerate()))
-    
         
     app.run(host='0.0.0.0', port=5001, debug=True)
         #global g_com_clip2
