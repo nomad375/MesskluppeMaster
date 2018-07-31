@@ -2,7 +2,7 @@ void CreateFileList() { //Function to create list of files
 SdCardErrorsCheck();
  
  uint32_t startTime = millis();          // variables for time in ms
-  int i = 0;
+  //int i = 0;
   uint32_t numberOfLines, n;
   char line[64] = {}; // char[48] enough for 7 sensors to read in buffer
   uint32_t ii = 0;

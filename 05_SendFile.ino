@@ -2,7 +2,7 @@
                          Send File
     -----------------------------------------------------------------------*/
 
-void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint32_t task)
+void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16_t task)
 
 { //Start SendData() - based on fgets example from SdFat library
 
@@ -11,7 +11,8 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint32
   unsigned long counter;
   uint32_t startTime = millis();
   char line[64];  // char[48] enough for 7 sensors to read in buffer
-  int n, i; //counters
+  int n; //counters
+ // int i; //counters
 
   radio.powerUp();
 
@@ -24,7 +25,7 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint32
   if (!rdfile.isOpen()) {
    // error("Fgets ERROR");
     SdCardErrorsCheck(); 
-    exit; //exit from function if SD file cannot be opened
+    exit(0); //exit from function if SD file cannot be opened
   }
 
   // read lines from the file

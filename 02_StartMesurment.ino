@@ -19,9 +19,9 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
 
   char Fname[] = "0000000000.csv";                       //create a new file
   DateTime now = rtc.now();
-  sprintf(Fname, "%10u.csv", now.unixtime()); // name file as a seconds() since 01.01.1970. 
+  sprintf(Fname, "%10lu.csv", now.unixtime()); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
   if (sd.exists(Fname)) {
-    sprintf(Fname, "%10u.csv", now.unixtime()+1); // add one second if Fname already exist
+    sprintf(Fname, "%10lu.csv", now.unixtime()+1); // add one second if Fname already exist. // by deafault %u changed to %lu by compilation warning
   }
 //Serial.println("file created: ");
   logfile.open(Fname);                                // open created file if creted new Fname
@@ -29,7 +29,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     digitalWrite(8, HIGH);
     //error("file.open");       //if file not open -> error
     Serial.println("ERROR file.open");       //if file not open -> error
-    exit;
+    exit(0);
       }
 
   cout << F("Logging to: ") << Fname << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
@@ -86,7 +86,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
 
 if (IamInOven == false) { break;  }
 
-  } // enf of collect datas as long as defined in line 13
+  } // enf of collect datas as long as defined in global g_maxMeasurement
 
   logfile.close();
 

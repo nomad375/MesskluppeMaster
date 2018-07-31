@@ -1,10 +1,10 @@
 /*=============================================
    global variables
   =============================================== */
-int32_t g_clipID = 01;                                   // Clip ID
-int32_t g_maxPing = 50;                               // Maximum time difference (µs) for successful ping
-int32_t g_maxMeasurement = 1000 * 60 * 1;                      // Maximum log time is 5 Minutes
-int32_t g_timeout = 1000 * 20;
+uint32_t g_clipID = 01;                                   // Clip ID
+uint32_t g_maxPing = 50;                               // Maximum time difference (µs) for successful ping
+uint32_t g_maxMeasurement = 1000 * 60 * 3;                      // Maximum log time is 5 Minutes
+uint32_t g_timeout = 1000 * 20;
 uint8_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
@@ -15,6 +15,7 @@ volatile bool IamInOven = false;
 volatile bool IamAtInlet = false ;
 
 uint16_t g_task = 0;
+
 
 /*=========================================================================
     Sensor config
@@ -93,8 +94,8 @@ void setup() {
   radio.setPALevel (RF24_PA_HIGH);
   radio.setDataRate (RF24_1MBPS);
   radio.setAutoAck(1);                        // Ensure autoACK is enabled
-  radio.enableAckPayload();                   //dual side communication for PING mode
-  radio.setRetries(1, 5);                    // Optionally, increase the delay between retries in 250us & # of retries up to 15
+  radio.enableAckPayload();                   // dual side communication for PING mode
+  radio.setRetries(1, 5);                     // Optionally, increase the delay between retries in 250us & # of retries up to 15
   radio.setCRCLength(RF24_CRC_8);             // Use 8-bit CRC for performance)
   radio.openWritingPipe(pipes[0]);            // Where we send data out. Defoult Pipes[0]!!!!!
 
@@ -114,7 +115,7 @@ void setup() {
     Use it at begin of every function thay use SD card.
     Use it inside errors-check when work with file */
 
-  SdCardErrorsCheck(); // Setup SD card an check if is it in
+  SdCardErrorsCheck(); // Setup SD card and check if card inside
 
   //  /*======= SD Card Setup =======*/
   //  if (!sd.begin(SD_CHIP_SELECT, SD_SCK_MHZ(50))) {    //Initialize the highest speed supported by the board
@@ -158,12 +159,13 @@ void loop() {
     case 30:
       Serial.println("======= Get List============");
       CreateFileList();
-      SendFile("files/file.dir", 1, 65535, g_task);
+      strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
+      SendFile(g_FileName, 1, 65535, g_task);
       break;
 
     case 40:
       Serial.println("======= Send file ============");
-      sprintf(g_FileName, "%10u.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970.
+      sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
       break;
 

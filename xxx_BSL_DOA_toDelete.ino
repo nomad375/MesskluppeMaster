@@ -12,7 +12,7 @@ void StartMesurmentCSV() {
   // Create the Filename
   DateTime now = rtc.now();
   char fN[18];
-  sprintf(fN, "%04u_%2u%02u%02u_%02u%02u%02u.csv", g_clipID, now.year()-2000, now.month(), now.day(), now.hour(), now.minute(), now.second());
+  sprintf(fN, "%04lu_%2u%02u%02u_%02u%02u%02u.csv", g_clipID, now.year()-2000, now.month(), now.day(), now.hour(), now.minute(), now.second());
   
   // Open the file
   logfile.open(fN);         
