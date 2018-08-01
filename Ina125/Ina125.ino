@@ -20,8 +20,8 @@ int analogvalB = 678; // analog reading taken with load B on the load cell
 
 // Upload the sketch again, and confirm, that the kilo-reading from the serial output now is correct, using your known loads
 
-long time_, time = 0; //
-int timeBetweenReadings = 200; // We want a reading every 200 ms;
+long time = 0; //
+int timeBetweenReadings = 5; // We want a reading every 200 ms;
 float load;
 #include <ResponsiveAnalogRead.h>
 
@@ -49,43 +49,51 @@ void setup() {
   analog4.setAnalogResolution(4096);
 
 
-
+  
 }
 
 void loop() {
 
   analogWrite(A0, 780); //2.5V for Aref input
   uint16_t i = 0;
-  time = millis();
-  time_ = micros();
+
+ // for (i = 0; i < 1024; i++) {
+  //  analogWrite(A0, i); //output for A0 in 0-1023 bits (0 to 3,3v)
+
+    time = micros();
+
+    // load = analogToLoad(analog1.getValue());
 
 
-  //Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*2.4/4096*1000);
-  //Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*3.3/4096*1000);
-//Serial.print(0);
-//Serial.print(" ");
-//Serial.print(2500);
-//Serial.print(" ");
-  // Serial.print("        analogValue Abs: ");Serial.print(AnalogValue());
-  // Serial.print("        analogValue Avr: ");Serial.print(averageValue1);
-  analog1.update(); Serial.print("        analogValue Raw: ");  Serial.print(analog1.getRawValue());
-  analog1.update(); Serial.print("        analogValue Flt in mV: ");  Serial.print(analog1.getValue());
-  analog2.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog2.getValue());
-  analog3.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog3.getValue());
-  analog4.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog4.getValue());
- Serial.print("        loop time: "); Serial.println(micros() - time_);
+    // Is it time to print?
+    // if(millis() > time + timeBetweenReadings){
+    //   float load = analogToLoad(analogValueAverage1);
 
-  //  Is it time to print ?
-//  if (millis() > time + timeBetweenReadings) {
-//
-//    analog1.update(); float load = analogToLoad(analog1.getValue());
-//    Serial.print("       load: ");  Serial.println(load, 5);
-//    time = millis();
-//
-//  } //end if Time
+    //Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*2.4/4096*1000);
+    //Serial.print("analogValue in mV: ");Serial.print(analogValueAverage*3.3/4096*1000);
+    Serial.print(0);
+    Serial.print(" ");
+    Serial.print(4000);
+    Serial.print(" ");
+    //Serial.print("        analogValue Abs: ");Serial.print(AnalogValue());
+    // Serial.print("        analogValue Avr: ");Serial.print(averageValue1);
+    analog1.update(); Serial.print("        analogValue Raw: ");  Serial.print(analog1.getRawValue());
+    analog1.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog1.getValue());
+   // analog2.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog2.getValue());
+  //  analog3.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog3.getValue());
+   // analog4.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog4.getValue());
 
-  Serial.println("");
-  delayMicroseconds(2500);
+    //Serial.print("       load: ");  Serial.println(load,5);
+  //Serial.print("        loop time: "); Serial.println(micros() - time);
+
+    Serial.println();
+    // time = millis();
+   delayMicroseconds(500);
+    //delay (1);
+ // } //end FOR
+
+
+  //  } //end if Time
 }
 
 float AnalogValue()

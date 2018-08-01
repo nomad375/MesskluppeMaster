@@ -63,9 +63,8 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     bout << ';' << now.unixtime();
     bout << ';' << millis()%1000; 
     bout << ';' << LineNumber;
-    ReadSensors(g_DataSensors);
     for (uint16_t ia = 1; ia <= 4; ia++) { // 4 analog inputs to read values
-      bout << ';' << g_DataSensors[ia];
+      bout << ';' << analogRead(ia);
     }   bout << endl;      // buffer the analog values
 
     logfile << buf;               //move data from buffer to file. DONT use flush HERE -> slow down saving data
