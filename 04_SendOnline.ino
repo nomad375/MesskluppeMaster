@@ -20,11 +20,12 @@ void SendOnline()
 
 
   while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 300000) ) { //run 3000 milliseconds in any case, and then untill task changed
-    Serial.print ("Line to send: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
+
+  //  Serial.print ("Line to send: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));
-      Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
+ //     Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
 
 
       //      while (actTime % g_logInterval);    // wait for time to be a multiple of interval
@@ -37,9 +38,9 @@ void SendOnline()
       SendMessage[3] = analogRead(A7)*2*3.3/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
-  
+      ReadSensors(g_DataSensors);
       for (uint16_t ia = 1; ia <= 4; ia++) {
-        SendMessage[ia + 3] = analogRead(ia)*3.3/4096*1000;   // 4 analog inputs to read values in mVolts
+        SendMessage[ia + 3] = g_DataSensors[ia];   // 4 analog inputs 
       }
 
 
@@ -47,7 +48,7 @@ void SendOnline()
 
     else {
      Serial.println("  Acknowledge but no data ");
-     break;   
+    // break;   
      //Serial.print(".");
     }
 
