@@ -1,5 +1,49 @@
 {% extends "index.html" %}
 {% block extra %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+	
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="ct-chart ct-perfect-fourth"></div>
+                </div>
+                <div class="chart-container" style="height: 550px;">
+                    <div id="graphdiv2" style="width:100%; height:550px;"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+  g2 = new Dygraph(
+    document.getElementById("graphdiv2"),
+         [
+            {% for file in g_buffer %}
+                [new Date({{file[1]|int * 1000 + file[2]|int}}), {{file[4]}}, {{file[5]}}, {{file[6]}}, {{file[4]}}], {% endfor %}
+              ],
+              {
+                labels: ['Date', 'X', 'Y', 'Z', '?'],
+                legend: 'always',
+                animatedZooms: true,
+                axis : {
+                        x : {
+                            valueFormatter: Dygraph.dateString_,
+                            ticker: Dygraph.dateTicker
+                        }
+                }
+              }
+              
+              
+              
+              );
+</script>
+
+
 
 <div class="row">
     <div class="col-lg-9">

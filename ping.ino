@@ -1,10 +1,10 @@
 /*=========================================================================
                          mode_ping()
     -----------------------------------------------------------------------*/ 
-   void mode_ping(){
+   void mode_ping(uint16_t task){
       Serial.println("<---------------------------------------- New Mode_Ping ---------------------------------------->");
       radio.powerUp();
-      uint32_t idTask = g_clipID*1000;
+      uint32_t idTask = g_clipID*1000+task;
       uint32_t SendMsg[8] = {idTask, millis(), 0, 0, 0, 0, 0, 0};
       uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
      // uint32_t timestamp = millis();

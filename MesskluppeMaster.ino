@@ -15,6 +15,7 @@ volatile bool IamInOven = false;
 volatile bool IamAtInlet = false ;
 
 uint16_t g_task = 0;
+uint16_t task = 0;
 
 
 /*=========================================================================
@@ -141,7 +142,8 @@ void setup() {
 void loop() {
 
   g_task = 0;
-  mode_ping();
+  mode_ping(task);
+  task = 0;
 
   switch (g_task) {
     case 0:
@@ -161,12 +163,14 @@ void loop() {
       CreateFileList();
       strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
       SendFile(g_FileName, 1, 65535, g_task);
+      task = 31; // Finished Sending 
       break;
 
     case 40:
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
+      task = 41; // Finished Sending 
       break;
 
     case 50:

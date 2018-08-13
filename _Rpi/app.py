@@ -6,12 +6,12 @@
 from flask import *
 import jinja2.exceptions
 #Others
-from subprocess import call
-from random import sample
 import threading
-from multiprocessing import Process, Array
 from messkluppe_nrf24 import *
 import csv
+import os.path
+import time
+import datetime
 
 #============================================================================#
 #   globals
@@ -25,7 +25,7 @@ global g_clip_files     # can be deleted
 g_clip_files = 0        # can be deleted
 
 global g_com_clip
-g_com_clip = [0, 0, 0, 0, 0,0 ,0 ,0 ,0 ,0 ,0]
+g_com_clip = [0, 0, 0, 0, 0,0 ,0 ,False ,False ,False ,0]
 global g_com_clip_live
 g_com_clip_live = [0, 0, 0, 0]
 global g_com_clip_files
@@ -40,7 +40,6 @@ g_com_clip_file = []
 #============================================================================#
 import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
-import time
 import spidev
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -59,7 +58,6 @@ radio.enableAckPayload()
 radio.setCRCLength(NRF24.CRC_8)
 radio.openReadingPipe(1,pipes)
 radio.startListening()
-
 #============================================================================#
 #   Flask Routs
 #============================================================================#
@@ -97,6 +95,9 @@ def get_globals():
         g_clip_files = len(g_com_clip_files),
         g_clip_file = len(g_com_clip_file),
         g_ping = g_com_clip[0],
+        g_download_finished = g_com_clip[7],
+        g_download_started = g_com_clip[8],
+        g_download_successfull = g_com_clip[9],
         g_live_x = g_com_clip_live[0],
         g_live_y = g_com_clip_live[1],
         g_live_z = g_com_clip_live[2],
@@ -110,26 +111,23 @@ def get_file_list():
   
 @app.route('/file_list_show')
 def get_file_list_show():
-    #get_file_list()
+    global g_com_clip_files 
+   
+    g_com_clip_files = check_filelist(g_com_clip_files)
     return render_template('file_list.html', g_buffer=g_com_clip_files)
-    
-@app.route('/file_show/<name>')
-def get_file_show(name):
-    f = open('_csv/'+str(name)+'.csv', 'r')
-    with f:
-        reader = csv.reader(f)
-    print(reader)
-    return render_template('file.html', g_buffer=g_com_clip_file)
-    
+        
 @app.route('/file_download/<name>/<lines>')
 def file_download(name, lines):
+    g_com_clip[7] = False
+    g_com_clip[8] = False
     g_com_clip_file.clear()
     g_com_clip[3] = int(name)                   # Filename
     g_com_clip[4] = 1                           # Download from     (1)
     g_com_clip[5] = int(lines)                  # Download until    (last line)
     g_com_clip[6] = int(lines)                  # File Lines
     change_clip_modus(40)
-    return("n")
+    
+    return render_template('file.html', g_buffer=g_com_clip_file)
 
 @app.route('/live_data')
 def live_data():    
@@ -148,8 +146,45 @@ def template_not_found(e):
 @app.errorhandler(404)
 def not_found(e):
     return '<strong>Page Not Found!</strong>', 404
+#============================================================================#
+#   Displays all csv files stored on the raspberry
+#   #2018-08-10
+#============================================================================#
+@app.route('/local_files')
+def local_files():  
+    p = "static/_csv/"
+    files = []
+    for filename in os.listdir(p):
+        file = os.stat(p+filename)
+        size = file.st_size
+        date = datetime.datetime.fromtimestamp(file.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+        files.append([filename, size, date])
+    
+    print(files)
+    return render_template('m_local_files.html', files=files)
+#============================================================================#
+#   Displays one csv as graph
+#   2018-08-10
+#============================================================================#
+@app.route('/local_file/<name>')
+def local_file(name):
+    data = []
+    with open('static/_csv/'+name) as file:
+        csvReader = csv.reader(file)
+        for row in csvReader:
+            data.append(row)
 
-
+    return render_template('m_local_file.html', file=name, data=data)
+#============================================================================#
+#   Displays all files which are on the Arduino
+#   2018-08-10
+#============================================================================#
+@app.route('/online_files')
+def online_files():
+    change_clip_modus(30)
+     
+    return render_template('m_online_files.html', files=name)
+    
 #============================================================================#
 #   Change the global variable to new mode
 #============================================================================#
@@ -161,27 +196,38 @@ def change_clip_modus(new):
 #   Create CSV
 #============================================================================#
 def create_csv(name, data):
-    f = open('_csv/'+str(name)+'.csv', 'w')
+    f = open('static/_csv/'+str(name)+'.csv', 'w')
     with f:
         writer = csv.writer(f)
         writer.writerows(data)    
 
 #============================================================================#
-#   notify the user that something happened
 #============================================================================#
-def notification(text, type):
-    pass
+#   Check Filelist
+#============================================================================#
+def check_filelist(filelist):
+    for x in range(0, len(filelist)):
+        #Check if file exist already and is complete
+        filepath = "static/_csv/"+str(filelist[x][4])+".csv"
+        #filelist[1] will hold all propertys
+        # Check if file exists and is completly downloaded
+        if os.path.isfile(filepath) and len(open(filepath).readlines()) == filelist[x][6]:  
+            filelist[x][1] = {'complete': True}
+        else:
+            filelist[x][1] = {'complete': False}
+        print(filelist[x])
+    
+    return filelist
+
 
 #============================================================================#
-#============================================================================#
-def com_clip ():#(g_com_clip):   
+def com_clip ():  
     receivedMessage = [0, 0, 0, 0, 0, 0, 0, 0,]
     RcvMsg = [0, 0, 0, 0, 0, 0, 0, 0,]
     SndMsg=[0, 0, 0, 0, 0, 0, 0, 0,]
     last_timestamp = 0
-    download_started = False
-    download_finished = False
-    #global g_com_clip
+
+
     
     while 1:
         #print("running")
@@ -218,7 +264,10 @@ def com_clip ():#(g_com_clip):
                                     
                     #---------- Collect File List ---------------------------#     
                     if (Rcv_idTask[1] == 30):                                # Clip Modus Arduino
-                        g_com_clip_files.append(RcvMsg) 
+                        g_com_clip_files.append(RcvMsg)
+                    #---------- Finished File List --------------------------#     
+                    if (Rcv_idTask[1] == 31):                                # Clip Modus Arduino
+                        g_com_clip[7] = True                       
                             
                     #---------- Start Get File ------------------------------#
                     if (g_com_clip[1] == 40):                                # Clip Modus Pi
@@ -228,25 +277,44 @@ def com_clip ():#(g_com_clip):
                         SndMsg = translate_to_radio(SndMsg, False)
                         radio.writeAckPayload(1, SndMsg, len(SndMsg))
                         change_clip_modus(0)
-                        download_finished = False
+                        g_com_clip[7] = False                                # download_finished
+                        g_com_clip[9] = False                                # download_successfull
                         
                     #---------- Collect File --------------------------------#     
                     if (Rcv_idTask[1] == 40):                                # Clip Modus Arduino
-                        download_started = True
-                        download_finished = False
+                        g_com_clip[8] = True                                 # download_started
+                        g_com_clip[7] = False                                # download_finished
+                        g_com_clip[9] = False                                # download_successfull
                         g_com_clip_file.append(RcvMsg)
-                        continue                        
+                        continue
+                    if (Rcv_idTask[1] == 41):                                # Clip Modus Arduino
+                        g_com_clip[7] = True                                 # download_finished
                         
                     #print("download_started: " + str(download_started) + " download_finished: " + str(download_finished) + " max lines " + str(g_com_clip[6]) + " downloaded: " + str(len(g_com_clip_file)))
-                    if (download_started == True and download_finished == True):
-                        if (g_com_clip[6] == len(g_com_clip_file)):              # Check if we get all lines
-                            print("All lines downloaded")
+                    if (g_com_clip[8] == True and g_com_clip[7] == True):    # download_started & download_finished
+                        if (g_com_clip[6] == len(g_com_clip_file)):          # Check if we get all lines
+                            g_com_clip[9] = True                             # download_successfull  
                             create_csv(g_com_clip[3], g_com_clip_file)
                         else:
-                            print("Something missing")
+                            g_com_clip[9] = False                            # download_successfull
+                            
+                            y = 1
+                            yy = 0
+                            for x in g_com_clip_file:
+                                
+                                while (x[3] != y):
+                                    print("x: " + str(x) + " y: " + str(y))
+                                    g_com_clip_file.insert(y-1, ["Silvo", 0,0,y+yy])
+                                    yy += 1
+                                    time.sleep(1)
+                                else: 
+                                    y += 1
+                                    yy = 0
+                                    
+                        create_csv(g_com_clip[3], g_com_clip_file)  
 
-                        download_finished = False
-                        download_started = False
+                        g_com_clip[7] = False                                # download_finished
+                        g_com_clip[8] = False                                # download_started
                         
                     #---------- Live Data -----------------------------------#
                     if (g_com_clip[1] == 60):                                # Clip Modus Pi    
@@ -260,19 +328,17 @@ def com_clip ():#(g_com_clip):
                        g_com_clip_live[1] = RcvMsg[5]
                        g_com_clip_live[2] = RcvMsg[6]
                        g_com_clip_live[3] = RcvMsg[7]
-                       
+                             
                      #---------- Ping Mode -----------------------------------#
                     if (g_com_clip[1] == 0):                                 # Clip Modus Pi 
                         ping = RcvMsg[1] - last_timestamp                    # Calculate the Ping
                         last_timestamp = RcvMsg[1]                           # Save the last Timestamp 
                         
                         if (0 < ping < 100):                                 # Good Ping
-                            #print ("Ping")
                             SndMsg = [RcvMsg[0], RcvMsg[1], int(time.time()),0,0,0,0,0]
                             SndMsg = translate_to_radio(SndMsg, False)
                             radio.writeAckPayload(1, SndMsg, len(SndMsg))
                             g_com_clip[0] = ping                             # Clip ping
-                            download_finished = True
                     
                         
             else:
@@ -286,18 +352,8 @@ def activate_job():
 #============================================================================#
 #   start Flask Server
 #============================================================================# 		
-if __name__ == '__main__':
-        
-        
-    app.run(host='0.0.0.0', port=5001, debug=True)
-        #global g_com_clip2
-        #g_com_clip = Array('i', 5)
-        #if 'g_com_clip_2' in globals():
-        #   print ("I Have!!!")
-        #p = Process(target=com_clip, args=(g_com_clip,))
-        #p.start()
-       # p.join()
-        		
+if __name__ == '__main__':    
+    app.run(host='0.0.0.0', port=5001, debug=True)     		
 #============================================================================# 	
 
 
