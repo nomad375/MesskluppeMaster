@@ -13,7 +13,7 @@ void SendOnline()
   uint32_t RecievedMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
  
   Serial.println ("Online transfering... " );
-
+  digitalWrite(5, HIGH); //wake up INA125
   delay(250);
 
 
@@ -25,7 +25,7 @@ void SendOnline()
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));
- //     Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
+   Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
 
 
       //      while (actTime % g_logInterval);    // wait for time to be a multiple of interval
@@ -57,6 +57,6 @@ void SendOnline()
  
   Serial.print("Online sending finish in "); Serial.print ((millis() - StartTime) / 1000); Serial.println(" seconds.");
   radio.powerDown();
-
+  digitalWrite(5, LOW); //sleep INA125
 }// GetRadioConnection()
 

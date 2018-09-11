@@ -4,6 +4,7 @@
 
 void StartMesurment() {
 
+
 SdCardErrorsCheck(); 
   uint32_t startTime = millis();          // variables for time in ms
   uint32_t actTime;
@@ -15,6 +16,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
 
   startTime = millis();
   actTime = millis();
+ digitalWrite(5, HIGH);//wake up INA125
 
 
   char Fname[] = "0000000000.csv";                       //create a new file
@@ -95,6 +97,6 @@ if (IamInOven == false) { break;  }
 
   strncpy(g_FileName, Fname, sizeof(Fname) - 1); // Get FileName value for external use
   //
-  
+  digitalWrite(5, LOW);  //sleep INA125
   
 } // ENF of StartMesurment

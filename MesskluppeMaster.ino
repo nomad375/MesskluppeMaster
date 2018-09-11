@@ -87,6 +87,8 @@ void setup() {
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
+  pinMode(5, OUTPUT); //RedLED on board
+  digitalWrite(13, LOW);
 
   /*======= Radio Setup =======*/
   radio.begin();
