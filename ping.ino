@@ -10,7 +10,7 @@
      // uint32_t timestamp = millis();
 
      // while (true){ ///     for (uint8_t i = 1; i < 255; i++ ) {
-       for (uint8_t i = 1; i < 255; i++ ) { 
+       for (uint8_t i = 1; i < 25; i++ ) { 
         Serial.print("ping. ");
 
          SendMsg[1] = millis();
@@ -63,9 +63,10 @@
               Serial.println("NO answer for ping. ");
          // delay(5);
           
-         }
+         } // end else
 
 
-      }
-   }
-//}
+      } // end for 1 to
+  radio.powerDown();
+  } //end ping
+

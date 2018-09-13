@@ -23,7 +23,7 @@ void SendOnline()
   while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 7000) ) { //run 3000 milliseconds in any case, and then untill task changed
 
  do { actTime = millis();  }
- while (actTime % g_logInterval);    // wait for time to be a multiple of interval
+ while (actTime % g_logInterval*10);    // wait for time to be a multiple of interval *10
 
   
   Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
@@ -33,7 +33,6 @@ void SendOnline()
    //Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
 
 
-      //      while (actTime % g_logInterval);    // wait for time to be a multiple of interval
 
       DateTime now = rtc.now();
       LineNumber ++;
@@ -52,14 +51,14 @@ void SendOnline()
     } //enf If radio.isAckPayloadAvailable() ) {
 
     else {
-     //Serial.println("  Acknowledge but no data ");
+     Serial.println("Send Online -   Acknowledge but no data ");
         break;   
    
     }
 
 
-  }// end while ( radio.write
- 
+  }// end for 1-255 
+  
   Serial.print("Online sending finish in "); Serial.print ((millis() - StartTime) / 1000); Serial.println(" seconds.");
   radio.powerDown();
   digitalWrite(5, LOW); //sleep INA125
