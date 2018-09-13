@@ -9,20 +9,24 @@
       uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
      // uint32_t timestamp = millis();
 
-      while (true){
-        Serial.print(".");
+      while (true){ ///     dfor (uint8_t i = 1; i < 256; i++ ) {
+        Serial.print("ping. ");
 
           SendMsg[1] = millis();
-          SendMsg[4] = analogRead(A7)*2*3.3/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
-         // SendMsg[5] = analogRead(A5)*3.3/4096*1000; //Actual Output voltage of Clip in mV. Used for perifery devices.
-        
+         SendMsg[4] = analogRead(A7)*2*ARef/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+         
+        ReadSensors(g_DataSensors);
+        SendMsg[7] = g_DataSensors[4]*10000+g_DataSensors[5]; 
+
+         // cout << endl << "Send Ping: " << SendMsg[0] << "," <<  SendMsg[1] << "," << SendMsg[2] << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7] << endl; 
           radio.write(&SendMsg, sizeof(SendMsg));
           
           if ( radio.isAckPayloadAvailable() ) {
               radio.read(&RcvMsg, sizeof(RcvMsg));
-              
-              //cout << endl << "Send: " << SendMsg[0] << "," <<  SendMsg[1] << "," << SendMsg[2] << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7] << endl; 
-              //cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
+                      Serial.print("HAVE answer for ping. ");
+
+            
+          //   cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
 //
 //
 //               // Calculate the Task
@@ -55,7 +59,8 @@
 
          }
          else {
-          delay(5);
+              Serial.print("NO answer for ping. ");
+         // delay(5);
           
          }
 

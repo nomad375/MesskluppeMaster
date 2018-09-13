@@ -17,7 +17,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   startTime = millis();
   actTime = millis();
  digitalWrite(5, HIGH);//wake up INA125
-
+  digitalWrite(8, HIGH);
 
   char Fname[] = "0000000000.csv";                       //create a new file
   DateTime now = rtc.now();
@@ -29,6 +29,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   logfile.open(Fname);                                // open created file if creted new Fname
   if (!logfile.is_open()) {
     digitalWrite(8, HIGH);
+    
     //error("file.open");       //if file not open -> error
     Serial.println("ERROR file.open");       //if file not open -> error
     exit(0);
@@ -65,10 +66,14 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     bout << ';' << now.unixtime();
     bout << ';' << millis()%1000; 
     bout << ';' << LineNumber;
+    
     ReadSensors(g_DataSensors);
-    for (uint16_t ia = 1; ia <= 4; ia++) { // 4 analog inputs to read values
+    for (uint16_t ia = 1; ia <= 3; ia++) { // 4 analog inputs to read values
       bout << ';' << g_DataSensors[ia];
-    }   bout << endl;      // buffer the analog values
+    }   
+    bout << ';' << uint32_t( analogRead(A7)*2*ARef/4096*1000); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+   
+    bout << endl;      // buffer the analog values
 
     logfile << buf;               //move data from buffer to file. DONT use flush HERE -> slow down saving data
 
@@ -98,5 +103,6 @@ if (IamInOven == false) { break;  }
   strncpy(g_FileName, Fname, sizeof(Fname) - 1); // Get FileName value for external use
   //
   digitalWrite(5, LOW);  //sleep INA125
+  digitalWrite(8, LOW);
   
 } // ENF of StartMesurment
