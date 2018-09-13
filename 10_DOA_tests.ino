@@ -3,7 +3,7 @@
     -----------------------------------------------------------------------*/
 void DOAtests() {
  
- while (!Serial);
+// while (!Serial);
 
   radio.setChannel(77); //77 in the past
   radio.openWritingPipe(pipes[1]);            // Where we send data out DOA pipes[1]. Default Pipes[0]!!!!!
@@ -25,7 +25,7 @@ void DOAtests() {
   
 /* HERE we can constanly send data online. time limit inside function SendOnline() */ 
   
-  SendOnline();
+//  SendOnline();
 
 
  /* HERE we can сreate new file and immidiately send it. Time for logging in global variables or below */
@@ -43,22 +43,22 @@ void DOAtests() {
   // SendFile(g_FileName, 1, 4000, g_task);
 
   //mode_ping();
-  Serial.println("end of DOA");
-  /*======================================================================================
-          Reboot Arduino Zero
-    ======================================================================================== */
-  delay(600000);
-  NVIC_SystemReset(); //reset CPU function
-
-
-
-  /*======================================================================================
-          Change everething back :)
-    ======================================================================================== */
-
-  radio.setChannel(125); //77 in the past
-  radio.openWritingPipe(pipes[0]);            // Where we send data out DOA pipes[1]. Defoult Pipes[0]!!!!!
-  radio.setPALevel (RF24_PA_HIGH);
+//  Serial.println("end of DOA");
+//  /*======================================================================================
+//          Reboot Arduino Zero
+//    ======================================================================================== */
+//  delay(600000);
+//  NVIC_SystemReset(); //reset CPU function
+//
+//
+//
+//  /*======================================================================================
+//          Change everething back :)
+//    ======================================================================================== */
+//
+//  radio.setChannel(125); //77 in the past
+//  radio.openWritingPipe(pipes[0]);            // Where we send data out DOA pipes[1]. Defoult Pipes[0]!!!!!
+//  radio.setPALevel (RF24_PA_HIGH);
 }//end of DOAtests()
 
 

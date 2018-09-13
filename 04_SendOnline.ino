@@ -11,7 +11,8 @@ void SendOnline()
   uint32_t SendMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
   SendMessage[0] = g_clipID * 1000 + 60; // 30(!?!)= Online mode for RPI
   uint32_t RecievedMessage[8] = {0, 0, 0, 0, 0, 0, 0, 0};
- 
+  uint32_t actTime;
+  
   Serial.println ("Online transfering... " );
   digitalWrite(5, HIGH); //wake up INA125
   delay(250);
@@ -19,8 +20,12 @@ void SendOnline()
 
 
 
-  while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 3000) ) { //run 3000 milliseconds in any case, and then untill task changed
+  while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 7000) ) { //run 3000 milliseconds in any case, and then untill task changed
 
+ do { actTime = millis();  }
+ while (actTime % g_logInterval);    // wait for time to be a multiple of interval
+
+  
   Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {

@@ -5,7 +5,7 @@ uint32_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 50;                               // Maximum time difference (µs) for successful ping
 uint32_t g_maxMeasurement = 1000 * 60 * 90;                      // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
-uint16_t g_logInterval = 10*100;                               // 15.625  milliseconds between analog entries (64Hz)
+uint16_t g_logInterval = 10*100/100;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -17,7 +17,7 @@ volatile bool IamAtInlet = false ;
 uint16_t g_task = 0;
 uint16_t task = 0;
 
-float ARef = 2.36;
+float ARef = 3.3;
 
 /*=========================================================================
     Sensor config
@@ -30,19 +30,6 @@ ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
 ResponsiveAnalogRead analog5(A5, true);
 
-/*=========================================================================
-    Termistor setup
-    -----------------------------------------------------------------------*/
-
-#include <math.h>
- 
-const int sensorPin = A0;                              // Analoger Eingangspin, an welchem der Thermistor angeschlossen ist
-const float ThermistorResistance = 108*1000;              // Thermistor Widerstand bei Raumtemperatur
-const float NominalTemperature = 24.5;                   // Raumtemperatur
-const float BCoefficient = 3950;                       // Beta-Wert des thermistors (aus dem Datenblatt)
-const float Vsupply = 3.3;                           // Versorgungspannung des Spannungsteilers (Mit dem Multimeter messen)
-const float Vref = 3.3;                              // Analogue Referenzspannung (Mit dem Multimeter messen)
-const float Rtop = 10*1000; 
 
 /*=========================================================================
     real Time Config
@@ -93,8 +80,8 @@ void setup() {
   //analogReadCorrection(8, 2053); //BMS feather. done  12.07.2018
   analogReadResolution(12); //12-bit resolution for analog inputs
   analogWriteResolution(10); //10-bit resolution for analog output A0
-  analogReference(AR_EXTERNAL);// external signal for analog reference
-  analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
+ // analogReference(AR_EXTERNAL);// external signal for analog reference
+ // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
 
 
   /*======= LED indication setup =======*/
@@ -109,7 +96,7 @@ void setup() {
   /*======= Radio Setup =======*/
   radio.begin();
   radio.enableDynamicPayloads();
-  radio.setChannel(77);
+  radio.setChannel(111);
   radio.setPALevel (RF24_PA_HIGH);
   radio.setDataRate (RF24_1MBPS);
   radio.setAutoAck(1);                        // Ensure autoACK is enabled
@@ -147,7 +134,7 @@ void setup() {
   //=======place to test functions ===========////
 
 
-//  DOAtests();
+DOAtests();
 
 } //end SETUP()
 
