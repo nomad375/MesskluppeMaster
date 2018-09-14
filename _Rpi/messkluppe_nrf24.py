@@ -8,7 +8,8 @@ def translate_from_radio(msg, size, debug=False):
         translated_msg.append(int.from_bytes([msg[i+3], msg[i+2], msg[i+1], msg[i]], byteorder='big')) 
         
     if (debug):
-        print("Translate FROM Radio: " + str(msg) + " --> " + str(translated_msg))
+        #print("Translate FROM Radio: " + str(msg) + " --> " + str(translated_msg))
+        print("Translate FROM Radio: " + str(translated_msg))
     return translated_msg
 #============================================================================#
 #============================================================================#
@@ -21,7 +22,8 @@ def translate_to_radio(msg, debug=False):
         for g in reversed(x):
             translated_msg.append(g)        
     if (debug):    
-	    print("Translate TO Radio: " + str(msg) + " --> " + str(translated_msg))
+	    #print("Translate TO Radio: " + str(msg) + " --> " + str(translated_msg))
+        print("Translate TO Radio:                                                                                        " + str(msg))
     return translated_msg
 #============================================================================#
 #============================================================================#

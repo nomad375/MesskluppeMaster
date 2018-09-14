@@ -1,4 +1,4 @@
-{% extends "base_layout.html" %} {% block title %}Main{% endblock %} 
+{% extends "base_layout.html" %} {% block title %}Messkluppe{% endblock %} 
 {% block page_title %}Messkluppe{% endblock %}
 {% block content %}
 
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <button type="button" class="btn btn-default btn-circle" id="file_list" ><i class="fa fa-refresh"></i></button> 
-                                    <span class="huge" id="g_clip_files">0</span>
+                                    <span class="huge" id="g_clip_files_len">0</span>
 
                                     <div>Log files</div>
                                 </div>
@@ -152,7 +152,7 @@
                 $("#ping").text(result.g_ping);
                 $("#g_clip_modus_pi").text(result.g_clip_modus_pi);
                 $("#g_clip_modus_ad").text(result.g_clip_modus_ad);
-                $("#g_clip_files").text(result.g_clip_files);
+                $("#g_clip_files_len").text(result.g_clip_files_len);
                 $("#g_clip_file").text(result.g_clip_file);
                 $("#g_live_x").text(result.g_live_x);
                 $("#g_live_y").text(result.g_live_y);

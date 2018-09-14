@@ -23,7 +23,7 @@ void SendOnline()
   while ((RecievedMessage[0] % 1000 == 60) || (millis() - StartTime < 7000) ) { //run 3000 milliseconds in any case, and then untill task changed
 
  do { actTime = millis();  }
- while (actTime % g_logInterval*10);    // wait for time to be a multiple of interval *10
+ while (actTime % (g_logInterval*25));    // wait for time to be a multiple of interval *10
 
   
   Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");

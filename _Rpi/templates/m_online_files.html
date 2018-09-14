@@ -1,6 +1,8 @@
 {% extends "index.html" %}
+{% block page_title %}Messkluppe - Online Files{% endblock %}
+
 {% block extra %}
-{% block page_title %}Online Files{% endblock %}
+
 <div class="row">
     <div class="col-lg-9">
         <div class="panel panel-default">
@@ -10,16 +12,15 @@
             <!-- /.panel-heading -->
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table class="table table-striped table-bordered table-hover" id="online_files">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Size(byte)</th>
                                 <th>Number of Lines</th>
-
-                                <th>DEL-PI</th>
-                                <th>DEL-AD</th>
+                                <th>DEL</th>
+                                <th>Download</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,4 +56,46 @@
     <!-- /.col-lg-6 -->
    
 </div>
+<script>
+$(window).ready(function(){
+    intervalId = setInterval(function(){
+        $.getJSON("/get_globals", function(result){
+            if (result.g_download_finished == true){
+                result.g_clip_files.forEach(function(e) {
+                    $('#online_files').append(
+                    '<tr><td>'+
+                        e[3]+
+                    '</td><td>'+
+                        e[4]+
+                    '</td><td>'+
+                        e[5]+
+                    '</td><td>'+
+                        e[6]+
+                    '</td><td>'+
+                        'link-DEL'+
+                    '</td><td>'+
+                        '<button type="button" class="btn btn-info btn-circle" onclick='+
+                            "$.get('"+
+                            '/file_download/'+
+                            e[4]+
+                            '/'+
+                            e[6]+
+                            "');"+
+                            '><i class="fa fa-download"></i></button></td></tr>');
+                    
+                    console.log(e);
+                });
+                console.log("download finished");
+                clearInterval(intervalId);
+                console.log(result);
+                
+            }
+        
+        })
+    }, 1000);
+});
+</script>
+
+
+
 {% endblock %}
