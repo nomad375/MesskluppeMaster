@@ -13,6 +13,7 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
   char line[64];  // char[48] enough for 7 sensors to read in buffer
   int n; //counters
  // int i; //counters
+ int lost_package = 0;
 
   radio.powerUp();
 
@@ -33,16 +34,22 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
   rdfile.seekSet(FirstLine*35); //TAKE care that 35 is smaller than and average srting volume in bytes but close enough to it
   
   while ((n = rdfile.fgets(line, sizeof(line))) > 0) { // START read file line by line untill endOfFile
-
-     ConvertStringToArray(line, g_SendMsg);
+    
+    ConvertStringToArray(line, g_SendMsg);
     g_SendMsg[0] = g_clipID*1000+task;
 
 
     Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
     if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
 
-           if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
-         //  if (!radio.write(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
+           if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { 
+               counter++; }
+           //if (!radio.write(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
+           bool ok = radio.txStandBy(); 
+           if (ok == 0){lost_package = lost_package + 1; Serial.print("lost: "); Serial.println(lost_package);}
+           if (lost_package > 1000){break;}
+          
+
 
     }//END if
 
