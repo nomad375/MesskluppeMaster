@@ -25,10 +25,10 @@
     document.getElementById("graphdiv2"),
          [
             {% for row in data %}
-                [new Date({{row[1]|int * 1000 + row[2]|int}}), {{row[4]}}, {{row[5]}}, {{row[6]}}, {{row[4]}}], {% endfor %}
+                [new Date({{row[1]|int * 1000 + row[2]|int}}), {{row[4]}}, {{row[5]}}, {{row[6]}}, {{row[7]|int / 100}}], {% endfor %}
               ],
               {
-                labels: ['Date', 'X', 'Y', 'Z', '?'],
+                labels: ['Date', 'X', 'Y', 'Z', 'V'],
                 legend: 'always',
                 animatedZooms: true,
                 axis : {

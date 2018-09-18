@@ -60,8 +60,8 @@
 $(window).ready(function(){
     intervalId = setInterval(function(){
         $.getJSON("/get_globals", function(result){
-            if (result.g_download_finished == true){
-                result.g_clip_files.forEach(function(e) {
+            if (result.dl_finished == true){
+                result.online_files.forEach(function(e) {
                     $('#online_files').append(
                     '<tr><td>'+
                         e[3]+
