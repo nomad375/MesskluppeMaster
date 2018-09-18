@@ -39,7 +39,7 @@ void SendOnline()
       SendMessage[0] = g_clipID * 1000 + 60;
       SendMessage[1] = now.unixtime();
       SendMessage[2] = millis() % 1000;
-      SendMessage[3] = analogRead(A7)*2*ARef/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+      SendMessage[3] = analogRead(A7)*2*g_ARef/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
       ReadSensors(g_DataSensors);

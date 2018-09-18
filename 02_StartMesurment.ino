@@ -71,7 +71,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     for (uint16_t ia = 1; ia <= 3; ia++) { // 4 analog inputs to read values
       bout << ';' << g_DataSensors[ia];
     }   
-    bout << ';' << uint32_t( analogRead(A7)*2*ARef/4096*1000); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+    bout << ';' << uint32_t( analogRead(A7)*2*g_ARef/4096*1000); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
    
     bout << endl;      // buffer the analog values
 

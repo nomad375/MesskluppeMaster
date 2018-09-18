@@ -17,7 +17,7 @@ volatile bool IamAtInlet = false ;
 uint16_t g_task = 0;
 uint16_t task = 0;
 
-float ARef = 3.3;
+float g_ARef = 3.3;
 
 /*=========================================================================
     Sensor config
