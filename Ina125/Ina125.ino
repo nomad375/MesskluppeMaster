@@ -26,9 +26,9 @@ float load;
 #include <ResponsiveAnalogRead.h>
 
 ResponsiveAnalogRead analog1(A1, true);
-ResponsiveAnalogRead analog2(A2, true);
-ResponsiveAnalogRead analog3(A3, true);
-ResponsiveAnalogRead analog4(A4, true);
+//ResponsiveAnalogRead analog2(A2, true);
+//ResponsiveAnalogRead analog3(A3, true);
+//ResponsiveAnalogRead analog4(A4, true);
 
 
 void setup() {
@@ -36,7 +36,7 @@ void setup() {
   analogReadCorrection(26, 2062);
   analogReadResolution(12); //12-bit resolution for analog inputs
   analogWriteResolution(10); //10-bit resolution for analog output A0
-  analogReference(AR_EXTERNAL);// external signal for analog reference
+ // analogReference(AR_EXTERNAL);// external signal for analog reference
 
   analog1.setAnalogResolution(4096);
   analog1.setSnapMultiplier(0.01); // 0.01 by default
@@ -44,9 +44,9 @@ void setup() {
   //analog1.disableSleep();
   analog1.enableSleep();
 
-  analog2.setAnalogResolution(4096);
-  analog3.setAnalogResolution(4096);
-  analog4.setAnalogResolution(4096);
+  //analog2.setAnalogResolution(4096);
+  //analog3.setAnalogResolution(4096);
+  //analog4.setAnalogResolution(4096);
 
 
 
@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
 
-  analogWrite(A0, 780); //2.5V for Aref input
+  //analogWrite(A0, 780); //2.5V for Aref input
   uint16_t i = 0;
   time = millis();
   time_ = micros();
@@ -69,10 +69,10 @@ void loop() {
   // Serial.print("        analogValue Abs: ");Serial.print(AnalogValue());
   // Serial.print("        analogValue Avr: ");Serial.print(averageValue1);
   analog1.update(); Serial.print("        analogValue Raw: ");  Serial.print(analog1.getRawValue());
-  analog1.update(); Serial.print("        analogValue Flt in mV: ");  Serial.print(analog1.getValue());
-  analog2.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog2.getValue());
-  analog3.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog3.getValue());
-  analog4.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog4.getValue());
+  //analog1.update(); Serial.print("        analogValue Flt in mV: ");  Serial.print(analog1.getValue());
+  //analog2.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog2.getValue());
+  //analog3.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog3.getValue());
+ // analog4.update(); Serial.print("        analogValue Flt: ");  Serial.print(analog4.getValue());
  Serial.print("        loop time: "); Serial.println(micros() - time_);
 
   //  Is it time to print ?

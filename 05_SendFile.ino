@@ -39,15 +39,15 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
     g_SendMsg[0] = g_clipID*1000+task;
 
 
-    //Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
+   // Serial.print ("Line to send: "); for (byte iii = 0; iii<8; iii++){ Serial.print (g_SendMsg[iii]); Serial.print(", "); } Serial.println (" ");
     if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
 
-           if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { 
-               counter++; }
+          if (!radio.writeFast(&g_SendMsg, sizeof(g_SendMsg))) { counter++; Serial.println(counter); }
            //if (!radio.write(&g_SendMsg, sizeof(g_SendMsg))) { counter++; }
-           bool ok = radio.txStandBy(); 
-           if (ok == 0){lost_package = lost_package + 1; Serial.print("lost: "); Serial.println(lost_package);}
-           if (lost_package > 1000){break;}
+//           bool ok = radio.txStandBy(); 
+
+//           if (ok == 0){lost_package = lost_package + 1; Serial.print("lost: "); Serial.println(lost_package);}
+          if (counter > 1000){break;}
           
 
 
@@ -61,7 +61,8 @@ if (IamAtInlet == true) { // Stop if come to Oven
 
   } // enf of read file line by line untill endOfFile
 
-  Serial.print("SendFile done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
+  Serial.print("SendFile done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds."); 
+  Serial.println(counter); Serial.println(" lines lost in space ");
 
   if (!radio.txStandBy()) {
     counter += 3;  // if radio.writeFast used its nesessary clean up FIFI buffer before TX mode
