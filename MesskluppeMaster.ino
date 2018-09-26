@@ -2,7 +2,7 @@
    global variables
   =============================================== */
 uint32_t g_clipID = 01;                                   // Clip ID
-uint32_t g_maxPing = 50;                               // Maximum time difference (µs) for successful ping
+uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
 uint32_t g_maxMeasurement = 1000 * 60 * 90;                      // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
 uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
