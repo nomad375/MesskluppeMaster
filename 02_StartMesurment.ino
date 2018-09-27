@@ -55,8 +55,8 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     }
 
     while (actTime % g_logInterval);    // wait for time to be a multiple of interval
-    detachInterrupt(20); // Stop interrupt to prevent freezing
-    detachInterrupt(21); // Stop interrupt to prevent freezing
+    detachInterrupt(INTERRUPT_PIN_INLET); // Stop interrupt to prevent freezing
+    detachInterrupt(INTERRUPT_PIN_CLIP); // Stop interrupt to prevent freezing
 
 
     obufstream bout(buf, sizeof(buf));                // use buffer to format line
@@ -68,17 +68,18 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     bout << ';' << LineNumber;
     
     ReadSensors(g_DataSensors);
-    for (uint16_t ia = 1; ia <= 3; ia++) { // 4 analog inputs to read values
+    for (uint16_t ia = 1; ia <= 3; ia++) { // 3 analog inputs to read values
       bout << ';' << g_DataSensors[ia];
     }   
-    bout << ';' << uint32_t( analogRead(A7)*2*g_ARef/4096*1000); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+   bout << ';' << uint32_t( analogRead(A7)*2*g_AnalogToMV); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+   //bout << ';' << uint32_t( g_DataSensors[4]*10000+g_DataSensors[5]); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
    
     bout << endl;      // buffer the analog values
 
     logfile << buf;               //move data from buffer to file. DONT use flush HERE -> slow down saving data
 
-   attachInterrupt(20, IRQ1, FALLING);
-   attachInterrupt(21, IRQ2, FALLING);
+   attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING);
+   attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING);
 
     if (!logfile) {
       //error("write logfile data failed");   //check for errors in logfile

@@ -26,7 +26,7 @@ void SendOnline()
  while (actTime % (g_logInterval*25));    // wait for time to be a multiple of interval *10
 
   
-  Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
+  //Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));
@@ -39,7 +39,7 @@ void SendOnline()
       SendMessage[0] = g_clipID * 1000 + 60;
       SendMessage[1] = now.unixtime();
       SendMessage[2] = millis() % 1000;
-      SendMessage[3] = analogRead(A7)*2*g_ARef/4096*1000; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+      SendMessage[3] = analogRead(A7)*2*g_AnalogToMV; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
       ReadSensors(g_DataSensors);

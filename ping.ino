@@ -35,9 +35,9 @@
         SendMsg[1] = millis();                                // Actual running time
         SendMsg[2] = ping;                                    // calculated ping in ms
         SendMsg[3] = average * 100;                           // average is float so we have to remove the '.'
-        SendMsg[4] = analogRead(A7)*2*g_ARef/4096*1000;       // Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+        SendMsg[4] = analogRead(A7)*2*g_AnalogToMV;       // Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
         ReadSensors(g_DataSensors);                           // Update Sensors
-        SendMsg[7] = g_DataSensors[4]*10000+g_DataSensors[5]; // Temperatures [0]=Clip [1]=Board
+        SendMsg[7] = g_DataSensors[4]*0xFFFF+g_DataSensors[5]; // Temperatures [0]=Clip [1]=Board
         
         /*========= Send SendMsg ========*/
         cout << "Send Ping: " << SendMsg[0] << "," <<  SendMsg[1] << "," << SendMsg[2] << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7] << endl;

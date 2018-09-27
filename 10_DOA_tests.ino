@@ -8,14 +8,21 @@ while (!Serial);
   radio.setChannel(111); //77 in the past
   radio.openWritingPipe(pipes[1]);            // Where we send data out DOA pipes[1]. Default Pipes[0]!!!!!
   radio.setPALevel (RF24_PA_HIGH);
-//  radio.setDataRate (RF24_250KBPS);
+//radio.setDataRate (RF24_250KBPS);
+//radio.setDataRate (RF24_2MBPS);
+
+#define INTERRUPT_PIN_INLET  15
+#define INTERRUPT_PIN_CLIP  16
+ 
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
 
 
 
-  // ReadSensors(g_DataSensors); //just a test for Analog read function.
+ReadSensors(g_DataSensors); //just a test for Analog read function.
+
+  
   //GetRadioConnection();
   //DeleteAllFiles();
 
@@ -29,7 +36,7 @@ while (!Serial);
 
 
  /* HERE we can сreate new file and immidiately send it. Time for logging in global variables or below */
-//  g_maxMeasurement = 1000 * 60 * 3;                      // ligging tume in milliseconds
+//  g_maxMeasurement = 1000 * 60 * 0.2;                      // ligging tume in milliseconds
 //  IamInOven = true;
 //  IamAtInlet = false;
 //  StartMesurment();
@@ -41,7 +48,7 @@ while (!Serial);
 g_task= 40;
 strncpy(g_FileName, "1536798492.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
 Serial.println (g_FileName);
-SendFile(g_FileName, 1, 65535, g_task);
+SendFile(g_FileName, 1, 10000, g_task);
 
   //mode_ping();
  Serial.println("end of DOA");
@@ -61,6 +68,9 @@ NVIC_SystemReset(); //reset CPU function
 //  radio.setChannel(77); //77 in the past
 //  radio.openWritingPipe(pipes[0]);            // Where we send data out DOA pipes[1]. Defoult Pipes[0]!!!!!
 //  radio.setPALevel (RF24_PA_HIGH);
+//  radio.setDataRate (RF24_1MBPS);
+// #define INTERRUPT_PIN_INLET  20
+// #define INTERRUPT_PIN_CLIP  21
 }//end of DOAtests()
 
 

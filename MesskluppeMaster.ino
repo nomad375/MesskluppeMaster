@@ -9,7 +9,8 @@ uint16_t g_logInterval = 10;                               // 15.625  millisecon
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-uint32_t g_DataSensors[6] = {0, 0, 0, 0, 0, 0};
+
+uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
 volatile bool IamInOven = false;
 volatile bool IamAtInlet = false ;
@@ -18,6 +19,7 @@ uint16_t g_task = 0;
 uint16_t task = 0;
 
 float g_ARef = 3.3;
+float g_AnalogToMV = g_ARef / 4096 * 1000;
 
 /*=========================================================================
     Sensor config
@@ -28,9 +30,14 @@ ResponsiveAnalogRead analog1(A1, true);
 ResponsiveAnalogRead analog2(A2, true);
 ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
-ResponsiveAnalogRead analog5(A5, true);
+//ResponsiveAnalogRead analog5(A5, true);
 
+#include <SparkFunMPU9250-DMP.h>
+MPU9250_DMP imu;
 
+#define INTERRUPT_PIN_INLET  20  // 20 for version 1
+#define INTERRUPT_PIN_CLIP  21   // 21 for version 1
+  
 /*=========================================================================
     real Time Config
     -----------------------------------------------------------------------*/
@@ -76,6 +83,8 @@ void setup() {
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
 
+
+
   analogReadCorrection(26, 2062);//DOA feather m0
   //analogReadCorrection(8, 2053); //BMS feather. done  12.07.2018
   analogReadResolution(12); //12-bit resolution for analog inputs
@@ -83,6 +92,8 @@ void setup() {
  // analogReference(AR_EXTERNAL);// external signal for analog reference
  // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
 
+
+  SetupSensors ();
 
   /*======= LED indication setup =======*/
 
@@ -109,11 +120,11 @@ void setup() {
   radio.stopListening();
 
   /*======= Interrupt Setup =======*/
-  pinMode(20, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
-  attachInterrupt(20, IRQ1, FALLING);
+  pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
+  attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING);
 
-  pinMode(21, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
-  attachInterrupt(21, IRQ2, FALLING);
+  pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
+  attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING);
 
 
   /* SD card SETUP is in external function SdCardErrorsCheck();.

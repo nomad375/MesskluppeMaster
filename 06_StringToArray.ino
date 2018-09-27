@@ -5,6 +5,8 @@
 void ConvertStringToArray (char TextString[], uint32_t *g_SendMsg)
 { //function for converting string to uint32_t[] array
 
+//uint32_t StartTime = micros();
+
     
   char TextStringCopy[strlen(TextString)];            // here we find lenghts of input TextString
   strcpy(TextStringCopy, TextString);                 // and creating TextStringCopy of TextString
@@ -22,6 +24,9 @@ void ConvertStringToArray (char TextString[], uint32_t *g_SendMsg)
  // Serial.print("Function test - array of uint32_t[]: "); for (int i = 0; i < 8; i++) { Serial.print(g_SendMsg[i], HEX); Serial.print("  ");  }  Serial.println();
  // Serial.print("Function test - array of uint32_t[]: "); for (int i = 0; i < 8; i++) { Serial.print(g_SendMsg[i]); Serial.print("  ");  }  Serial.println();
 
+//uint32_t FinishTime = micros();
+
+//Serial.println ( FinishTime - StartTime);
 
 } //end ConvertStringToArray
 
