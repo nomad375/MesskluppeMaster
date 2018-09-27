@@ -40,7 +40,7 @@
         SendMsg[7] = g_DataSensors[4]*0xFFFF+g_DataSensors[5]; // Temperatures [0]=Clip [1]=Board
         
         /*========= Send SendMsg ========*/
-        cout << "Send Ping: " << SendMsg[0] << "," <<  SendMsg[1] << "," << SendMsg[2] << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7] << endl;
+        //cout << "Send Ping: " << SendMsg[0] << "," <<  SendMsg[1] << "," << SendMsg[2] << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7] << endl;
         radio.powerUp(); 
         sucess = radio.write(&SendMsg, sizeof(SendMsg));
 
@@ -58,7 +58,7 @@
               uint32_t task = RcvMsg[0]%1000;                 // calculate the task
               uint32_t id = (RcvMsg[0]-task)/1000;            // calculate the id
               ping = SendMsg[1] - RcvMsg[1];                  // calculate the ping
-              cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
+              //cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
               //cout << "task :" << task << " id:" << id << " ping: " << ping << endl;
 
               /*======= Check the msg =========*/
