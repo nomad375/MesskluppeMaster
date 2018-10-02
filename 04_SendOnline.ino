@@ -1,7 +1,7 @@
 /*=========================================================================
                          SendOnline()
     -----------------------------------------------------------------------*/
-void SendOnline()
+void SendOnline() //move out task to global!
 { //SendOnline()
 
   radio.powerUp();
@@ -25,8 +25,8 @@ void SendOnline()
  do { actTime = millis();  }
  while (actTime % (g_logInterval*25));    // wait for time to be a multiple of interval *10
 
+    Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
   
-  //Serial.print ("Line to send Online: "); for (byte i = 0; i<8; i++){ Serial.print (SendMessage[i]); Serial.print(", "); } Serial.println (" ");
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));
@@ -39,14 +39,14 @@ void SendOnline()
       SendMessage[0] = g_clipID * 1000 + 60;
       SendMessage[1] = now.unixtime();
       SendMessage[2] = millis() % 1000;
-      SendMessage[3] = analogRead(A7)*2*g_AnalogToMV; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+      SendMessage[3] = g_DataSensors[15]*2; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
       ReadSensors(g_DataSensors);
       for (uint16_t ia = 1; ia <= 3; ia++) {
         SendMessage[ia + 3] = g_DataSensors[ia];   // 4 analog inputs 
       }
-       SendMessage[7] = g_DataSensors[4]*10000+g_DataSensors[5];   // 4 analog inputs 
+      // SendMessage[7] = g_DataSensors[13]*0xFFFF+g_DataSensors[15];   // 4 analog inputs 
 
     } //enf If radio.isAckPayloadAvailable() ) {
 

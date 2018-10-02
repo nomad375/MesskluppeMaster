@@ -3,12 +3,12 @@
   =============================================== */
 uint32_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
-uint32_t g_maxMeasurement = 1000 * 60 * 90;                      // Maximum log time is 5 Minutes
+uint32_t g_maxMeasurement = 1000 * 60 * 90;               // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
 uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
-uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
@@ -25,18 +25,26 @@ float g_AnalogToMV = g_ARef / 4096 * 1000;
     Sensor config
     -----------------------------------------------------------------------*/
 #include <SAMD_AnalogCorrection.h>
+
+
 #include <ResponsiveAnalogRead.h>
 ResponsiveAnalogRead analog1(A1, true);
 ResponsiveAnalogRead analog2(A2, true);
 ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
-//ResponsiveAnalogRead analog5(A5, true);
+ResponsiveAnalogRead analog7(A5, true);
+
 
 #include <SparkFunMPU9250-DMP.h>
 MPU9250_DMP imu;
 
-#define INTERRUPT_PIN_INLET  20  // 20 for version 1
-#define INTERRUPT_PIN_CLIP  21   // 21 for version 1
+#include "avdweb_AnalogReadFast.h"
+
+bool  ANALOG_READ_FAST = 1;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
+bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smoothing - set 1 otherwise 0. 
+
+#define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
+#define INTERRUPT_PIN_CLIP  1   // 21 for version 1
   
 /*=========================================================================
     real Time Config
@@ -55,7 +63,7 @@ RTC_Millis rtc;
 SdFat sd;                       //file system object
 ofstream logfile;               // text file for logging
 #define error(s) sd.errorHalt(F(s))   // store error strings in flash to save RAM
-char buf[80];               //buffer to format data - easier to echo to serial
+char buf[256];               //buffer to format data - easier to echo to serial
 
 /*=========================================================================
     Serial Monitoring
@@ -78,7 +86,7 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 void setup() {
   Serial.begin(115200);
- // while (!Serial);
+while (!Serial);
 
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
@@ -91,7 +99,6 @@ void setup() {
   analogWriteResolution(10); //10-bit resolution for analog output A0
  // analogReference(AR_EXTERNAL);// external signal for analog reference
  // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
-
 
   SetupSensors ();
 
@@ -144,7 +151,7 @@ void setup() {
 
   //=======place to test functions ===========////
 
-
+//Serial.println( "Setup done!");
 //DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 } //end SETUP()
@@ -179,15 +186,23 @@ delay(1000);
       CreateFileList();
       strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
       SendFile(g_FileName, 1, 65535, g_task);
-      task = 31; // Finished Sending 
+      task = 39; // Finished Sending 
       break;
 
     case 40:
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
-      task = 41; // Finished Sending 
+      task = 49; // Finished Sending 
       break;
+
+    case 41: /// anothe file length
+      Serial.println("======= Send file ============");
+      sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+      SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
+      task = 49; // Finished Sending 
+      break;
+
 
     case 50:
       Serial.println("======= del file ============");

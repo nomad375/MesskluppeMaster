@@ -4,7 +4,7 @@ SdCardErrorsCheck();
  uint32_t startTime = millis();          // variables for time in ms
   //int i = 0;
   uint32_t numberOfLines, n;
-  char line[64] = {}; // char[48] enough for 7 sensors to read in buffer
+  char line[128] = {}; // char[48] enough for 7 sensors to read in buffer
   uint32_t ii = 0;
 
   char NameOfFile[256], NameOfFile10[10]; //variables to read filename and to get only digital part of it.
@@ -19,7 +19,7 @@ SdCardErrorsCheck();
     sd.mkdir("files");
   }
   ListOfFiles.open("files/file.dir", O_CREAT | O_WRITE);
-  ListOfFiles << "ClipID_Task;PingTimeStamp;UnixTime;FileName;FileSize;NumberOfLines;DirIndex" << endl;
+  ListOfFiles << "ClipID_Task;FileName;Counter;FileSize(KB);NumberOfLines;DirIndex" << endl;
 
   sd.vwd()->rewind();
 
@@ -61,7 +61,8 @@ SdCardErrorsCheck();
       OneFile.close();
       ii++;
       //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
-      ListOfFiles << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+     // ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+      ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize()/1000<< ";" << AllFiles.fileSize()%1000 << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
 
       
     } //end of IF for no hidden files or directory

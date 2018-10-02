@@ -16,7 +16,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
 
   startTime = millis();
   actTime = millis();
- digitalWrite(5, HIGH);//wake up INA125
+  digitalWrite(5, HIGH);//wake up INA125
   digitalWrite(8, HIGH);
 
   char Fname[] = "0000000000.csv";                       //create a new file
@@ -39,12 +39,25 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
 
   obufstream bout(buf, sizeof(buf));                                                    // format the buffer
   bout << F("ID");
-  bout << F(";Time ");                                                                  // name the column for time in buffer
-  bout << F(";Microseconds "); 
-  bout << F(";Line Number "); 
-  for (uint8_t i = 1; i <= 4; i++) { // 4 analog inputs to read values
-    bout << F(";S.") << int(i);  // name the columns of the sensors in buffer
-  }
+  bout << F(";Time");                                                                  // name the column for time in buffer
+  bout << F(";Line#"); 
+  bout << F(";ms%100 "); 
+  bout << F(";FX "); 
+  bout << F(";FY "); 
+  bout << F(";FZ");
+  bout << F(";AX "); 
+  bout << F(";AY"); 
+  bout << F(";AZ");
+  bout << F(";GX"); 
+  bout << F(";GY"); 
+  bout << F(";GZ");
+  bout << F(";Tbr"); 
+  bout << F(";Tcl"); 
+  bout << F(";MX"); 
+  bout << F(";MY"); 
+  bout << F(";MZ");
+  bout << F(";Vin");
+  
   logfile << buf << endl;                                                               //save buffer on sd
   
   while ((actTime - startTime) <= g_maxMeasurement) {  //collect datas as long as defined in glabal
@@ -62,18 +75,16 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     obufstream bout(buf, sizeof(buf));                // use buffer to format line
                                 
     DateTime now = rtc.now();
+    ReadSensors(g_DataSensors);
+    
     bout << g_clipID; 
     bout << ';' << now.unixtime();
-    bout << ';' << millis()%1000; 
     bout << ';' << LineNumber;
-    
-    ReadSensors(g_DataSensors);
-    for (uint16_t ia = 1; ia <= 3; ia++) { // 3 analog inputs to read values
-      bout << ';' << g_DataSensors[ia];
-    }   
-   bout << ';' << uint32_t( analogRead(A7)*2*g_AnalogToMV); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
-   //bout << ';' << uint32_t( g_DataSensors[4]*10000+g_DataSensors[5]); //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
    
+    for (uint16_t ia = 0; ia < 16; ia++) { // sensors values
+      bout << ';' << (int16_t)g_DataSensors[ia];
+    }   
+      
     bout << endl;      // buffer the analog values
 
     logfile << buf;               //move data from buffer to file. DONT use flush HERE -> slow down saving data
@@ -89,7 +100,9 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     }
 
 #if ECHO_TO_SERIAL                        //if EchoToSerial (line 36) =1 
+
     cout << buf;                          //the data will be printed on Serial Monitor
+Serial.println();
 #endif  // ECHO_TO_SERIAL
 
 if (IamInOven == false) { break;  }

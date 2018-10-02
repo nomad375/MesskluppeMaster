@@ -2,16 +2,22 @@
                          Send File
     -----------------------------------------------------------------------*/
 
-void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
+void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
     Serial.print ("This file sending now: " ); Serial.println(g_FileName);
     
     /*========== Variables ==========*/
-    uint32_t idTask = g_clipID*1000+task;
-    char line[64];                          // char[48] enough for 7 sensors to read in buffer                       
+    uint16_t idTask = g_clipID*1000+task;
+    char line[128];                          // char[48] enough for 7 sensors to read in buffer                       
     unsigned long startTime, stopTime = 0; 
     unsigned long timeoutPeriod = 3000;
-    uint32_t SendMsg[8] = {idTask, 0, 0, 0, 0, 0, 0, 0};
-    
+    uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    // добавить варианты отправки строки разной длины (содержимого) в зависимости от задачи.
+    // возможно поможет вынос ConvertStringToArray из функции прямо в тело отправки
+    // разберись с глобальными.локальными sendMessage////
+    ///45!!!!
+    //ID;Time;Line#;ms%100 ;FX ;FY ;FZ;AX ;AY;AZ;GX;GY;GZ;Tbr;Tcl;MX;MY;MZ;Vin
+
     /*======== Radio Settings =======*/
     radio.powerUp();
     radio.setRetries(2,15);  
@@ -25,7 +31,8 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
         SdCardErrorsCheck(); 
         exit(0);                        //exit from function if SD file cannot be opened
     }// endif
-    rdfile.seekSet(FirstLine*35);       //TAKE care that 35 is smaller than and average srting volume in bytes but close enough to it
+    
+    rdfile.seekSet(FirstLine*70);       //TAKE care that 80 is smaller than and average srting volume in bytes but close enough to it
 
       
     /*==========================================
@@ -38,13 +45,18 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
         boolean timedOut = 0;                                 // Boolean for keeping track of failures
 
         while (rdfile.fgets(line, sizeof(line)) > 0) {       // Read the File line by line
-           ConvertStringToArray(line, g_SendMsg);      
+          ConvertStringToArray(line, g_SendMsg, task);  
+
            g_SendMsg[0] = idTask;
+            if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
           
-           if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
-              timedOut = 1;                                                       // Indicate failure
-              break;                                                              // Break out of the for loop
-           }//endif  
+                   if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                      timedOut = 1;                                                       // Indicate failure
+                      break;                                                              // Break out of the for loop
+                   }//endif  
+
+           }//END if (g_SendMsg[3] >= FirstLine)
+           if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}
         }//endwhile   
         
         stopTime = millis();                                                      // Capture the time of completion or failure
@@ -56,9 +68,11 @@ void SendFile(char *g_FileName, uint32_t FirstLine, uint32_t LinesToSend, uint16
           radio.txStandBy(timeoutPeriod);
        }// endif timedout                                                         //Standby, block until FIFO empty (sent) or user specified timeout reached. FIFO flushed if user timeout reached.
    
-   }else{                                             
+   }// end if radio
+   
+   else{                                             
       Serial.println("Communication not established");                            //If unsuccessful initiating transfer, exit and retry later
-   }
+   } //end else
 
     /*==========================================
      *  Print the result
