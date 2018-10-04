@@ -7,6 +7,7 @@ void StartMesurment() {
 
 SdCardErrorsCheck(); 
   uint32_t startTime = millis();          // variables for time in ms
+//  uint32_t nowUnixTime = now.unixtime();
   uint32_t actTime;
   actTime = startTime;
   uint32_t LineNumber = 0;
@@ -19,14 +20,20 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
   digitalWrite(5, HIGH);//wake up INA125
   digitalWrite(8, HIGH);
 
-  char Fname[] = "0000000000.csv";                       //create a new file
+  char FnameCSV[] = "0000000000.csv";                       //create a new file
+  char FnameDAT[] = "0000000000.dat";                       //create a new file
+ // uint32_t nowUnixTime = now.unixtime();
   DateTime now = rtc.now();
-  sprintf(Fname, "%10lu.csv", now.unixtime()); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
-  if (sd.exists(Fname)) {
-    sprintf(Fname, "%10lu.csv", now.unixtime()+1); // add one second if Fname already exist. // by deafault %u changed to %lu by compilation warning
+  sprintf(FnameCSV, "%10lu.csv", now.unixtime()); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+  sprintf(FnameDAT, "%10lu.dat", now.unixtime()); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+  if (sd.exists(FnameCSV)) {
+    sprintf(FnameCSV, "%10lu.csv", now.unixtime()+1); // add one second if FnameCSV already exist. // by deafault %u changed to %lu by compilation warning
+  }
+    if (sd.exists(FnameDAT)) {
+    sprintf(FnameCSV, "%10lu.csv", now.unixtime()+1); // add one second if FnameCSV already exist. // by deafault %u changed to %lu by compilation warning
   }
 //Serial.println("file created: ");
-  logfile.open(Fname);                                // open created file if creted new Fname
+  logfile.open(FnameCSV);                                // open created file if creted new FnameCSV
   if (!logfile.is_open()) {
     digitalWrite(8, HIGH);
     
@@ -35,7 +42,7 @@ while (millis()-startTime < g_timeout && IamInOven == false) ;
     exit(0);
       }
 
-  cout << F("Logging to: ") << Fname << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
+  cout << F("Logging to: ") << FnameCSV << endl;            //Serialprint Logging to : FILENAME (+ End of Line)
 
   obufstream bout(buf, sizeof(buf));                                                    // format the buffer
   bout << F("ID");
@@ -114,7 +121,7 @@ if (IamInOven == false) { break;  }
   IamInOven = false;
   Serial.print("file saved in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
 
-  strncpy(g_FileName, Fname, sizeof(Fname) - 1); // Get FileName value for external use
+  strncpy(g_FileName, FnameCSV, sizeof(FnameCSV) - 1); // Get FileName value for external use
   //
   digitalWrite(5, LOW);  //sleep INA125
   digitalWrite(8, LOW);
