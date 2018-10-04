@@ -9,6 +9,8 @@ uint16_t g_logInterval = 10;                               // 15.625  millisecon
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+uint8_t PayloadLen = 32;
 
 uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
@@ -100,7 +102,7 @@ while (!Serial);
  // analogReference(AR_EXTERNAL);// external signal for analog reference
  // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
 
-  SetupSensors ();
+SetupSensors ();
 
   /*======= LED indication setup =======*/
 

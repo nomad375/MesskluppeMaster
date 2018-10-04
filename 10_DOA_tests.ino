@@ -9,7 +9,7 @@ void DOAtests() {
   radio.openWritingPipe(pipes[1]);            // Where we send data out DOA pipes[1]. Default Pipes[0]!!!!!
   radio.setPALevel (RF24_PA_HIGH);
   //radio.setDataRate (RF24_250KBPS);
-  //radio.setDataRate (RF24_2MBPS);
+ // radio.setDataRate (RF24_2MBPS);
 
 
 
@@ -37,19 +37,38 @@ void DOAtests() {
 
 
   /* HERE we can сreate new file and immidiately send it. Time for logging in global variables or below */
-    g_maxMeasurement = 1000 * 60 * 3;                      // ligging tume in milliseconds
-    IamInOven = true;
-    IamAtInlet = false;
-    StartMesurment();
-    g_task= 40;
-    SendFile(g_FileName, 1, 65535, g_task);
+//    g_maxMeasurement = 1000 * 60 * 5;                      // ligging tume in milliseconds
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    StartMesurment();
+//    g_task= 40;
+//    SendFile(g_FileName, 1, 65535, g_task);
+//
+//
+//    g_maxMeasurement = 1000 * 60 * 5;                      // ligging tume in milliseconds
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    StartMesurment();
+//    g_task= 41;
+//    SendFile(g_FileName, 1, 65535, g_task);
+
 
 
   /* HERE we can send by  file name */
-//  g_task = 40;
-//  strncpy(g_FileName, "1538401938.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
+  g_task = 40;
+  strncpy(g_FileName, "1538491140.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
+  Serial.println (g_FileName);
+  SendFile(g_FileName, 1, 18000, g_task);
+
+//    g_task = 40;
+//  strncpy(g_FileName, "1538491141.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
 //  Serial.println (g_FileName);
-//  SendFile(g_FileName, 1, 10000, g_task);
+//  SendFile(g_FileName, 1, 18000, g_task);
+//
+//    g_task = 41;
+//  strncpy(g_FileName, "1538491140.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
+//  Serial.println (g_FileName);
+//  SendFile(g_FileName, 1, 18000, g_task);
 
   //mode_ping();
   Serial.println(" end of DOA");

@@ -10,7 +10,9 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
     char line[128];                          // char[48] enough for 7 sensors to read in buffer                       
     unsigned long startTime, stopTime = 0; 
     unsigned long timeoutPeriod = 3000;
-    uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+   uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    //uint32_t SendMsg[8] = {idTask, 0, 0, 0, 0, 0, 0, 0};
+    
 
     // добавить варианты отправки строки разной длины (содержимого) в зависимости от задачи.
     // возможно поможет вынос ConvertStringToArray из функции прямо в тело отправки
@@ -44,13 +46,31 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
         startTime = millis();                                 // For calculating transfer rate
         boolean timedOut = 0;                                 // Boolean for keeping track of failures
 
-        while (rdfile.fgets(line, sizeof(line)) > 0) {       // Read the File line by line
-          ConvertStringToArray(line, g_SendMsg, task);  
+       while (rdfile.fgets(line, sizeof(line)) > 0) 
+       //for (int i = 0; i < 18000; i++)
+        {       // Read the File line by line
+       ConvertStringToArray(line, g_SendMsg, task);  
+//          g_SendMsg[1] = micros();
+//          g_SendMsg[2] = micros();
+//           g_SendMsg[3] = 1;
+//            g_SendMsg[4] = micros();
+//             g_SendMsg[5] = micros();
+//              g_SendMsg[6] = micros();
+//               g_SendMsg[7] = micros();
+//                g_SendMsg[8] =micros();
+//                          g_SendMsg[9] = micros();
+//          g_SendMsg[10] = micros();
+//           g_SendMsg[11] = micros();
+//            g_SendMsg[12] = micros();
+//             g_SendMsg[13] = micros();
+//              g_SendMsg[14] = micros();
+//               g_SendMsg[15] = micros();
 
            g_SendMsg[0] = idTask;
             if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
           
-                   if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                  if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                             
                       timedOut = 1;                                                       // Indicate failure
                       break;                                                              // Break out of the for loop
                    }//endif  
