@@ -37,13 +37,21 @@ void DOAtests() {
 
 
   /* HERE we can сreate new file and immidiately send it. Time for logging in global variables or below */
-//    g_maxMeasurement = 1000 * 60 * 5;                      // ligging tume in milliseconds
+//    g_maxMeasurement = 1000 * 60 * 3;                      // logging tume in milliseconds
 //    IamInOven = true;
 //    IamAtInlet = false;
 //    StartMesurment();
+// 
+//  
+//    g_task= 41;
+//    SendDatFile(g_FileName, 1, 65535, g_task);
+//    Serial.println ("+++++++++++++++++");
 //    g_task= 40;
+
 //    SendFile(g_FileName, 1, 65535, g_task);
-//
+//    Serial.println ("+++++++++++++++++");
+//    delay(3000);
+
 //
 //    g_maxMeasurement = 1000 * 60 * 5;                      // ligging tume in milliseconds
 //    IamInOven = true;
@@ -55,20 +63,17 @@ void DOAtests() {
 
 
   /* HERE we can send by  file name */
-  g_task = 40;
-  strncpy(g_FileName, "1538491140.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
+  g_task = 41;
+  strncpy(g_FileName, "1538743008.dat", 15); // in case sending certain file - do STRNCPY, name, 12.
   Serial.println (g_FileName);
-  SendFile(g_FileName, 1, 18000, g_task);
-
+  SendDatFile(g_FileName, 1, 19778, g_task);
+  
 //    g_task = 40;
-//  strncpy(g_FileName, "1538491141.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
+//  strncpy(g_FileName, "1538740580.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
 //  Serial.println (g_FileName);
-//  SendFile(g_FileName, 1, 18000, g_task);
+//  SendFile(g_FileName, 1, 19778, g_task);
 //
-//    g_task = 41;
-//  strncpy(g_FileName, "1538491140.csv", 15); // in case sending certain file - do STRNCPY, name, 12.
-//  Serial.println (g_FileName);
-//  SendFile(g_FileName, 1, 18000, g_task);
+
 
   //mode_ping();
   Serial.println(" end of DOA");

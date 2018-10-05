@@ -8,8 +8,8 @@
         radio.setRetries(1, 2);
         
       /*========== Variables ==========*/
-      uint32_t idTask = g_clipID*1000+task;
-      uint16_t SendMsg[16] = {idTask, millis(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+      uint16_t idTask = g_clipID*1000+task;
+      uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
       uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
       uint32_t ping = 65535;
       int sleep = 10;   

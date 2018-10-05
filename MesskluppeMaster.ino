@@ -1,11 +1,11 @@
 /*=============================================
    global variables
   =============================================== */
-uint32_t g_clipID = 01;                                   // Clip ID
+uint16_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
 uint32_t g_maxMeasurement = 1000 * 60 * 90;               // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
-uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
+uint16_t g_logInterval = 5;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -23,6 +23,26 @@ uint16_t task = 0;
 float g_ARef = 3.3;
 float g_AnalogToMV = g_ARef / 4096 * 1000;
 
+struct PayloadStructure {
+    uint16_t Cell_ZERO;
+    uint16_t Cell_0;
+    uint32_t Cell_1_2;
+    uint16_t Cell_3;
+    uint16_t Cell_4;
+    uint16_t Cell_5;
+    uint16_t Cell_6;
+    uint16_t Cell_7;
+    uint16_t Cell_8;
+    uint16_t Cell_9;
+    uint16_t Cell_10;
+    uint16_t Cell_11;
+    uint16_t Cell_12;
+    uint16_t Cell_13;
+    uint16_t Cell_14;
+    uint16_t Cell_15;
+};
+
+  struct PayloadStructure Payload;
 /*=========================================================================
     Sensor config
     -----------------------------------------------------------------------*/
@@ -64,6 +84,7 @@ RTC_Millis rtc;
 #define SD_CHIP_SELECT  4       //hardwritten pinout on feather adalogger board
 SdFat sd;                       //file system object
 ofstream logfile;               // text file for logging
+SdFile datfile;
 #define error(s) sd.errorHalt(F(s))   // store error strings in flash to save RAM
 char buf[256];               //buffer to format data - easier to echo to serial
 
@@ -71,7 +92,7 @@ char buf[256];               //buffer to format data - easier to echo to serial
     Serial Monitoring
     -----------------------------------------------------------------------*/
 ArduinoOutStream cout(Serial);  // Serial print stream
-#define ECHO_TO_SERIAL  1   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
+#define ECHO_TO_SERIAL  0   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
 
 /*=========================================================================
     RADIO RF24
@@ -127,6 +148,7 @@ SetupSensors ();
 
   radio.startListening();
   radio.stopListening();
+
 
   /*======= Interrupt Setup =======*/
   pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
@@ -187,21 +209,21 @@ delay(1000);
       Serial.println("======= Get List============");
       CreateFileList();
       strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
-      SendFile(g_FileName, 1, 65535, g_task);
+      SendTxtFile(g_FileName, 1, 65535, g_task);
       task = 39; // Finished Sending 
       break;
 
     case 40:
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
-      SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
+      SendTxtFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
       task = 49; // Finished Sending 
       break;
 
     case 41: /// anothe file length
       Serial.println("======= Send file ============");
-      sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
-      SendFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
+      sprintf(g_FileName, "%10lu.dat", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+      SendDatFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
       task = 49; // Finished Sending 
       break;
 
@@ -220,4 +242,6 @@ delay(1000);
       break;
 
   }
-}
+}// end loop
+
+

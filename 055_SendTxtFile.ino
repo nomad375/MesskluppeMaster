@@ -1,8 +1,9 @@
 /*=========================================================================
                          Send File
+               ПРОВЕРИТЬ ОТПРАВКУ СПИСКА ФАЙЛОВ
     -----------------------------------------------------------------------*/
 
-void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
+void SendTxtFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
     Serial.print ("This file sending now: " ); Serial.println(g_FileName);
     
     /*========== Variables ==========*/
@@ -10,15 +11,8 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
     char line[128];                          // char[48] enough for 7 sensors to read in buffer                       
     unsigned long startTime, stopTime = 0; 
     unsigned long timeoutPeriod = 3000;
-   uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    //uint32_t SendMsg[8] = {idTask, 0, 0, 0, 0, 0, 0, 0};
-    
+    uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    // добавить варианты отправки строки разной длины (содержимого) в зависимости от задачи.
-    // возможно поможет вынос ConvertStringToArray из функции прямо в тело отправки
-    // разберись с глобальными.локальными sendMessage////
-    ///45!!!!
-    //ID;Time;Line#;ms%100 ;FX ;FY ;FZ;AX ;AY;AZ;GX;GY;GZ;Tbr;Tcl;MX;MY;MZ;Vin
 
     /*======== Radio Settings =======*/
     radio.powerUp();
@@ -50,21 +44,6 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
        //for (int i = 0; i < 18000; i++)
         {       // Read the File line by line
        ConvertStringToArray(line, g_SendMsg, task);  
-//          g_SendMsg[1] = micros();
-//          g_SendMsg[2] = micros();
-//           g_SendMsg[3] = 1;
-//            g_SendMsg[4] = micros();
-//             g_SendMsg[5] = micros();
-//              g_SendMsg[6] = micros();
-//               g_SendMsg[7] = micros();
-//                g_SendMsg[8] =micros();
-//                          g_SendMsg[9] = micros();
-//          g_SendMsg[10] = micros();
-//           g_SendMsg[11] = micros();
-//            g_SendMsg[12] = micros();
-//             g_SendMsg[13] = micros();
-//              g_SendMsg[14] = micros();
-//               g_SendMsg[15] = micros();
 
            g_SendMsg[0] = idTask;
             if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
@@ -98,8 +77,8 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
      *  Print the result
     /*========================================== */
 
-    float rate = LinesToSend * 32 / (stopTime - startTime);         
-    float lps = LinesToSend / ((stopTime - startTime)/1000);
+    float rate = g_SendMsg[3] * 32 / (stopTime - startTime);         
+    float lps = g_SendMsg[3] / ((stopTime - startTime)/1000);
 
     cout << "Transfer completed at " << rate << " KB/s" << endl;
     cout << "The transfer took " << stopTime - startTime << " ms at " << lps << " lines/s" << endl;
@@ -109,4 +88,4 @@ void SendFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16
     /*========================================== */
     digitalWrite(8, LOW);
     radio.powerDown();
-}
+} //end send file
