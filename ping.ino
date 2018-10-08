@@ -47,8 +47,9 @@ and back:
         SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;
         SendMsg[3] = ping;                                    // calculated ping in ms
         SendMsg[4] = average * 100;                           // average is float so we have to remove the '.'
+        
        
-//        ReadSensors(g_DataSensors);                           // Update Sensors
+//        ReadSensorsTMP(g_DataSensors);                           // Update Sensors
 
         
         /*========= Send SendMsg ========*/

@@ -3,11 +3,7 @@
     -----------------------------------------------------------------------*/
 
 void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
-    Serial.print ("filename input: " ); Serial.println(g_FileName);
-  char FnameDAT[] = "0000000000.dat";    
-   strncpy(FnameDAT, g_FileName, 10); // Get FileName value for external use//create a new file
-  //  sprintf(FnameDAT, "%10ul.dat", g_FileName); // by deafault %u changed to %lu by compilation warning
-    Serial.print ("This file sending now:" ); Serial.println(FnameDAT);
+   Serial.print ("This file sending now:" ); Serial.println(g_FileName);
  
     
     /*========== Variables ==========*/
@@ -27,7 +23,7 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
     SdCardErrorsCheck(); 
     digitalWrite(8, HIGH);
 
-    SdFile datfile(FnameDAT, O_READ);  // Open the File
+    SdFile datfile(g_FileName, O_READ);  // Open the File
     
     if (!datfile.isOpen()) {
         SdCardErrorsCheck(); 
@@ -39,7 +35,7 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
     /*==========================================
      *  Try to get a connection
     /*========================================== */
-    radio.writeFast(&Payload.Cell_0,sizeof(Payload)-4);                // Send the transfer command
+    radio.writeFast(&Payload.Cell_0,sizeof(Payload)-4-8);                // Send the transfer command
     
     if(radio.txStandBy(timeoutPeriod)){                       // If transfer initiation was successful, do the following
         startTime = millis();                                 // For calculating transfer rate
@@ -59,14 +55,14 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
         
                  if (Payload.Cell_3 >= FirstLine){ // Send if line >= of desied fist line
         
-                          if(!radio.writeBlocking(&Payload.Cell_0,sizeof(Payload)-4,timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                          if(!radio.writeBlocking(&Payload.Cell_0,sizeof(Payload)-4-8,timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
                              timedOut = 1;                                                            // Indicate failure
                              exit(0);                                                                 // Break out of the for loop
                           }//endif  
                           
                   }//END if (Payload.Cell_3 >= FirstLine)
              
-                if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}
+                if (Payload.Cell_3 >= FirstLine+LinesToSend){break;}
            }// while while (datfile.available())    
 
        //This should be called to wait for completion and put the radio in standby mode after transmission, returns 0 if data still in FIFO (timed out), 1 if success

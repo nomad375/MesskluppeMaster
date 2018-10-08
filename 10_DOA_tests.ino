@@ -17,8 +17,21 @@ void DOAtests() {
           Do your tests here:
     ======================================================================================== */
 
-
-//  for (int TestLoop = 0; TestLoop < 65535; TestLoop++) {ReadSensors(g_DataSensors);} //just a test for readSensors function.
+//for (int TestLoop = 1; TestLoop < 100; TestLoop++) { 
+//    g_maxMeasurement = 1000 * TestLoop; 
+//    g_task= 41; 
+//    Serial.println ("logging to DAT");
+//    StartMesurment(); 
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    g_task= 40; 
+//    Serial.println ("logging to CSV");
+//    StartMesurmentCSV();    
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    
+//    
+//    } //just a test for readSensors function.
 
 
 
@@ -28,8 +41,17 @@ void DOAtests() {
   //DeleteAllFiles();
 
   /* HERE we can create new file list */
-//CreateFileList();
-//SendFile("files/file.dir", 1,65535,40);
+    g_task= 41; 
+    g_maxMeasurement = 1000*3; 
+    Serial.println ("logging to DAT");
+    IamInOven = true;
+    IamAtInlet = false;
+    StartMesurment();   
+    g_task= 41;
+    SendDatFile(g_FileName, 1, 65535, g_task);
+CreateFileList();
+g_task= 30;
+SendTxtFile("files/file.dir", 1,65535,g_task);
 
   /* HERE we can constanly send data online. time limit inside function SendOnline() */
 
@@ -41,14 +63,17 @@ void DOAtests() {
 //    IamInOven = true;
 //    IamAtInlet = false;
 //    StartMesurment();
-// 
-//  
 //    g_task= 41;
 //    SendDatFile(g_FileName, 1, 65535, g_task);
 //    Serial.println ("+++++++++++++++++");
-//    g_task= 40;
-
-//    SendFile(g_FileName, 1, 65535, g_task);
+//
+//
+//    g_maxMeasurement = 1000 * 60 * 3;                      // logging tume in milliseconds
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    StartMesurmentCSV();
+//    g_task= 40;    
+//    SendTxtFile(g_FileName, 1, 65535, g_task);
 //    Serial.println ("+++++++++++++++++");
 //    delay(3000);
 
@@ -63,10 +88,10 @@ void DOAtests() {
 
 
   /* HERE we can send by  file name */
-  g_task = 41;
-  strncpy(g_FileName, "1538743008.dat", 15); // in case sending certain file - do STRNCPY, name, 12.
-  Serial.println (g_FileName);
-  SendDatFile(g_FileName, 1, 19778, g_task);
+//  g_task = 41;
+//  strncpy(g_FileName, "1538991205.dat", 15); // in case sending certain file - do STRNCPY, name, 12.
+//  Serial.println (g_FileName);
+//  SendDatFile(g_FileName, 1, 19778, g_task);
   
 //    g_task = 40;
 //  strncpy(g_FileName, "1538740580.csv", 15); // in case sending certain file - do STRNCPY, name, 12.

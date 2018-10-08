@@ -24,11 +24,11 @@ float g_ARef = 3.3;
 float g_AnalogToMV = g_ARef / 4096 * 1000;
 
 struct PayloadStructure {
-    uint16_t Cell_ZERO;
-    uint16_t Cell_0;
-    uint32_t Cell_1_2;
-    uint16_t Cell_3;
-    uint16_t Cell_4;
+    uint16_t Cell_ZERO;    // just take a place to cut size of Cell 0
+    uint16_t Cell_0;       // g_clipID or idTask
+    uint32_t Cell_1_2;     //now.unixtime() or othe long value
+    uint16_t Cell_3;        //LineNumber
+    uint16_t Cell_4;        // Sensor 1..15
     uint16_t Cell_5;
     uint16_t Cell_6;
     uint16_t Cell_7;
@@ -40,6 +40,11 @@ struct PayloadStructure {
     uint16_t Cell_13;
     uint16_t Cell_14;
     uint16_t Cell_15;
+    uint16_t Cell_16;
+    uint16_t Cell_17;
+    uint16_t Cell_18;
+    uint16_t Cell_19;
+    
 };
 
   struct PayloadStructure Payload;
@@ -56,17 +61,29 @@ ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
 ResponsiveAnalogRead analog7(A5, true);
 
-
-#include <SparkFunMPU9250-DMP.h>
-MPU9250_DMP imu;
+//#include <SparkFunMPU9250-DMP.h>
+//MPU9250_DMP imu;
+struct imuStructure { //temporal exchange of i2c board
+      uint16_t ax;
+      uint16_t ay;
+      uint16_t az;
+      uint16_t gx;
+      uint16_t gy;
+      uint16_t gz;
+      uint16_t temperature; // board temperature in C * 100
+      uint16_t mx;
+      uint16_t my;
+      uint16_t mz;
+    };
+  struct imuStructure imu;
 
 #include "avdweb_AnalogReadFast.h"
 
 bool  ANALOG_READ_FAST = 1;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
 bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smoothing - set 1 otherwise 0. 
 
-#define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
-#define INTERRUPT_PIN_CLIP  1   // 21 for version 1
+#define INTERRUPT_PIN_INLET  20  // 20 for version 1 Please Check!!!!
+#define INTERRUPT_PIN_CLIP  21   // 21 for version 1
   
 /*=========================================================================
     real Time Config
@@ -74,6 +91,7 @@ bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smooth
 
 #include <Wire.h>         // this #include still required because the RTClib depends on it
 #include "RTClib.h"        //libry modified from original. take care to use needed one
+
 
 RTC_Millis rtc;
 /*=========================================================================
@@ -123,7 +141,10 @@ while (!Serial);
  // analogReference(AR_EXTERNAL);// external signal for analog reference
  // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
 
-SetupSensors ();
+//SetupSensors ();
+
+// temporal initialiastion of i2c sensors when it OFF
+SetupSensorsTEMP();
 
   /*======= LED indication setup =======*/
 
@@ -176,7 +197,7 @@ SetupSensors ();
   //=======place to test functions ===========////
 
 //Serial.println( "Setup done!");
-DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 } //end SETUP()
 
