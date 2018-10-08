@@ -18,7 +18,7 @@ SdCardErrorsCheck();
     sd.mkdir("files");
   }
   ListOfFiles.open("files/file.dir", O_CREAT | O_WRITE);
-  ListOfFiles << "ClipID_Task;FileName;Counter;FileSize(KB);NumberOfLines;FileType;DirIndex" << endl;
+  ListOfFiles << "ClipID_Task;FileName;Counter;FileSize(KB);FileSize(byte);NumberOfLines;FileType;DirIndex" << endl;
 
   sd.vwd()->rewind();
 
@@ -73,7 +73,7 @@ if (NameOfFile[11] == 'd'){ //if CSV file then
     OneFile.seekEnd(-sizeof(Payload)); //TAKE care that offset bigger then average line size in bytes!
     OneFile.read((uint8_t *)&Payload, sizeof(Payload)); // get from file blocks into Payload ( sizeof(Payload) )
     numberOfLines = Payload.Cell_3;
-    PrintPayloadBytes();
+    //PrintPayloadBytes();
 
 } //enf if DAT file then
 

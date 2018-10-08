@@ -11,7 +11,7 @@
       uint16_t idTask = g_clipID*1000+task;
       uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
       uint32_t RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-      uint32_t ping = 65535;
+      uint32_t ping = 999;
       int sleep = 10;   
       uint32_t myMillis;
       /*======== Average Array ========*/
@@ -47,13 +47,14 @@ and back:
         SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;
         SendMsg[3] = ping;                                    // calculated ping in ms
         SendMsg[4] = average * 100;                           // average is float so we have to remove the '.'
+        for (int q = 5; q < 16; q++) { SendMsg[q] = q;  }
         
        
 //        ReadSensorsTMP(g_DataSensors);                           // Update Sensors
 
         
         /*========= Send SendMsg ========*/
-        cout << "Send Ping: " << SendMsg[0] << "," <<  myMillis << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7]<< "," << SendMsg[8] << "," << SendMsg[9] << "," << SendMsg[10] << "," << SendMsg[11] << "," << SendMsg[12] << ","<< SendMsg[13] << "," << SendMsg[14] << "," << SendMsg[15] << endl;
+        //cout << "Send Ping: " << SendMsg[0] << "," <<  myMillis << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7]<< "," << SendMsg[8] << "," << SendMsg[9] << "," << SendMsg[10] << "," << SendMsg[11] << "," << SendMsg[12] << ","<< SendMsg[13] << "," << SendMsg[14] << "," << SendMsg[15] << endl;
         radio.powerUp(); 
         sucess = radio.write(&SendMsg, sizeof(SendMsg));
 
@@ -66,20 +67,22 @@ and back:
         average = total / numReadings;                        // the average of the lost packages
           
         /*====== Answer from RPI  =======*/
+        memset(&RcvMsg, 0, sizeof(RcvMsg)); //clear RcvMsg
         if (radio.isAckPayloadAvailable()) {
               radio.read(&RcvMsg, sizeof(RcvMsg));
               uint32_t task = RcvMsg[0]%1000;                 // calculate the task
               uint32_t id = (RcvMsg[0]-task)/1000;            // calculate the id
-              uint32_t ping32 = myMillis - RcvMsg[1];         // calculate the ping
-              if (ping32 <= 65535){ping = ping32;}            // calculate the ping
-              else {ping = 65535;}                            // calculate the ping
+              
+              
+              if ((myMillis - RcvMsg[1]) <= 65535){ping = (myMillis - RcvMsg[1]);}            // calculate the ping
+              else {ping = 999;}                            // calculate the ping
   
-              cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
-              //cout << "task :" << task << " id:" << id << " ping: " << ping << endl;
+             // cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
+              cout << "g_task :"<< g_task << ", task :" << task << ", id:" << id << ", ping: " << ping << endl;
 
               /*======= Check the msg =========*/
               if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
-                  Serial.println(">> Got task >>");
+                  Serial.print(">> Got task >>"); Serial.print(task);
                   
                   // Store in globals
                   g_RcvMsg[0] = RcvMsg[0];                  // Clip idTask

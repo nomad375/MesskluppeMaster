@@ -38,13 +38,12 @@ void SendOnline() //move out task to global!
       DateTime now = rtc.now();
       LineNumber ++;
       SendMessage[0] = g_clipID * 1000 + 60;
-      //SendMessage[1] = now.unixtime();
       uint32_t currenttime = millis();
-      SendMessage[2] = (uint16_t) ((currenttime >> 16) & 0xFFFF) ;
-      SendMessage[1] = (uint16_t) (currenttime & 0xFFFF) ;
+      SendMessage[1] = (uint16_t) ((currenttime >> 16) & 0xFFFF) ;
+      SendMessage[2] = (uint16_t) (currenttime & 0xFFFF) ;
       SendMessage[3] = millis() % 1000;
-      SendMessage[4] = g_DataSensors[15]*2; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
-     // SendMessage[4] = LineNumber; //Counter for lines since starting of function
+      // SendMessage[4] = g_DataSensors[15]*2; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
+      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
       ReadSensorsTMP(g_DataSensors);
       for (uint16_t ia = 1; ia <= 3; ia++) {

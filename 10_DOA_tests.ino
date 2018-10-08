@@ -17,21 +17,24 @@ void DOAtests() {
           Do your tests here:
     ======================================================================================== */
 
-//for (int TestLoop = 1; TestLoop < 100; TestLoop++) { 
-//    g_maxMeasurement = 1000 * TestLoop; 
-//    g_task= 41; 
-//    Serial.println ("logging to DAT");
-//    StartMesurment(); 
-//    IamInOven = true;
-//    IamAtInlet = false;
-//    g_task= 40; 
-//    Serial.println ("logging to CSV");
-//    StartMesurmentCSV();    
-//    IamInOven = true;
-//    IamAtInlet = false;
-//    
-//    
-//    } //just a test for readSensors function.
+for (int TestLoop = 1; TestLoop < 100; TestLoop++) { 
+    g_maxMeasurement = 1000 * TestLoop; 
+
+        IamInOven = true;
+    IamAtInlet = false;
+    g_task= 41; 
+    Serial.println ("logging to DAT");
+    StartMesurment(); 
+
+    IamInOven = true;
+    IamAtInlet = false;
+    g_task= 40; 
+    Serial.println ("logging to CSV");
+    StartMesurmentCSV();    
+
+    
+    
+    } //just a test for readSensors function.
 
 
 

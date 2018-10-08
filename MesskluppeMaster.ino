@@ -110,7 +110,7 @@ char buf[256];               //buffer to format data - easier to echo to serial
     Serial Monitoring
     -----------------------------------------------------------------------*/
 ArduinoOutStream cout(Serial);  // Serial print stream
-#define ECHO_TO_SERIAL  0   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
+#define ECHO_TO_SERIAL  1   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
 
 /*=========================================================================
     RADIO RF24
@@ -215,6 +215,7 @@ delay(1000);
 
   switch (g_task) {
     case 0:
+    task=0;
       break;
 
     case 10:
@@ -234,14 +235,14 @@ delay(1000);
       task = 39; // Finished Sending 
       break;
 
-    case 40:
+    case 41:
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendTxtFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
       task = 49; // Finished Sending 
       break;
 
-    case 41: /// anothe file length
+    case 40: /// anothe file type
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.dat", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendDatFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
@@ -257,7 +258,12 @@ delay(1000);
       Serial.println("======= Send Online ============");
       SendOnline();
       break;
-
+      
+    case 99:
+      Serial.println("======= 99 ============");
+      task=99;
+      break;
+      
     default:
 
       break;
