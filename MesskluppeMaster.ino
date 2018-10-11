@@ -222,8 +222,9 @@ delay(1000);
       break;
 
     case 20:
-      Serial.println("======= Logging Mode ============");
+      Serial.println("======= Sync Time ============");
       synctime(g_RcvMsg[2]);
+      Serial.println("======= Start Measurement ============");
       StartMesurment();
       break;
 
@@ -261,7 +262,9 @@ delay(1000);
       
     case 99:
       Serial.println("======= 99 ============");
-      task=99;
+      radio.flush_tx();
+      radio.flush_rx();
+      task = 0;
       break;
       
     default:

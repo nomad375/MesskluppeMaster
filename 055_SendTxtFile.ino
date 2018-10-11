@@ -30,8 +30,9 @@ void SendTxtFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
     
     rdfile.seekSet(FirstLine*70);       //TAKE care that 80 is smaller than and average srting volume in bytes but close enough to it
 
-      
-    /*==========================================
+
+  
+    /*========================================== 
      *  Try to get a connection
     /*========================================== */
     radio.writeFast(&SendMsg,sizeof(SendMsg));                // Send the transfer command
@@ -45,16 +46,19 @@ void SendTxtFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
         {       // Read the File line by line
        ConvertStringToArray(line, g_SendMsg, task);  
 
-           g_SendMsg[0] = idTask;
-            if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
-          
-                  if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
-                             
-                      timedOut = 1;                                                       // Indicate failure
-                      break;                                                              // Break out of the for loop
-                   }//endif  
+       g_SendMsg[0] = idTask;
+       if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
+    
+            if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                cout << "writeBlocking failed" << endl;       
+                timedOut = 1;                                                       // Indicate failure
+                break;                                                              // Break out of the for loop
+             }//endif
+             else {
+              cout << "Line send: " << g_SendMsg[0] << "," << g_SendMsg[1] << "," << g_SendMsg[2] << "," << g_SendMsg[3] << "," << g_SendMsg[4] << "," << g_SendMsg[5] << "," << g_SendMsg[5] << endl;  
+             }
 
-           }//END if (g_SendMsg[3] >= FirstLine)
+      }//END if (g_SendMsg[3] >= FirstLine)
            if (g_SendMsg[3] >= FirstLine+LinesToSend){break;}
         }//endwhile   
         

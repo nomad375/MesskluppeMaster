@@ -47,7 +47,7 @@ and back:
         SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;
         SendMsg[3] = ping;                                    // calculated ping in ms
         SendMsg[4] = average * 100;                           // average is float so we have to remove the '.'
-        for (int q = 5; q < 16; q++) { SendMsg[q] = q;  }
+        //for (int q = 5; q < 16; q++) { SendMsg[q] = q;  }
         
        
 //        ReadSensorsTMP(g_DataSensors);                           // Update Sensors
@@ -67,7 +67,7 @@ and back:
         average = total / numReadings;                        // the average of the lost packages
           
         /*====== Answer from RPI  =======*/
-        memset(&RcvMsg, 0, sizeof(RcvMsg)); //clear RcvMsg
+        //memset(&RcvMsg, 0, sizeof(RcvMsg)); //clear RcvMsg
         if (radio.isAckPayloadAvailable()) {
               radio.read(&RcvMsg, sizeof(RcvMsg));
               uint32_t task = RcvMsg[0]%1000;                 // calculate the task
@@ -77,11 +77,12 @@ and back:
               if ((myMillis - RcvMsg[1]) <= 65535){ping = (myMillis - RcvMsg[1]);}            // calculate the ping
               else {ping = 999;}                            // calculate the ping
   
-             // cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
-              cout << "g_task :"<< g_task << ", task :" << task << ", id:" << id << ", ping: " << ping << endl;
+              //cout <<"Recv: " << RcvMsg[0] << "," << RcvMsg[1] << "," << RcvMsg[2] << "," << RcvMsg[3] << "," << RcvMsg[4] << "," << RcvMsg[5] << "," << RcvMsg[6] << "," << RcvMsg[7] << endl; 
+              //cout << "g_task :"<< g_task << ", task :" << task << ", id:" << id << ", ping: " << ping << endl;
 
               /*======= Check the msg =========*/
-              if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
+              //if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
+              if (id == g_clipID && task != 0){
                   Serial.print(">> Got task >>"); Serial.print(task);
                   
                   // Store in globals
