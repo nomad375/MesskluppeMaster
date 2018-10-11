@@ -5,12 +5,13 @@ uint16_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
 uint32_t g_maxMeasurement = 1000 * 60 * 90;               // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
-uint16_t g_logInterval = 5;                               // 15.625  milliseconds between analog entries (64Hz)
+uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 //uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t PayloadLen = 32;
+uint16_t g_fileCount = 0;
 
 uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
@@ -199,6 +200,7 @@ SetupSensorsTEMP();
 //Serial.println( "Setup done!");
 //DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+CreateFileList();
 } //end SETUP()
 
 
@@ -226,6 +228,8 @@ delay(1000);
       synctime(g_RcvMsg[2]);
       Serial.println("======= Start Measurement ============");
       StartMesurment();
+      Serial.println("======= Update List ============");
+      CreateFileList();
       break;
 
     case 30:

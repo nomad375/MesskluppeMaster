@@ -63,7 +63,7 @@ ReadSensorsTMP(g_DataSensors);
 /* DAT file write string */
 //memset(&Payload, 0, sizeof(Payload));
 
-
+DateTime now = rtc.now();
 Payload.Cell_0 = g_clipID; 
 Payload.Cell_1_2 = now.unixtime(); //check is the same in CSV and DAT
 Payload.Cell_3 = LineNumber;

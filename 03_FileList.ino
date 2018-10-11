@@ -92,5 +92,6 @@ if (NameOfFile[11] == 'd'){ //if CSV file then
   ListOfFiles.close();
 
   Serial.print("file list done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
+  g_fileCount = ii;
 
 } //Enf of function

@@ -47,6 +47,7 @@ and back:
         SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;
         SendMsg[3] = ping;                                    // calculated ping in ms
         SendMsg[4] = average * 100;                           // average is float so we have to remove the '.'
+        SendMsg[5] = g_fileCount;
         //for (int q = 5; q < 16; q++) { SendMsg[q] = q;  }
         
        

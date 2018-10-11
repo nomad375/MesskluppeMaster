@@ -31,7 +31,7 @@ void SendOnline() //move out task to global!
     radio.write(&SendMessage, sizeof(SendMessage));
     if ( radio.isAckPayloadAvailable() ) {
       radio.read(&RecievedMessage, sizeof(RecievedMessage));
-   //Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
+      Serial.print("  Ack we GOT: "); for (byte i = 0; i<8; i++)  {Serial.print (RecievedMessage[i]); Serial.print(", "); } Serial.println("  ");
 
 
 
@@ -55,7 +55,8 @@ void SendOnline() //move out task to global!
 
     else {
      Serial.println("Send Online -   Acknowledge but no data ");
-        break;   
+        
+        //break;   
    
     }
 
