@@ -46,7 +46,7 @@ void SendOnline() //move out task to global!
       // SendMessage[4] = LineNumber; //Counter for lines since starting of function
 
       ReadSensorsTMP(g_DataSensors);
-      for (uint16_t ia = 1; ia <= 3; ia++) {
+      for (uint16_t ia = 1; ia <= 11; ia++) {
         SendMessage[ia + 4] = g_DataSensors[ia];   // 4 analog inputs 
       }
       // SendMessage[7] = g_DataSensors[13]*0xFFFF+g_DataSensors[15];   // 4 analog inputs 

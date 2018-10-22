@@ -128,7 +128,7 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 void setup() {
   Serial.begin(115200);
-while (!Serial);
+  //while (!Serial);
 
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
