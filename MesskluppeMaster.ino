@@ -21,7 +21,7 @@ volatile bool IamAtInlet = false ;
 uint16_t g_task = 0;
 uint16_t task = 0;
 
-float g_ARef = 3.3;
+float g_ARef = 3.28;
 float g_AnalogToMV = g_ARef / 4096 * 1000;
 
 struct PayloadStructure {
@@ -60,31 +60,18 @@ ResponsiveAnalogRead analog1(A1, true);
 ResponsiveAnalogRead analog2(A2, true);
 ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
-ResponsiveAnalogRead analog7(A5, true);
+ResponsiveAnalogRead analog5(A5, true);
 
-//#include <SparkFunMPU9250-DMP.h>
-//MPU9250_DMP imu;
-struct imuStructure { //temporal exchange of i2c board
-      uint16_t ax;
-      uint16_t ay;
-      uint16_t az;
-      uint16_t gx;
-      uint16_t gy;
-      uint16_t gz;
-      uint16_t temperature; // board temperature in C * 100
-      uint16_t mx;
-      uint16_t my;
-      uint16_t mz;
-    };
-  struct imuStructure imu;
+#include <SparkFunMPU9250-DMP.h>
+MPU9250_DMP imu;
 
 #include "avdweb_AnalogReadFast.h"
 
 bool  ANALOG_READ_FAST = 1;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
 bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smoothing - set 1 otherwise 0. 
 
-#define INTERRUPT_PIN_INLET  20  // 20 for version 1 Please Check!!!!
-#define INTERRUPT_PIN_CLIP  21   // 21 for version 1
+#define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
+#define INTERRUPT_PIN_CLIP  1   // 21 for version 1
   
 /*=========================================================================
     real Time Config
@@ -128,7 +115,7 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 void setup() {
   Serial.begin(115200);
-  //while (!Serial);
+ // while (!Serial);
 
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
@@ -142,10 +129,10 @@ void setup() {
  // analogReference(AR_EXTERNAL);// external signal for analog reference
  // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
 
-//SetupSensors ();
+SetupSensors ();
 
 // temporal initialiastion of i2c sensors when it OFF
-SetupSensorsTEMP();
+// SetupSensorsTEMP();
 
   /*======= LED indication setup =======*/
 
@@ -153,8 +140,8 @@ SetupSensorsTEMP();
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
-  pinMode(5, OUTPUT); //RedLED on board
-  digitalWrite(13, LOW);
+  pinMode(5, OUTPUT); //SLEEP pin for INA and Hall Sensors
+  digitalWrite(5, LOW);
 
   /*======= Radio Setup =======*/
   radio.begin();
@@ -174,10 +161,9 @@ SetupSensorsTEMP();
 
   /*======= Interrupt Setup =======*/
   pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
-  attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING);
-
   pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
-  attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING);
+//  attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING);
+//  attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING);
 
 
   /* SD card SETUP is in external function SdCardErrorsCheck();.
@@ -201,6 +187,7 @@ SetupSensorsTEMP();
 //DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 CreateFileList();
+
 } //end SETUP()
 
 
@@ -210,7 +197,9 @@ CreateFileList();
     -----------------------------------------------------------------------*/
 
 void loop() {
+
 delay(1000);
+
   g_task = 0;
   mode_ping(task);
   task = 0;
@@ -236,27 +225,22 @@ delay(1000);
       Serial.println("======= Get List============");
       CreateFileList();
       strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
-      SendTxtFile(g_FileName, 1, 65535, g_task);
+      SendFileList(g_FileName, 1, 65535, g_task);
       task = 39; // Finished Sending 
       break;
 
-    case 41:
-      Serial.println("======= Send file ============");
-      sprintf(g_FileName, "%10lu.csv", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
-      SendTxtFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
-      task = 49; // Finished Sending 
-      break;
-
-    case 40: /// anothe file type
+    case 40: 
       Serial.println("======= Send file ============");
       sprintf(g_FileName, "%10lu.dat", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       SendDatFile(g_FileName, g_RcvMsg[4], g_RcvMsg[5], g_task);
       task = 49; // Finished Sending 
       break;
 
-
-    case 50:
-      Serial.println("======= del file ============");
+    case 50: 
+      Serial.println("======= Delete file ============");
+      sprintf(g_FileName, "%10lu.dat", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+      DeleteFile(g_FileName);
+      task = 59; // Finished deleting 
       break;
 
     case 60:

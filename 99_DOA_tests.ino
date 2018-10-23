@@ -11,30 +11,49 @@ void DOAtests() {
   //radio.setDataRate (RF24_250KBPS);
  // radio.setDataRate (RF24_2MBPS);
 
+       digitalWrite(5, HIGH);//wake up INA125
+       IamInOven = false;
+       IamAtInlet = false;
+       delay(250);
+attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interupt 
+attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interupt 
+uint16_t Tclip, Tboard, Vbat;
+while(1){//test while loop
+delay(1000);
+ReadSensors(g_DataSensors);
+Tboard = g_DataSensors[10];
+Tclip = g_DataSensors[11];
+Vbat = g_DataSensors[15];
+Serial.print (Tboard); Serial.print (" C ");
+Serial.print ((Tclip*g_ARef/4096-0.463)*100); Serial.print (" C ");
+Serial.print (Vbat*g_ARef/4096*2); Serial.print (" V ");
+Serial.println ();
+
+  }//end test whilw loop
 
 
   /*======================================================================================
           Do your tests here:
     ======================================================================================== */
 
-for (int TestLoop = 1; TestLoop < 100; TestLoop++) { 
-    g_maxMeasurement = 1000 * TestLoop; 
-
-        IamInOven = true;
-    IamAtInlet = false;
-    g_task= 41; 
-    Serial.println ("logging to DAT");
-    StartMesurment(); 
-
-    IamInOven = true;
-    IamAtInlet = false;
-    g_task= 40; 
-    Serial.println ("logging to CSV");
-    StartMesurmentCSV();    
-
-    
-    
-    } //just a test for readSensors function.
+//for (int TestLoop = 1; TestLoop < 100; TestLoop++) { 
+//    g_maxMeasurement = 1000 * TestLoop*10; 
+//
+////    IamInOven = true;
+////    IamAtInlet = false;
+////    g_task= 41; 
+////    Serial.println ("logging to DAT");
+////    StartMesurment(); 
+//
+//    IamInOven = true;
+//    IamAtInlet = false;
+//    g_task= 40; 
+//    Serial.println ("logging to CSV");
+//    StartMesurmentCSV();    
+//
+//    
+//    
+//} //just a test for readSensors function.
 
 
 
@@ -44,17 +63,18 @@ for (int TestLoop = 1; TestLoop < 100; TestLoop++) {
   //DeleteAllFiles();
 
   /* HERE we can create new file list */
-    g_task= 41; 
-    g_maxMeasurement = 1000*3; 
-    Serial.println ("logging to DAT");
-    IamInOven = true;
-    IamAtInlet = false;
-    StartMesurment();   
-    g_task= 41;
-    SendDatFile(g_FileName, 1, 65535, g_task);
-CreateFileList();
-g_task= 30;
-SendTxtFile("files/file.dir", 1,65535,g_task);
+//
+//    g_task= 41; 
+//    g_maxMeasurement = 1000*3; 
+////   Serial.println ("logging to DAT");
+////    IamInOven = true;
+////    IamAtInlet = false;
+//    StartMesurment();   
+//    g_task= 41;
+//    SendDatFile(g_FileName, 1, 65535, g_task);
+//CreateFileList();
+//g_task= 30;
+//SendTxtFile("files/file.dir", 1,65535,g_task);
 
   /* HERE we can constanly send data online. time limit inside function SendOnline() */
 
@@ -109,8 +129,8 @@ SendTxtFile("files/file.dir", 1,65535,g_task);
   //  /*======================================================================================
   //          Reboot Arduino Zero
   //    ======================================================================================== */
-  //  delay(600000);
-  NVIC_SystemReset(); //reset CPU function
+delay(600000);
+  // NVIC_SystemReset(); //reset CPU function
   //
   //
   //

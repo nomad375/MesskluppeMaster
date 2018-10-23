@@ -31,28 +31,16 @@
  *  Lopp until we get a task from Raspberry
 /*========================================== */
       while (true){
- /*
-  Splitting int32_t variable to 2 uint16_t variables:
-  intArray3[0] = (uint16_t) ((timeSeries[0] >> 16) & 0xFFFF) ;
-  intArray3[1] = (uint16_t) ((timeSeries[0]) & 0xFFFF) ;
-and back:
-  timeSeries[6] = ( (intArray3[0] << 16) + (intArray3[1]) ); // Method 1
-  timeSeries[7] = ( (int32_t) intArray3[0] ) << 16  | intArray3[1] ; // Method 2
-  
-  */
-       
+
+
+ 
         /*======= Prepare SendMsg =======*/
    myMillis = millis();      // Actual running time
-        SendMsg[1] = (uint16_t) ((myMillis >> 16) & 0xFFFF) ;                               
-        SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;
+        SendMsg[1] = (uint16_t) ((myMillis >> 16) & 0xFFFF) ;      //older bytes of uint32_t                        
+        SendMsg[2] = (uint16_t) ((myMillis) & 0xFFFF) ;           //yanger bytes of uint32_t  
         SendMsg[3] = ping;                                    // calculated ping in ms
         SendMsg[4] = average * 100;                           // average is float so we have to remove the '.'
         SendMsg[5] = g_fileCount;
-        //for (int q = 5; q < 16; q++) { SendMsg[q] = q;  }
-        
-       
-//        ReadSensorsTMP(g_DataSensors);                           // Update Sensors
-
         
         /*========= Send SendMsg ========*/
         //cout << "Send Ping: " << SendMsg[0] << "," <<  myMillis << "," << SendMsg[3] << "," << SendMsg[4] << "," << SendMsg[5] << "," << SendMsg[6] << "," << SendMsg[7]<< "," << SendMsg[8] << "," << SendMsg[9] << "," << SendMsg[10] << "," << SendMsg[11] << "," << SendMsg[12] << ","<< SendMsg[13] << "," << SendMsg[14] << "," << SendMsg[15] << endl;
@@ -102,7 +90,9 @@ and back:
 
         /*======== Power Saving =========*/
         radio.powerDown();
+
         delay(sleep);
+        
 
       } //endWhile "Loop until we get a task from Raspberry"
       /*==== reset Radio Settings =====*/

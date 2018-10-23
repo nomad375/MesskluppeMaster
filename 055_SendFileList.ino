@@ -1,9 +1,8 @@
 /*=========================================================================
                          Send File
-               ПРОВЕРИТЬ ОТПРАВКУ СПИСКА ФАЙЛОВ
     -----------------------------------------------------------------------*/
 
-void SendTxtFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
+void SendFileList(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
     Serial.print ("This file sending now: " ); Serial.println(g_FileName);
     
     /*========== Variables ==========*/

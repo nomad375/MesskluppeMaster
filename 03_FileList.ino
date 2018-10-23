@@ -67,7 +67,7 @@ SdCardErrorsCheck();
 
 } //enf if CSV file
 
-if (NameOfFile[11] == 'd'){ //if CSV file then
+if (NameOfFile[11] == 'd'){ //if DAT file then
     FileType = 01;
     numberOfLines = 0;
     OneFile.seekEnd(-sizeof(Payload)); //TAKE care that offset bigger then average line size in bytes!

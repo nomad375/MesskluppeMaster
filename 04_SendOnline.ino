@@ -15,6 +15,7 @@ void SendOnline() //move out task to global!
   uint32_t actTime;
   
   Serial.println ("Online transfering... " );
+  
   digitalWrite(5, HIGH); //wake up INA125
   delay(250);
 
@@ -39,17 +40,17 @@ void SendOnline() //move out task to global!
       LineNumber ++;
       SendMessage[0] = g_clipID * 1000 + 60;
       uint32_t currenttime = millis();
+      ReadSensors(g_DataSensors);
+      
       SendMessage[1] = (uint16_t) ((currenttime >> 16) & 0xFFFF) ;
       SendMessage[2] = (uint16_t) (currenttime & 0xFFFF) ;
-      SendMessage[3] = millis() % 1000;
-      // SendMessage[4] = g_DataSensors[15]*2; //Actual input voltage of Clip in mV. 4096 for 12-bits /1024 for 10-bits analog input
-      // SendMessage[4] = LineNumber; //Counter for lines since starting of function
+    //  SendMessage[3] = millis() % 1000;
+      SendMessage[3] = (uint16_t)(g_DataSensors[15]*2*3.28/4096*1000);
 
-      ReadSensorsTMP(g_DataSensors);
+
       for (uint16_t ia = 1; ia <= 11; ia++) {
-        SendMessage[ia + 4] = g_DataSensors[ia];   // 4 analog inputs 
+        SendMessage[ia + 4] = g_DataSensors[ia];   // 11 analog inputs 
       }
-      // SendMessage[7] = g_DataSensors[13]*0xFFFF+g_DataSensors[15];   // 4 analog inputs 
 
     } //enf If radio.isAckPayloadAvailable() ) {
 
