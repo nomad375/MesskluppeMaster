@@ -37,49 +37,18 @@ SdCardErrorsCheck();
         exit(0);                        //exit from function if SD file cannot be opened
     }// endif
 
-    
-    if (NameOfFile[11] == 'c'){ //if CSV file then
-      FileType = 02;
-      // open  file to find number of lines inside it
-
-      numberOfLines = 0;
-      // read lines from the file. move cursor to position end-of-file minus offset
-      OneFile.seekEnd(-128); //TAKE care that offset bigger then average line size in bytes!
-
-      while ((n = OneFile.fgets(line, sizeof(line))) > 0) { //read all lines untull EOF /enf-of-file
-
-        if (n > 0) { // udate value numberOfLines to value from not empty line
-
-          char *pch;                                                   // temporal linked char[]  for STRTOK (look for value in beatween of separators)
-          pch = strtok (line, ";");                                    //first iteration
-          numberOfLines = atol(pch);                                   //TEMPORAL value for numberOfLines
-
-          for (uint8_t i = 1; i < 4; i++ ) {
-            pch = strtok (NULL, ";");                                 //getting next values from strig befor separator ";"
-            numberOfLines = atol(pch);                                //our target - value at position #3 (<3)
-          } //end FOR
-
-        }//end if
-      
-      } // end of read file line by line untill endOfFile-----------------------------------
-      
-      OneFile.close();
-
-} //enf if CSV file
 
 if (NameOfFile[11] == 'd'){ //if DAT file then
-    FileType = 01;
+    FileType = 1;
     numberOfLines = 0;
     OneFile.seekEnd(-sizeof(Payload)); //TAKE care that offset bigger then average line size in bytes!
     OneFile.read((uint8_t *)&Payload, sizeof(Payload)); // get from file blocks into Payload ( sizeof(Payload) )
     numberOfLines = Payload.Cell_3;
-    //PrintPayloadBytes();
-
 } //enf if DAT file then
 
 
       ii++;
-      //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
+     //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
      // ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
       ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize()/1000<< ";" << AllFiles.fileSize()%1000 << ";" << numberOfLines<< ";" << FileType << ";" << AllFiles.dirIndex() << endl;
 
