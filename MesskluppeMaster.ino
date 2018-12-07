@@ -9,7 +9,6 @@ uint16_t g_logInterval = 10;                               // 15.625  millisecon
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-//uint32_t g_SendMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t PayloadLen = 32;
 uint16_t g_fileCount = 0;
 
@@ -22,8 +21,6 @@ uint16_t g_task = 0;
 uint16_t task = 0;
 
 float g_YawOffset = 0;
-
-
 
 struct PayloadStructure {
     uint16_t Cell_ZERO;    // just take a place to cut size of Cell 0
@@ -42,8 +39,6 @@ struct PayloadStructure {
     uint16_t Cell_13;
     uint16_t Cell_14;
     uint16_t Cell_15;
-
-    
 };
 
   struct PayloadStructure Payload;
@@ -51,7 +46,6 @@ struct PayloadStructure {
     Sensor config
     -----------------------------------------------------------------------*/
 #include <SAMD_AnalogCorrection.h>
-
 
 #include <ResponsiveAnalogRead.h>
 ResponsiveAnalogRead analog1(A1, true);
@@ -70,6 +64,7 @@ bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smooth
 
 #define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
 #define INTERRUPT_PIN_CLIP  1   // 21 for version 1
+
   
 /*=========================================================================
     real Time Config
@@ -77,9 +72,8 @@ bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smooth
 
 #include <Wire.h>         // this #include still required because the RTClib depends on it
 #include "RTClib.h"        //libry modified from original. take care to use needed one
-
-
 RTC_Millis rtc;
+
 /*=========================================================================
     SD CARD include
     -----------------------------------------------------------------------*/
@@ -87,10 +81,10 @@ RTC_Millis rtc;
 #include "SdFat.h"
 #define SD_CHIP_SELECT  4       //hardwritten pinout on feather adalogger board
 SdFat sd;                       //file system object
-ofstream logfile;               // text file for logging
+//ofstream logfile;               // text file for logging
 SdFile datfile;
 #define error(s) sd.errorHalt(F(s))   // store error strings in flash to save RAM
-char buf[256];               //buffer to format data - easier to echo to serial
+//char buf[256];               //buffer to format data - easier to echo to serial
 
 /*=========================================================================
     Serial Monitoring
@@ -105,7 +99,6 @@ ArduinoOutStream cout(Serial);  // Serial print stream
 #include "RF24.h"
 RF24 radio(6, 10); // pin 9 powered by 2V. so i deside avoid it. tested pins - 5,6,9,10 with no diffrence found
 const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
-
 
 /*=========================================================================
                           SETUP
@@ -123,19 +116,20 @@ void setup() {
   analogWriteResolution(10); //10-bit resolution for analog output A0
   analogReference(AR_INTERNAL2V23); //a built-in 2.23V reference
 
+  SetupSensors ();
 
-SetupSensors ();
-
-
+  /*======= Interrupt Setup =======*/
+  pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
+  pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
+   
   /*======= LED indication setup =======*/
-
   pinMode(8, OUTPUT); //GreenLED on board
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
   pinMode(5, OUTPUT); //SLEEP pin for INA and Hall Sensors
   digitalWrite(5, HIGH);
-   Serial.println ("digitalWrite(5, HIGH)");
+  //Serial.println ("digitalWrite(5, HIGH)");
 
   /*======= Radio Setup =======*/
   radio.begin();
@@ -148,16 +142,8 @@ SetupSensors ();
   radio.setRetries(1, 5);                     // Optionally, increase the delay between retries in 250us & # of retries up to 15
   radio.setCRCLength(RF24_CRC_8);             // Use 8-bit CRC for performance)
   radio.openWritingPipe(pipes[0]);            // Where we send data out. Defoult Pipes[0]!!!!!
-
   radio.startListening();
   radio.stopListening();
-
-
-  /*======= Interrupt Setup =======*/
-  pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
-  pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
-
-
 
   /* SD card SETUP is in external function SdCardErrorsCheck();.
     This function is to preven frrezing on errors.
@@ -207,8 +193,8 @@ delay(1000);
 
     case 20:  //Loggin Mode
     
-attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to wait we are in oven...
-attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to wait we are in oven...
+      attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to wait we are in oven...
+      attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to wait we are in oven...
     
       Serial.println("======= Sync Time ============");
       synctime(g_RcvMsg[2]);
@@ -217,8 +203,8 @@ attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to wait we 
       Serial.println("======= Update List ============");
       CreateFileList();
      
-detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
-detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
+  detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
+  detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
 
       break;
 

@@ -4,10 +4,7 @@
 
 void SdCardErrorsCheck() {   /* SD card SETUP */
 
-
 //Serial.println("SdCardErrorsCheck()");
-
-
 
   if (!sd.begin(SD_CHIP_SELECT, SPI_FULL_SPEED)) {    //Initialize the highest speed supported by the board (!sd.begin(SD_CHIP_SELECT, SD_SCK_MHZ(50)))
 
@@ -20,7 +17,6 @@ void SdCardErrorsCheck() {   /* SD card SETUP */
     // or wait until card inserted in slot
     exit;
   }
-
 
 } //end SdCardErrorsCheck()
 
@@ -48,7 +44,6 @@ void DeleteAllFiles() {
 
   char NameOfFile[256];
   SdFile AllFilesInDir;
-  
   SdCardErrorsCheck();
   sd.vwd()->rewind();
 
@@ -70,4 +65,3 @@ void DeleteAllFiles() {
   } //end While
 
 }// End of DeleteAllFiles()
-

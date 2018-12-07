@@ -15,7 +15,7 @@ void StartMesurment() {
 
   while ((millis() - startTime < g_timeout) && IamInOven == false) ; //wait clip interrupt or timeout
   if (IamInOven == false) {
-    return;   //go out of while, if not in oven
+    return;   //go out of while(), if not in oven
   }
 
   startTime = millis();
@@ -25,12 +25,12 @@ void StartMesurment() {
   DateTime now = rtc.now();
 
   /* DAT file create */
-  sprintf(FnameDAT, "%10lu.dat", now.unixtime()); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
+  sprintf(FnameDAT, "%10lu.dat", now.unixtime()); // name file as a seconds() since 01.01.1970. 
   if (sd.exists(FnameDAT)) {
-    sprintf(FnameDAT, "%10lu.dat", now.unixtime() + 1); // add one second if FnameCSV already exist. // by deafault %u changed to %lu by compilation warning
+    sprintf(FnameDAT, "%10lu.dat", now.unixtime() + 1); // add one second if FnameCSV already exist. 
   }
 
-  datfile.open(FnameDAT, O_WRITE | O_CREAT);                                // open created file if creted new FnameCSV
+  datfile.open(FnameDAT, O_WRITE | O_CREAT);   // open created file if creted new FnameDAT
 
   if (!datfile.isOpen()) {
     digitalWrite(8, HIGH);
@@ -40,7 +40,7 @@ void StartMesurment() {
     exit(0);
   }
 
-  Serial.print ("Logging to file " ); Serial.print (FnameDAT); Serial.print (" during " ); Serial.print (g_maxMeasurement / 1000); Serial.println (" seconds " );
+ // Serial.print ("Logging to file " ); Serial.print (FnameDAT); Serial.print (" during " ); Serial.print (g_maxMeasurement / 1000); Serial.println (" seconds " );
 
   while ((actTime - startTime) <= g_maxMeasurement) {  //collect datas as long as defined in glabal
 
@@ -75,7 +75,6 @@ void StartMesurment() {
     Payload.Cell_14 = 00;   // Reserved Place
     Payload.Cell_15 = 00;   // Reserved Place
 
-
     //PrintPayload();
     //PrintPayloadBytes();
     //PrintPayloadHEX();
@@ -84,7 +83,6 @@ void StartMesurment() {
     detachInterrupt(INTERRUPT_PIN_CLIP); // Stop interrupt to prevent freezing
 
     datfile.write((uint8_t *)&Payload, sizeof(Payload));
-
 
     attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to see end of oven
     attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to see end of oven
@@ -103,7 +101,6 @@ void StartMesurment() {
   Serial.print("file saved in "); Serial.println ((millis() - startTime) / 1000); Serial.println(" seconds.");
 
   strncpy(g_FileName, FnameDAT, sizeof(FnameDAT) - 1); // Get FileName value for external use
-
 
 
 } // END of StartMesurment DAT

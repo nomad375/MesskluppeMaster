@@ -119,7 +119,9 @@ void ReadSensors (uint16_t *g_DataSensors)
       if (Yaw >=360){NewYaw = Yaw-360;}
       else if (Yaw <0){NewYaw = 360 + Yaw;}
       else { NewYaw = Yaw;}
-      
+
+      // g_DataSensors[4] = (uint16_t) (imu.calcAccel(imu.ax) * 1000);  // check what position is better for accererometer reading. here at dmpUpdateFifo or above at  imu.update
+      // g_DataSensors[5] = (uint16_t) (imu.calcAccel(imu.ay) * 1000);
       g_DataSensors[6] =  (uint16_t) NewYaw;
 
     }
@@ -188,13 +190,17 @@ void ReadSensors (uint16_t *g_DataSensors)
 //  float mV_Y = 2.433;
 //  float mV_Z = 2.429;
 
-  float mV_X = 2.313; // (2.055)
-  float mV_Y = 2.323; // (2.055)
-  float mV_Z = 2.319; // (2.063)
+ float mV_X = 2.313; 
+ float mV_Y = 2.323; 
+ float mV_Z = 2.319; 
+//
+//  float mV_X =  (2.055);
+//  float mV_Y = (2.055);
+//  float mV_Z = (2.063);
 
-  float Gain_X = 604;
-  float Gain_Y = 604;
-  float Gain_Z = 604;
+  float Gain_X = 1805.801802; //(33.3 Ohm)
+  float Gain_Y = 336.963374; //180.2 Ohm
+  float Gain_Z = 404;  //150 Ohm
 
   float K11 = 1172.4335;
   float K12 = 13.4040;
@@ -207,17 +213,24 @@ void ReadSensors (uint16_t *g_DataSensors)
   float K33 = -927.3757;
 
   float Ufx, Ufy, Ufz;
+//  float offsetX = 46;
+//  float offsetY = -18;
+//  float offsetZ = -31;
   float offsetX = 0;
   float offsetY = 0;
   float offsetZ = 0;
 
-  Ufx = (RawX + offsetX) * (ARef / 4096) * 1000 / mV_X / Gain_X ;
-  Ufy = (RawY + offsetY) * (ARef / 4096) * 1000 / mV_Y / Gain_Y ;
-  Ufz = (RawZ + offsetZ) * (ARef / 4096) * 1000 / mV_Z / Gain_Z ;
+  Serial.print ("Raw X: "); Serial.print (RawX); Serial.print(" bit, ");
+  Serial.print ("Raw Y: "); Serial.print (RawY); Serial.print(" bit, ");
+  Serial.print ("Raw Z: "); Serial.print (RawZ); Serial.print(" bit, ");
 
-  float     ForceX = Ufx * K11 + Ufy * K12 + Ufz * K13;
-  float     ForceY = Ufx * K21 + Ufy * K22 + Ufz * K23;
-  float     ForceZ = Ufx * K31 + Ufy * K32 + Ufz * K33;
+  Ufx = RawX  * ARef / 4096 * 1000 / mV_X / Gain_X ;
+  Ufy = RawY  * ARef / 4096 * 1000 / mV_Y / Gain_Y ;
+  Ufz = RawZ  * ARef / 4096 * 1000 / mV_Z / Gain_Z ;
+
+  float     ForceX = Ufx * K11 + Ufy * K12 + Ufz * K13 - offsetX;
+  float     ForceY = Ufx * K21 + Ufy * K22 + Ufz * K23 - offsetY;
+  float     ForceZ = Ufx * K31 + Ufy * K32 + Ufz * K33 - offsetZ;
 
   g_DataSensors[1] = (uint16_t)(ForceX);
   g_DataSensors[2] = (uint16_t)(ForceY);

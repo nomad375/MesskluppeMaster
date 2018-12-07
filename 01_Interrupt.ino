@@ -21,14 +21,12 @@ void IRQ2() {
   else  {
     IamInOven = false;
   }
-
+  g_YawOffset = imu.yaw - 90;
+  //Serial.print("<<--Yaw Offset --> " );
+  //Serial.println(g_YawOffset);
   // Serial.print("<<--OVEN--IRQ2> " );
   // Serial.println(IamInOven);
   // Serial.print("<<--INLET--IRQ2> " );
   // Serial.println(IamAtInlet);
-
-  g_YawOffset = imu.yaw - 90;
-  //Serial.print("<<--Yaw Offset --> " );
-  //Serial.println(g_YawOffset);
   interrupts();
 }

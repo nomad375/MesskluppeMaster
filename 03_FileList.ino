@@ -2,7 +2,6 @@ void CreateFileList() { //Function to create list of files
 SdCardErrorsCheck();
  
  uint32_t startTime = millis();          // variables for time in ms
-  //int i = 0;
   uint32_t numberOfLines, n;
   char line[128] = {}; // char[48] enough for 7 sensors to read in buffer
   uint32_t ii = 0;
@@ -49,11 +48,9 @@ if (NameOfFile[11] == 'd'){ //if DAT file then
 
       ii++;
      //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
-     // ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
       ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize()/1000<< ";" << AllFiles.fileSize()%1000 << ";" << numberOfLines<< ";" << FileType << ";" << AllFiles.dirIndex() << endl;
 
-      
-    } //end of IF for no hidden files or directory
+      } //end of IF for no hidden files or directory
 
     AllFiles.close();
 

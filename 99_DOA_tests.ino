@@ -9,9 +9,9 @@ void DOAtests() {
   radio.openWritingPipe(pipes[1]);            // Where we send data out DOA pipes[1]. Default Pipes[0]!!!!!
   radio.setPALevel (RF24_PA_HIGH);
   //radio.setDataRate (RF24_250KBPS);
-  // radio.setDataRate (RF24_2MBPS);
+  //radio.setDataRate (RF24_2MBPS);
 
- // digitalWrite(5, HIGH);//wake up INA125
+  //digitalWrite(5, HIGH);//wake up INA125
   IamInOven = false;
   IamAtInlet = false;
   delay(250);
@@ -22,37 +22,36 @@ void DOAtests() {
 
 
 
-//while (1) { //test while loop
-//  
-//
-//}//end test whilw loop
+while (1) { //test while loop
+  
+    ReadSensors(g_DataSensors);
+    
+   Serial.print (" X force: "); Serial.print ((int16_t)g_DataSensors[1]);
+   Serial.print (" [N], Y force: ");   Serial.print ((int16_t)g_DataSensors[2]);
+   Serial.print (" [N], Z force: ");   Serial.print ((int16_t)g_DataSensors[3]);
+   Serial.println (" [N]");
+  
+
+
+}//end test whilw loop
 
 
 
-///float g_AnalogToMV = 3300 / 4096 * 1000;
-
-//  Tboard = g_DataSensors[10];
-//  Tclip = g_DataSensors[11];
-//  Vbat = g_DataSensors[15];
-//  Serial.print (Tboard); Serial.print (" C ");
-//  Serial.print ((Tclip * g_ARef / 4096 - 0.463) * 100); Serial.print (" C ");
-//  Serial.print (Vbat * g_ARef / 4096 * 2); Serial.print (" V ");
-//  Serial.println ();
 
   /*======================================================================================
           Create files
     ======================================================================================== */
 
-  for (int TestLoop = 1; TestLoop < 10; TestLoop++) {
-      g_maxMeasurement = 1000 * TestLoop*3;
-  
-      IamInOven = true;
-      IamAtInlet = false;
-      g_task= 41;
-      Serial.println ("logging to DAT");
-      StartMesurment();
-  
-   } //just a test for readSensors function.
+//  for (int TestLoop = 1; TestLoop < 10; TestLoop++) {
+//      g_maxMeasurement = 1000 * TestLoop*3;
+//  
+//      IamInOven = true;
+//      IamAtInlet = false;
+//      g_task= 41;
+//      Serial.println ("logging to DAT");
+//      StartMesurment();
+//  
+//   } //just a test for readSensors function.
 
 
 
