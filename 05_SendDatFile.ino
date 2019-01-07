@@ -35,8 +35,7 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
     /*==========================================
      *  Try to get a connection
     /*========================================== */
-    radio.writeFast(&Payload.Cell_0,sizeof(Payload)-4);                // Send the transfer command
-     PrintPayload();
+    radio.writeFast(&Payload.Cell_0,sizeof(Payload)-4-8);                // Send the transfer command
     
     if(radio.txStandBy(timeoutPeriod)){                       // If transfer initiation was successful, do the following
         startTime = millis();                                 // For calculating transfer rate
@@ -48,15 +47,15 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
             datfile.read((uint8_t *)&Payload, sizeof(Payload)); // get from file blocks into Payload ( sizeof(Payload) )
             Payload.Cell_0 = idTask;
             
-       PrintPayload();
+        //PrintPayload();
         //PrintPayloadHEX();
         //PrintPayloadBytes();
-        Serial.println();
+        //Serial.println();
         
         
                  if (Payload.Cell_3 >= FirstLine){ // Send if line >= of desied fist line
         
-                          if(!radio.writeBlocking(&Payload.Cell_0,sizeof(Payload)-4,timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
+                          if(!radio.writeBlocking(&Payload.Cell_0,sizeof(Payload)-4-8,timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
                              timedOut = 1;                                                            // Indicate failure
                              exit(0);                                                                 // Break out of the for loop
                           }//endif  
@@ -120,8 +119,6 @@ Serial.print (Payload.Cell_12); Serial.print (" ");
 Serial.print (Payload.Cell_13); Serial.print (" "); 
 Serial.print (Payload.Cell_14); Serial.print (" "); 
 Serial.print (Payload.Cell_15); Serial.print (" "); 
-
-
 Serial.println ("");
 }
 
@@ -131,23 +128,22 @@ void PrintPayloadHEX()
 Serial.print ("Payload (");
 Serial.print (sizeof(Payload));
 Serial.print (")bytes   HEX:  ");
-Serial.print (Payload.Cell_ZERO,HEX); Serial.print ("(");Serial.print (sizeof(Payload.Cell_ZERO));  Serial.print (") ");
-Serial.print (Payload.Cell_0,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_0));  Serial.print (") ");
-Serial.print (Payload.Cell_1_2,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_1_2));  Serial.print (") ");
-Serial.print (Payload.Cell_3,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_3));  Serial.print (") ");
-Serial.print (Payload.Cell_4,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_4));  Serial.print (") ");
-Serial.print (Payload.Cell_5,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_5));  Serial.print (") ");
-Serial.print (Payload.Cell_6,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_6));  Serial.print (") ");
-Serial.print (Payload.Cell_7,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_7));  Serial.print (") ");
-Serial.print (Payload.Cell_8,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_8));  Serial.print (") ");
-Serial.print (Payload.Cell_9,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_9));  Serial.print (") ");
-Serial.print (Payload.Cell_10,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_10));  Serial.print (") ");
-Serial.print (Payload.Cell_11,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_11));  Serial.print (") ");
-Serial.print (Payload.Cell_12,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_12));  Serial.print (") ");
-Serial.print (Payload.Cell_13,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_13));  Serial.print (") ");
-Serial.print (Payload.Cell_14,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_14));  Serial.print (") ");
-Serial.print (Payload.Cell_15,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_15));  Serial.print (") ");
-
+Serial.print (Payload.Cell_ZERO,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_0,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_1_2,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_3,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_4,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_5,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_6,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_7,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_8,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_9,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_10,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_11,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_12,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_13,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_14,HEX); Serial.print (" "); 
+Serial.print (Payload.Cell_15,HEX); Serial.print (" "); 
 Serial.println ("");
 }
 
