@@ -3,6 +3,7 @@
     -----------------------------------------------------------------------*/ 
    void mode_ping(uint16_t task){
       Serial.println("<---------------------------------------- New Mode_Ping ---------------------------------------->");
+        digitalWrite(5, LOW);  Serial.println ("digitalWrite(5, LOW)");
       /*======== Radio Settings =======*/
         radio.powerUp();
         radio.setRetries(1, 2);
@@ -84,18 +85,21 @@
                   g_RcvMsg[6] = RcvMsg[6];
                   g_RcvMsg[7] = RcvMsg[7];
                   g_task = task;
-                  return;
+                  break;
+
               }//endIf "check the msg"
         }//endIf "Answer from RPI"
 
         /*======== Power Saving =========*/
         radio.powerDown();
-
         delay(sleep);
-        
+
 
       } //endWhile "Loop until we get a task from Raspberry"
+
+      digitalWrite(5, HIGH); Serial.println ("digitalWrite(5, HIGH)");
+
       /*==== reset Radio Settings =====*/
       radio.setRetries(2, 15); 
+return; 
   }//endFunc "mode_ping"
-

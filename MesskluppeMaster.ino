@@ -3,7 +3,7 @@
   =============================================== */
 uint16_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
-uint32_t g_maxMeasurement = 1000 * 60 * 90;               // Maximum log time is 5 Minutes
+uint32_t g_maxMeasurement = 1000 * 60 * 5;               // Maximum log time is 5 Minutes
 uint32_t g_timeout = 1000 * 20;
 uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
 char g_FileName[15];                                      //file name to exchange
@@ -20,12 +20,7 @@ volatile bool IamAtInlet = false ;
 uint16_t g_task = 0;
 uint16_t task = 0;
 
-<<<<<<< HEAD
 float g_YawOffset = 0;
-=======
-float g_ARef = 3.28;
-float g_AnalogToMV = g_ARef / 4096 * 1000;
->>>>>>> parent of 94290d9... Clean Up
 
 struct PayloadStructure {
     uint16_t Cell_ZERO;    // just take a place to cut size of Cell 0
@@ -44,14 +39,6 @@ struct PayloadStructure {
     uint16_t Cell_13;
     uint16_t Cell_14;
     uint16_t Cell_15;
-<<<<<<< HEAD
-=======
-    uint16_t Cell_16;
-    uint16_t Cell_17;
-    uint16_t Cell_18;
-    uint16_t Cell_19;
-    
->>>>>>> parent of 94290d9... Clean Up
 };
 
   struct PayloadStructure Payload;
@@ -72,7 +59,7 @@ MPU9250_DMP imu;
 
 #include "avdweb_AnalogReadFast.h"
 
-bool  ANALOG_READ_FAST = 1;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
+bool  ANALOG_READ_FAST = 0;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
 bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smoothing - set 1 otherwise 0. 
 
 #define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
@@ -124,13 +111,9 @@ void setup() {
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
 
-
-
-  analogReadCorrection(26, 2062);//DOA feather m0
-  //analogReadCorrection(8, 2053); //BMS feather. done  12.07.2018
+  analogReadCorrection(4, 2060);//DOA 28.11.2018
   analogReadResolution(12); //12-bit resolution for analog inputs
   analogWriteResolution(10); //10-bit resolution for analog output A0
-<<<<<<< HEAD
   analogReference(AR_INTERNAL2V23); //a built-in 2.23V reference
 
   SetupSensors ();
@@ -139,28 +122,14 @@ void setup() {
   pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
   pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
    
-=======
- // analogReference(AR_EXTERNAL);// external signal for analog reference
- // analogWrite(A0, 755); //2.5V for Aref input. A0 conected to Aref input. Change later if Aref connected to external reference.
-
-SetupSensors ();
-
-// temporal initialiastion of i2c sensors when it OFF
-// SetupSensorsTEMP();
-
->>>>>>> parent of 94290d9... Clean Up
   /*======= LED indication setup =======*/
   pinMode(8, OUTPUT); //GreenLED on board
   digitalWrite(8, LOW);
   pinMode(13, OUTPUT); //RedLED on board
   digitalWrite(13, LOW);
   pinMode(5, OUTPUT); //SLEEP pin for INA and Hall Sensors
-<<<<<<< HEAD
   digitalWrite(5, HIGH);
   //Serial.println ("digitalWrite(5, HIGH)");
-=======
-  digitalWrite(5, LOW);
->>>>>>> parent of 94290d9... Clean Up
 
   /*======= Radio Setup =======*/
   radio.begin();
@@ -176,17 +145,6 @@ SetupSensors ();
   radio.startListening();
   radio.stopListening();
 
-<<<<<<< HEAD
-=======
-
-  /*======= Interrupt Setup =======*/
-  pinMode(INTERRUPT_PIN_INLET, INPUT_PULLUP);                   //Interrupt for sensor at TDO inlet
-  pinMode(INTERRUPT_PIN_CLIP, INPUT_PULLUP);                   //Interrupt for sensor at TDO Clip (inlet and outlet)
-//  attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING);
-//  attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING);
-
-
->>>>>>> parent of 94290d9... Clean Up
   /* SD card SETUP is in external function SdCardErrorsCheck();.
     This function is to preven frrezing on errors.
     Use it at begin of every function thay use SD card.
@@ -233,28 +191,21 @@ delay(1000);
     case 10:
       break;
 
-<<<<<<< HEAD
     case 20:  //Loggin Mode
     
       attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to wait we are in oven...
       attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to wait we are in oven...
     
-=======
-    case 20:
->>>>>>> parent of 94290d9... Clean Up
       Serial.println("======= Sync Time ============");
       synctime(g_RcvMsg[2]);
       Serial.println("======= Start Measurement ============");
       StartMesurment();
       Serial.println("======= Update List ============");
       CreateFileList();
-<<<<<<< HEAD
      
   detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
   detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
 
-=======
->>>>>>> parent of 94290d9... Clean Up
       break;
 
     case 30:
@@ -297,5 +248,3 @@ delay(1000);
 
   }
 }// end loop
-
-

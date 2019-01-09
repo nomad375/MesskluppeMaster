@@ -26,17 +26,7 @@ strcpy(TextStringCopy, TextString);                 // and creating TextStringCo
                } //end FOR  
 
 
-
-  //Serial.print (str);
- // Serial.print("Function test - array of uint32_t[]: "); for (int i = 0; i < 8; i++) { Serial.print(g_SendMsg[i], HEX); Serial.print("  ");  }  Serial.println();
- // Serial.print("Function test - array of uint32_t[]: "); for (int i = 0; i < 8; i++) { Serial.print(g_SendMsg[i]); Serial.print("  ");  }  Serial.println();
-
 uint32_t FinishTime = micros();
-//Serial.print ( "micros for line convert ");
-//Serial.println ( FinishTime - StartTime);
-//Serial.print("Function test - array of uint16_t[]: "); for (int i = 0; i < 16; i++) { Serial.print(g_SendMsg[i]); Serial.print("  ");  }  Serial.println();
-//Serial.print("Function test - array of uint16_t[]: "); for (int i = 0; i < 16; i++) { Serial.print(g_SendMsg[i],HEX); Serial.print("  ");  }  Serial.println();
 
 
 } //end ConvertStringToArray
-
