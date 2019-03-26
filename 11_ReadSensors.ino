@@ -202,15 +202,15 @@ void ReadSensors (uint16_t *g_DataSensors)
   float Gain_Y = 336.963374; //180.2 Ohm
   float Gain_Z = 404;  //150 Ohm
 
-  float K11 = 1172.4335;
-  float K12 = 13.4040;
-  float K13 = 3.3653;
-  float K21 = -13.2875;
-  float K22 = -428.3136;
-  float K23 = -36.7550;
-  float K31 = -0.6148;
-  float K32 = -0.1976;
-  float K33 = -927.3757;
+  float K11 = 1191.6359;  //1172.4335;
+  float K12 = 46.1907;    //13.4040;
+  float K13 = -2.5465;    //3.3653;
+  float K21 = 9.8374;     //-13.2875;
+  float K22 = -572.4666;  //-428.3136;
+  float K23 = 27.5130;    //-36.7550;
+  float K31 = -2.2144;    //-0.6148;
+  float K32 = 0.6154;     //-0.1976;
+  float K33 = -893.6081;  //-927.3757;
 
   float Ufx, Ufy, Ufz;
 //  float offsetX = 46;
