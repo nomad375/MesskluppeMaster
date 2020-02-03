@@ -4,8 +4,8 @@
 uint16_t g_clipID = 01;                                   // Clip ID
 uint32_t g_maxPing = 5000;                               // Maximum time difference (µs) for successful ping
 uint32_t g_maxMeasurement = 1000 * 60 * 5;               // Maximum log time is 5 Minutes
-uint32_t g_timeout = 1000 * 20;
-uint16_t g_logInterval = 10;                               // 15.625  milliseconds between analog entries (64Hz)
+uint32_t g_timeout = 1000 * 60;                           //timeout for quiting from logging mode if clip did not reach TDO inlet
+uint16_t g_logInterval = 5;                               // 10  milliseconds between analog entries (100Hz)
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -16,6 +16,7 @@ uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
 volatile bool IamInOven = false;
 volatile bool IamAtInlet = false ;
+volatile uint32_t IRQ2_time = millis();
 
 uint16_t g_task = 0;
 uint16_t task = 0;
@@ -25,9 +26,9 @@ float g_YawOffset = 0;
 struct PayloadStructure {
     uint16_t Cell_ZERO;    // just take a place to cut size of Cell 0
     uint16_t Cell_0;       // g_clipID or idTask
-    uint32_t Cell_1_2;     //now.unixtime() or othe long value
-    uint16_t Cell_3;        //LineNumber
-    uint16_t Cell_4;        // Sensor 1..15
+    uint32_t Cell_1_2;     // now.unixtime() or othe long value
+    uint16_t Cell_3;       // LineNumber
+    uint16_t Cell_4;       // Sensor 1..15
     uint16_t Cell_5;
     uint16_t Cell_6;
     uint16_t Cell_7;
@@ -54,16 +55,17 @@ ResponsiveAnalogRead analog3(A3, true);
 ResponsiveAnalogRead analog4(A4, true);
 ResponsiveAnalogRead analog5(A5, true);
 
+
 #include <SparkFunMPU9250-DMP.h>
 MPU9250_DMP imu;
 
 #include "avdweb_AnalogReadFast.h"
 
-bool  ANALOG_READ_FAST = 0;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 ms if use ResponsiveAnalogRead smoothing
+bool  ANALOG_READ_FAST = 1;    // if you want try analogReadFast function - set 1 otherwise 0. Difference in function 1700 vs 3800 micros if use ResponsiveAnalogRead smoothing
 bool  RESPONSIVE_ANALOG_READ = 1; // if you want try ResponsiveAnalogRead smoothing - set 1 otherwise 0. 
 
-#define INTERRUPT_PIN_INLET  0  // 20 for version 1 Please Check!!!!
-#define INTERRUPT_PIN_CLIP  1   // 21 for version 1
+#define INTERRUPT_PIN_INLET  1  // 20 for version 1 Please Check!!!!
+#define INTERRUPT_PIN_CLIP  0   // 21 for version 1
 
   
 /*=========================================================================
@@ -90,7 +92,7 @@ SdFile datfile;
     Serial Monitoring
     -----------------------------------------------------------------------*/
 ArduinoOutStream cout(Serial);  // Serial print stream
-#define ECHO_TO_SERIAL  1   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
+#define ECHO_TO_SERIAL  0   // echo data to serial port - !!! can reach stuck INTERRUPT inside StartLogging function 
 
 /*=========================================================================
     RADIO RF24
@@ -106,12 +108,12 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 void setup() {
   Serial.begin(115200);
- // while (!Serial);
+//while (!Serial);
 
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
 
-  analogReadCorrection(4, 2060);//DOA 28.11.2018
+  //analogReadCorrection(4, 2060);//DOA 28.11.2018
   analogReadResolution(12); //12-bit resolution for analog inputs
   analogWriteResolution(10); //10-bit resolution for analog output A0
   analogReference(AR_INTERNAL2V23); //a built-in 2.23V reference
@@ -129,7 +131,7 @@ void setup() {
   digitalWrite(13, LOW);
   pinMode(5, OUTPUT); //SLEEP pin for INA and Hall Sensors
   digitalWrite(5, HIGH);
-  //Serial.println ("digitalWrite(5, HIGH)");
+  Serial.println ("digitalWrite(5, HIGH)");
 
   /*======= Radio Setup =======*/
   radio.begin();
@@ -162,8 +164,8 @@ void setup() {
 
   //=======place to test functions ===========////
 
-//Serial.println( "Setup done!");
-DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Serial.println( "Setup done!");
+//DOAtests(); // check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 CreateFileList();
 
@@ -179,12 +181,12 @@ void loop() {
 
 delay(1000);
 
-  g_task = 0;
+  g_task = 0; //must be 0
   mode_ping(task);
   task = 0;
 
   switch (g_task) {
-    case 0:
+    case 0: 
     task=0;
       break;
 
@@ -192,9 +194,10 @@ delay(1000);
       break;
 
     case 20:  //Loggin Mode
-    
-      attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to wait we are in oven...
-      attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to wait we are in oven...
+
+
+attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are in oven...
+attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to wait we are in oven...
     
       Serial.println("======= Sync Time ============");
       synctime(g_RcvMsg[2]);
@@ -202,16 +205,18 @@ delay(1000);
       StartMesurment();
       Serial.println("======= Update List ============");
       CreateFileList();
-     
-  detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
-  detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
+      Serial.println("======= 99 ============");
+      radio.flush_tx();
+      radio.flush_rx();     
+detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
+detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
 
       break;
 
     case 30:
       Serial.println("======= Get List============");
       CreateFileList();
-      strncpy(g_FileName, "files/file.dir", 15); // use strncpy() tu put file name in *char variable 
+      strncpy(g_FileName, "files/file.dir", 15); // use strncpy() to put file name in *char variable 
       SendFileList(g_FileName, 1, 65535, g_task);
       task = 39; // Finished Sending 
       break;
@@ -227,12 +232,31 @@ delay(1000);
       Serial.println("======= Delete file ============");
       sprintf(g_FileName, "%10lu.dat", g_RcvMsg[3]); // name file as a seconds() since 01.01.1970. // by deafault %u changed to %lu by compilation warning
       DeleteFile(g_FileName);
+      Serial.println("======= Update List ============");
+      CreateFileList();
+
       task = 59; // Finished deleting 
       break;
+ 
+  case 51: 
+      Serial.println("======= Delete all files ============");
+      DeleteAllFiles();
+      Serial.println("======= Update List ============");
+      CreateFileList();
 
+      task = 59; // Finished deleting 
+      break;
+ 
     case 60:
       Serial.println("======= Send Online ============");
+      attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are in oven...
+      attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to wait we are in oven...
+
       SendOnline();
+
+      detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
+      detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
+
       break;
       
     case 99:

@@ -36,7 +36,7 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
      *  Try to get a connection
     /*========================================== */
     radio.writeFast(&Payload.Cell_0,sizeof(Payload)-4);                // Send the transfer command
-     PrintPayload();
+    // PrintPayload();
     
     if(radio.txStandBy(timeoutPeriod)){                       // If transfer initiation was successful, do the following
         startTime = millis();                                 // For calculating transfer rate
@@ -48,10 +48,10 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
             datfile.read((uint8_t *)&Payload, sizeof(Payload)); // get from file blocks into Payload ( sizeof(Payload) )
             Payload.Cell_0 = idTask;
             
-       PrintPayload();
-        //PrintPayloadHEX();
-        //PrintPayloadBytes();
-        Serial.println();
+     //PrintPayload();
+     //PrintPayloadHEX();
+     //PrintPayloadBytes();
+     //Serial.println();
         
         
                  if (Payload.Cell_3 >= FirstLine){ // Send if line >= of desied fist line
@@ -120,8 +120,6 @@ Serial.print (Payload.Cell_12); Serial.print (" ");
 Serial.print (Payload.Cell_13); Serial.print (" "); 
 Serial.print (Payload.Cell_14); Serial.print (" "); 
 Serial.print (Payload.Cell_15); Serial.print (" "); 
-
-
 Serial.println ("");
 }
 
@@ -147,7 +145,6 @@ Serial.print (Payload.Cell_12,HEX); Serial.print ("("); Serial.print (sizeof(Pay
 Serial.print (Payload.Cell_13,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_13));  Serial.print (") ");
 Serial.print (Payload.Cell_14,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_14));  Serial.print (") ");
 Serial.print (Payload.Cell_15,HEX); Serial.print ("("); Serial.print (sizeof(Payload.Cell_15));  Serial.print (") ");
-
 Serial.println ("");
 }
 

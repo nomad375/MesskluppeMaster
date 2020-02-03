@@ -11,7 +11,10 @@ void StartMesurment() {
   uint32_t actTime;
   actTime = startTime;
   uint32_t LineNumber = 0;
-
+  
+    IamAtInlet = false;
+    IamInOven = false;
+    
 
   while ((millis() - startTime < g_timeout) && IamInOven == false) ; //wait clip interrupt or timeout
   if (IamInOven == false) {
@@ -40,7 +43,7 @@ void StartMesurment() {
     exit(0);
   }
 
- // Serial.print ("Logging to file " ); Serial.print (FnameDAT); Serial.print (" during " ); Serial.print (g_maxMeasurement / 1000); Serial.println (" seconds " );
+ Serial.print ("Logging to file " ); Serial.print (FnameDAT); Serial.print (" during " ); Serial.print (g_maxMeasurement / 1000); Serial.println (" seconds " );
 
   while ((actTime - startTime) <= g_maxMeasurement) {  //collect datas as long as defined in glabal
 
@@ -84,8 +87,8 @@ void StartMesurment() {
 
     datfile.write((uint8_t *)&Payload, sizeof(Payload));
 
-    attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, FALLING); //atach interapt to see end of oven
-    attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, FALLING); //atach interapt to see end of oven
+    attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to see end of oven
+    attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to see end of oven
 
 
     if (IamInOven == false) {

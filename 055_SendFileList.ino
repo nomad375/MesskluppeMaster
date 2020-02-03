@@ -49,12 +49,12 @@ void SendFileList(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, ui
        if (g_SendMsg[3] >= FirstLine){ // Send if line >= of desied fist line
     
             if(!radio.writeBlocking(&g_SendMsg,sizeof(g_SendMsg),timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
-                cout << "writeBlocking failed" << endl;       
+                //cout << "writeBlocking failed" << endl;       
                 timedOut = 1;                                                       // Indicate failure
                 break;                                                              // Break out of the for loop
              }//endif
              else {
-              cout << "Line send: " << g_SendMsg[0] << "," << g_SendMsg[1] << "," << g_SendMsg[2] << "," << g_SendMsg[3] << "," << g_SendMsg[4] << "," << g_SendMsg[5] << "," << g_SendMsg[5] << endl;  
+              //cout << "Line send: " << g_SendMsg[0] << "," << g_SendMsg[1] << "," << g_SendMsg[2] << "," << g_SendMsg[3] << "," << g_SendMsg[4] << "," << g_SendMsg[5] << "," << g_SendMsg[5] << endl;  
              }
 
       }//END if (g_SendMsg[3] >= FirstLine)
@@ -83,8 +83,8 @@ void SendFileList(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, ui
     float rate = g_SendMsg[3] * 32 / (stopTime - startTime);         
     float lps = g_SendMsg[3] / ((stopTime - startTime)/1000);
 
-    cout << "Transfer completed at " << rate << " KB/s" << endl;
-    cout << "The transfer took " << stopTime - startTime << " ms at " << lps << " lines/s" << endl;
+    //cout << "Transfer completed at " << rate << " KB/s" << endl;
+    //cout << "The transfer took " << stopTime - startTime << " ms at " << lps << " lines/s" << endl;
 
     /*==========================================
      *  lets go back to ping

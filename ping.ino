@@ -4,10 +4,11 @@
    void mode_ping(uint16_t task){
       Serial.println("<---------------------------------------- New Mode_Ping ---------------------------------------->");
         digitalWrite(5, LOW);  Serial.println ("digitalWrite(5, LOW)");
+        digitalWrite(13, HIGH);
       /*======== Radio Settings =======*/
         radio.powerUp();
         radio.setRetries(1, 2);
-        
+
       /*========== Variables ==========*/
       uint16_t idTask = g_clipID*1000+task;
       uint16_t SendMsg[16] = {idTask, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -32,7 +33,7 @@
  *  Lopp until we get a task from Raspberry
 /*========================================== */
       while (true){
-
+//       Serial.println("< i am waiting for task >"); 
 
  
         /*======= Prepare SendMsg =======*/
@@ -73,7 +74,8 @@
               /*======= Check the msg =========*/
               //if (id == g_clipID && ping < g_maxPing && ping > 0 && task != 0){
               if (id == g_clipID && task != 0){
-                  Serial.print(">> Got task >>"); Serial.print(task);
+                
+                  Serial.print(">> Got task >>"); Serial.println(task);
                   
                   // Store in globals
                   g_RcvMsg[0] = RcvMsg[0];                  // Clip idTask
@@ -98,6 +100,7 @@
       } //endWhile "Loop until we get a task from Raspberry"
 
       digitalWrite(5, HIGH); Serial.println ("digitalWrite(5, HIGH)");
+      digitalWrite(13, LOW);
 
       /*==== reset Radio Settings =====*/
       radio.setRetries(2, 15); 

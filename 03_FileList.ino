@@ -48,7 +48,7 @@ if (NameOfFile[11] == 'd'){ //if DAT file then
 
       ii++;
      //cout << ClipID_Task << ";" << "PingTimeStamp" << ";" << "UnixTime" << ";" << ii << ";" << NameOfFile10 << ";" << AllFiles.fileSize() << ";" << numberOfLines << ";" << AllFiles.dirIndex() << endl;
-      ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize()/1000<< ";" << AllFiles.fileSize()%1000 << ";" << numberOfLines<< ";" << FileType << ";" << AllFiles.dirIndex() << endl;
+     ListOfFiles << ClipID_Task << ";" << NameOfFile10  << ";" << ii << ";" << AllFiles.fileSize()/1000<< ";" << AllFiles.fileSize()%1000 << ";" << numberOfLines<< ";" << FileType << ";" << AllFiles.dirIndex() << endl;
 
       } //end of IF for no hidden files or directory
 

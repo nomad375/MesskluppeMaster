@@ -102,7 +102,7 @@ void ReadSensors (uint16_t *g_DataSensors)
     g_DataSensors[4] = (uint16_t) (imu.calcAccel(imu.ax) * 1000);
     g_DataSensors[5] = (uint16_t) (imu.calcAccel(imu.ay) * 1000);
     
-    g_DataSensors[7] = (uint16_t) (imu.temperature / 1000 - 290); // board temperature in C * 100 (-offset of Almemo)
+    g_DataSensors[7] = (uint16_t) (imu.temperature / 1000); // board temperature in C * 100 (-offset of Almemo)
 
   } //end if imu.dataReady()
 
@@ -120,8 +120,6 @@ void ReadSensors (uint16_t *g_DataSensors)
       else if (Yaw <0){NewYaw = 360 + Yaw;}
       else { NewYaw = Yaw;}
 
-      // g_DataSensors[4] = (uint16_t) (imu.calcAccel(imu.ax) * 1000);  // check what position is better for accererometer reading. here at dmpUpdateFifo or above at  imu.update
-      // g_DataSensors[5] = (uint16_t) (imu.calcAccel(imu.ay) * 1000);
       g_DataSensors[6] =  (uint16_t) NewYaw;
 
     }
@@ -138,7 +136,7 @@ void ReadSensors (uint16_t *g_DataSensors)
       analog1.update(analogReadFast(A1));
       analog2.update(analogReadFast(A2));
       analog3.update(analogReadFast(A3));
-      analog4.update(analogReadFast(A4)); //Serial.print ((Tclip*g_ARef/4096-0.463)*100); Serial.print (" C ");
+      analog4.update(analogReadFast(A4)); 
       analog5.update(analogReadFast(A5));
     } //end if (ANALOG_READ_FAST == 1)
 
@@ -184,59 +182,23 @@ void ReadSensors (uint16_t *g_DataSensors)
 
 
 
-  float ARef = 2.23; //Reference Voltage for analog inputs. Ised Internal AR_INTERNAL2V23
+//  float ARef = 2.23; //Reference Voltage for analog inputs. Ised Internal AR_INTERNAL2V23
 
-//  float mV_X = 2.461;
-//  float mV_Y = 2.433;
-//  float mV_Z = 2.429;
+//Serial.print ("ZERO : "); Serial.print (0); Serial.print (" ");
+//Serial.print ("Raw X: "); Serial.print (RawX); Serial.print(" bit, ");
+//Serial.print ("Raw Y: "); Serial.print (RawY); Serial.print(" bit, ");
+//Serial.print ("Raw Z: "); Serial.print (RawZ); Serial.print(" bit, ");
+//Serial.print ("Ti: "); Serial.print (g_DataSensors[7]/333.87f + 21.0f); Serial.print(" C, ");
+//Serial.print ("Battery: "); Serial.print ((RawVbat) * 2.23 /4096*2); Serial.print(" V, ");
+//Serial.print ("Battery: "); Serial.print (RawVbat); Serial.print(" bits, ");
+//Serial.print ("MAX : "); Serial.print (4100);
+//Serial.println (" ");
 
- float mV_X = 2.313; 
- float mV_Y = 2.323; 
- float mV_Z = 2.319; 
-//
-//  float mV_X =  (2.055);
-//  float mV_Y = (2.055);
-//  float mV_Z = (2.063);
 
-  float Gain_X = 1805.801802; //(33.3 Ohm)
-  float Gain_Y = 336.963374; //180.2 Ohm
-  float Gain_Z = 404;  //150 Ohm
-
-  float K11 = 1191.6359;  //1172.4335;
-  float K12 = 46.1907;    //13.4040;
-  float K13 = -2.5465;    //3.3653;
-  float K21 = 9.8374;     //-13.2875;
-  float K22 = -572.4666;  //-428.3136;
-  float K23 = 27.5130;    //-36.7550;
-  float K31 = -2.2144;    //-0.6148;
-  float K32 = 0.6154;     //-0.1976;
-  float K33 = -893.6081;  //-927.3757;
-
-  float Ufx, Ufy, Ufz;
-//  float offsetX = 46;
-//  float offsetY = -18;
-//  float offsetZ = -31;
-  float offsetX = 0;
-  float offsetY = 0;
-  float offsetZ = 0;
-
-  Serial.print ("Raw X: "); Serial.print (RawX); Serial.print(" bit, ");
-  Serial.print ("Raw Y: "); Serial.print (RawY); Serial.print(" bit, ");
-  Serial.print ("Raw Z: "); Serial.print (RawZ); Serial.print(" bit, ");
-
-  Ufx = RawX  * ARef / 4096 * 1000 / mV_X / Gain_X ;
-  Ufy = RawY  * ARef / 4096 * 1000 / mV_Y / Gain_Y ;
-  Ufz = RawZ  * ARef / 4096 * 1000 / mV_Z / Gain_Z ;
-
-  float     ForceX = Ufx * K11 + Ufy * K12 + Ufz * K13 - offsetX;
-  float     ForceY = Ufx * K21 + Ufy * K22 + Ufz * K23 - offsetY;
-  float     ForceZ = Ufx * K31 + Ufy * K32 + Ufz * K33 - offsetZ;
-
-  g_DataSensors[1] = (uint16_t)(ForceX);
-  g_DataSensors[2] = (uint16_t)(ForceY);
-  g_DataSensors[3] = (uint16_t)(ForceZ);
-  g_DataSensors[8] = (uint16_t)(((RawTclip * ARef * 1000 / 4096) - 500) / 0.1); // [(analog voltage in mV) - 500] / 10
-  g_DataSensors[9] = (uint16_t)(RawVbat * 2 * ARef / 4096 * 1000-70);
-
+    g_DataSensors[1] = (uint16_t)(RawX);
+    g_DataSensors[2] = (uint16_t)(RawY);
+    g_DataSensors[3] = (uint16_t)(RawZ);
+    g_DataSensors[8] = (uint16_t)(RawTclip);
+    g_DataSensors[9] = (uint16_t)(RawVbat);
 
 }//end ReadSensors
