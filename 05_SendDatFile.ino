@@ -3,9 +3,8 @@
     -----------------------------------------------------------------------*/
 
 void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
-   Serial.print ("This file sending now:" ); Serial.println(g_FileName);
- 
-    
+   Serial.print ("This file sending now: " ); Serial.println(g_FileName);
+     
     /*========== Variables ==========*/
     uint16_t idTask = g_clipID*1000+task;
     unsigned long startTime, stopTime = 0; 

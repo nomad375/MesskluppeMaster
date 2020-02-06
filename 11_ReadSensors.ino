@@ -84,24 +84,22 @@ void SetupSensors ()
 
 void ReadSensors (uint16_t *g_DataSensors)
 {
-  uint32_t StartTime = micros();
   uint16_t RawX, RawY, RawZ, RawTclip, RawVbat;
   
   float Yaw, NewYaw;
 
 
-  //                   Collect time stamp
-  //                   Remember - last sensor reads ~1-3 millisecond later then fist
-  g_DataSensors[0] = millis() % 1000; //timing
+  //  Collect time stamp
+  //  Remember - last sensor reads ~1-3 millisecond later then fist
+  g_DataSensors[0] = (uint16_t)(millis() % 1000UL); //timing
 
-  //                   digital sensors read
+  //digital sensors read
 
   if ( imu.dataReady() ) // think to add here RESPONSIVE_ANALOG_READ filter...
   { imu.update(UPDATE_ACCEL | UPDATE_TEMP);
 
     g_DataSensors[4] = (uint16_t) (imu.calcAccel(imu.ax) * 1000);
     g_DataSensors[5] = (uint16_t) (imu.calcAccel(imu.ay) * 1000);
-    
     g_DataSensors[7] = (uint16_t) (imu.temperature / 1000); // board temperature in C * 100 (-offset of Almemo)
 
   } //end if imu.dataReady()
@@ -117,8 +115,9 @@ void ReadSensors (uint16_t *g_DataSensors)
       Yaw = imu.yaw - g_YawOffset;
   
       if (Yaw >=360){NewYaw = Yaw-360;}
-      else if (Yaw <0){NewYaw = 360 + Yaw;}
+      else if (Yaw <0){NewYaw = Yaw+360;}
       else { NewYaw = Yaw;}
+      NewYaw = NewYaw*10; // *10 to see decimal value
 
       g_DataSensors[6] =  (uint16_t) NewYaw;
 
@@ -152,8 +151,8 @@ void ReadSensors (uint16_t *g_DataSensors)
     RawX = analog1.getValue();      // load cell X RAW
     RawY = analog2.getValue();      // load cell Y RAW
     RawZ = analog3.getValue();      // load cell Z RAW
-    RawTclip = analog4.getValue();     // Clip Temperature
-    RawVbat = analog5.getValue();     // internal voltage
+    RawTclip = analog4.getValue();  // Clip Temperature
+    RawVbat = analog5.getValue();   // internal voltage
 
 
   } //enf if (RESPONSIVE_ANALOG_READ ==1)

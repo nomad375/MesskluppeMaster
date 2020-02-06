@@ -16,7 +16,7 @@ strcpy(TextStringCopy, TextString);                 // and creating TextStringCo
               g_SendMsg[0] = atoi(pch);
               
               pch = strtok (NULL, ";"); 
-              g_SendMsg[2] = (uint16_t) ((atol(pch) >> 16) & 0xFFFF) ; /// hERE
+              g_SendMsg[2] = (uint16_t) ((atol(pch) >> 16) & 0xFFFF) ; 
               g_SendMsg[1] = (uint16_t) ((atol(pch)) & 0xFFFF) ;
               
               

@@ -9,10 +9,9 @@ uint16_t g_logInterval = 5;                               // 10  milliseconds be
 char g_FileName[15];                                      //file name to exchange
 uint32_t g_RcvMsg[8] = {0, 0, 0, 0, 0, 0, 0, 0};          // Store the last radio msg
 uint16_t g_SendMsg[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 uint8_t PayloadLen = 32;
 uint16_t g_fileCount = 0;
-
-uint16_t g_DataSensors[16] = {0, 0, 0, 0, 0, 0};
 
 volatile bool IamInOven = false;
 volatile bool IamAtInlet = false ;
@@ -102,6 +101,14 @@ ArduinoOutStream cout(Serial);  // Serial print stream
 RF24 radio(6, 10); // pin 9 powered by 2V. so i deside avoid it. tested pins - 5,6,9,10 with no diffrence found
 const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
+// Adafruit Watchdog Library Basic Usage Example
+//
+// Simple example of how to use the watchdog library.
+//
+// Author: Tony DiCola
+
+
+#include <Adafruit_SleepyDog.h>
 /*=========================================================================
                           SETUP
     -----------------------------------------------------------------------*/
@@ -154,10 +161,6 @@ void setup() {
 
   SdCardErrorsCheck(); // Setup SD card and check if card inside
 
-  //  /*======= SD Card Setup =======*/
-  //  if (!sd.begin(SD_CHIP_SELECT, SD_SCK_MHZ(50))) {    //Initialize the highest speed supported by the board
-  //    sd.initErrorHalt();                               //but not over 50 MHz
-  //  }
 
   /*======= RTC Setup =======*/
   rtc.begin(DateTime(F(__DATE__), F(__TIME__)));      //Set the time to compiled time
@@ -179,7 +182,7 @@ CreateFileList();
 
 void loop() {
 
-delay(1000);
+delay(1000);//delete it?
 
   g_task = 0; //must be 0
   mode_ping(task);
@@ -195,8 +198,7 @@ delay(1000);
 
     case 20:  //Loggin Mode
 
-
-attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are in oven...
+attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are at Inlet...
 attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to wait we are in oven...
     
       Serial.println("======= Sync Time ============");
@@ -207,7 +209,8 @@ attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to wait we a
       CreateFileList();
       Serial.println("======= 99 ============");
       radio.flush_tx();
-      radio.flush_rx();     
+      radio.flush_rx();  
+         
 detachInterrupt(INTERRUPT_PIN_INLET); // Detach interrupt because end of function
 detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
 
@@ -234,7 +237,6 @@ detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
       DeleteFile(g_FileName);
       Serial.println("======= Update List ============");
       CreateFileList();
-
       task = 59; // Finished deleting 
       break;
  
@@ -243,17 +245,14 @@ detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
       DeleteAllFiles();
       Serial.println("======= Update List ============");
       CreateFileList();
-
       task = 59; // Finished deleting 
       break;
  
     case 60:
-      Serial.println("======= Send Online ============");
-      attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are in oven...
+      attachInterrupt(INTERRUPT_PIN_INLET, IRQ1, RISING); //atach interapt to wait we are at Inlet...
       attachInterrupt(INTERRUPT_PIN_CLIP, IRQ2, CHANGE); //atach interapt to wait we are in oven...
-
+      Serial.println("======= Send Online ============");
       SendOnline();
-
       detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
       detachInterrupt(INTERRUPT_PIN_CLIP); // Detach interrupt because end of function
 
