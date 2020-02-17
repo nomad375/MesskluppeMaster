@@ -27,14 +27,18 @@ void DOAtests() {
 
 while (1) { //test while loop
   delay(100);
-
-  Serial.print(" IRQ1 = "); Serial.print(digitalRead(0));
-  Serial.print(" IRQ2 = ");Serial.print(digitalRead(1));
-  Serial.print(" IamAtInlet = ");Serial.print(IamAtInlet);
-  Serial.print(" IamInOven = ");Serial.print(IamInOven);   
-  Serial.println();
+//  SdCardErrorsCheck();
   
+//
+//  Serial.print(" IRQ1 = "); Serial.print(digitalRead(0));
+//  Serial.print(" IRQ2 = ");Serial.print(digitalRead(1));
+//  Serial.print(" IamAtInlet = ");Serial.print(IamAtInlet);
+//  Serial.print(" IamInOven = ");Serial.print(IamInOven);   
+//  Serial.println();
+//  
 ReadSensors(g_DataSensors);
+Watchdog.reset();
+
  //   delay (1000);
   //   for (byte i = 0; i<10; i++)  {Serial.print (g_DataSensors[i]); Serial.print(", "); } Serial.println("  ");
   //   for (byte i = 0; i<10; i++)  {Serial.print ((int16_t)g_DataSensors[i]); Serial.print(", "); } Serial.println("  ");

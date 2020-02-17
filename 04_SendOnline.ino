@@ -1,8 +1,7 @@
 /*=========================================================================
                          SendOnline()
     -----------------------------------------------------------------------*/
-void SendOnline() 
-{ //SendOnline()
+void SendOnline(){ //SendOnline()
 
   radio.powerUp();
 
@@ -55,5 +54,6 @@ void SendOnline()
 
  // Serial.print("Online sending finish in "); Serial.print ((millis() - StartTime) / 1000); Serial.println(" seconds.");
   radio.powerDown();
+  
 
-}// EBF of void SendOnline()
+}// END of void SendOnline()

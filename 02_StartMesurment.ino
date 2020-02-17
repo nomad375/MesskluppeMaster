@@ -4,7 +4,6 @@
 
 void StartMesurment() {
 
-
   SdCardErrorsCheck();
 
   uint32_t startTime = millis();          // variables for time in ms

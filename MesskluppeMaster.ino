@@ -20,7 +20,7 @@ volatile uint32_t IRQ2_time = millis();
 uint16_t g_task = 0;
 uint16_t task = 0;
 
-float g_YawOffset = 0;
+float g_YawOffset = 0.0;
 
 struct PayloadStructure {
     uint16_t Cell_ZERO;    // just take a place to cut size of Cell 0
@@ -109,6 +109,8 @@ const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544D52687CLL };
 
 
 #include <Adafruit_SleepyDog.h>
+
+
 /*=========================================================================
                           SETUP
     -----------------------------------------------------------------------*/
@@ -117,6 +119,8 @@ void setup() {
   Serial.begin(115200);
 //while (!Serial);
 
+
+Watchdog.enable(32*1000); // 32 seconds of watchdog
 
   /*  =====   here is setup for AnalogRead values. set best for all four sensors. Read manual at https://github.com/dxinteractive/ResponsiveAnalogRead =====  */
 
@@ -182,7 +186,7 @@ CreateFileList();
 
 void loop() {
 
-delay(1000);//delete it?
+//delay(1000);//delete it?
 
   g_task = 0; //must be 0
   mode_ping(task);

@@ -2,6 +2,7 @@
                          mode_ping()
     -----------------------------------------------------------------------*/ 
    void mode_ping(uint16_t task){
+    
       Serial.println("<---------------------------------------- New Mode_Ping ---------------------------------------->");
         digitalWrite(5, LOW);  Serial.println ("digitalWrite(5, LOW)");
         digitalWrite(13, HIGH);
@@ -96,6 +97,7 @@
         radio.powerDown();
         delay(sleep);
 
+    Watchdog.reset();
 
       } //endWhile "Loop until we get a task from Raspberry"
 
@@ -104,5 +106,6 @@
 
       /*==== reset Radio Settings =====*/
       radio.setRetries(2, 15); 
+      
 return; 
   }//endFunc "mode_ping"

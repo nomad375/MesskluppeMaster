@@ -3,12 +3,14 @@
     -----------------------------------------------------------------------*/
 
 void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uint16_t task){ //Start SendData() - based on fgets example from SdFat library
+
    Serial.print ("This file sending now: " ); Serial.println(g_FileName);
      
     /*========== Variables ==========*/
     uint16_t idTask = g_clipID*1000+task;
     unsigned long startTime, stopTime = 0; 
     unsigned long timeoutPeriod = 3000;
+    unsigned long counter = 1;    
    
   memset(&Payload, 0, sizeof(Payload)); //memset(&structPointer,0,sizeof(structName)); //set a struct to all zeroes with memset
   Payload.Cell_0 = idTask;
@@ -43,16 +45,10 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
 
 
            while (datfile.available()) { //read until end of file
-        
+       
             datfile.read((uint8_t *)&Payload, sizeof(Payload)); // get from file blocks into Payload ( sizeof(Payload) )
             Payload.Cell_0 = idTask;
             
-     //PrintPayload();
-     //PrintPayloadHEX();
-     //PrintPayloadBytes();
-     //Serial.println();
-        
-        
                  if (Payload.Cell_3 >= FirstLine){ // Send if line >= of desied fist line
         
                           if(!radio.writeBlocking(&Payload.Cell_0,sizeof(Payload)-4,timeoutPeriod)){  // If retries are failing and the user defined timeout is exceeded
@@ -63,6 +59,10 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
                   }//END if (Payload.Cell_3 >= FirstLine)
              
                 if (Payload.Cell_3 >= FirstLine+LinesToSend){break;}
+                if (counter >= 1000 ){counter = 0; Watchdog.reset();} // reset of watchdog 
+               
+                  counter ++;
+                
            }// while while (datfile.available())    
 
        //This should be called to wait for completion and put the radio in standby mode after transmission, returns 0 if data still in FIFO (timed out), 1 if success
@@ -95,6 +95,8 @@ void SendDatFile(char *g_FileName, uint16_t FirstLine, uint16_t LinesToSend, uin
     /*========================================== */
     digitalWrite(8, LOW);
     radio.powerDown();
+
+ 
 } //end send file
 
 

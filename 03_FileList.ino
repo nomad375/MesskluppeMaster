@@ -1,4 +1,5 @@
 void CreateFileList() { //Function to create list of files
+
 SdCardErrorsCheck();
  
  uint32_t startTime = millis();          // variables for time in ms
@@ -59,5 +60,6 @@ if (NameOfFile[11] == 'd'){ //if DAT file then
 
   Serial.print("file list done in "); Serial.print ((millis() - startTime) / 1000); Serial.println(" seconds.");
   g_fileCount = ii;
-
+  
+ 
 } //Enf of function

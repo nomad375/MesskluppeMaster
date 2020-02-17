@@ -2,8 +2,8 @@
     Setup for all sensonrs (analog + digial)
   ======================================== */
 
-void SetupSensors ()
-{
+void SetupSensors (){
+  
 
   analog1.setSnapMultiplier(0.01); // 0.01 by default
   analog2.setSnapMultiplier(0.01); // 0.01 by default
@@ -66,11 +66,12 @@ void SetupSensors ()
 
   // The sample rate of the accel/gyro can be set using
   // setSampleRate. Acceptable values range from 4Hz to 1kHz
-  imu.setSampleRate(400); // Set sample rate to 10Hz
+  //imu.setSampleRate(400); // USED before 2020 02 07 
+  imu.setSampleRate(800); // Set sample rate to 800Hz 
 
   imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT | // Enable 6-axis quat
                DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-               100); // Set DMP FIFO rate to 10 Hz
+               400); // Set DMP FIFO rate to 100! Hz
   // DMP_FEATURE_LP_QUAT can also be used. It uses the
   // accelerometer in low-power mode to estimate quat's.
   // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
@@ -84,8 +85,8 @@ void SetupSensors ()
 
 void ReadSensors (uint16_t *g_DataSensors)
 {
+
   uint16_t RawX, RawY, RawZ, RawTclip, RawVbat;
-  
   float Yaw, NewYaw;
 
 
@@ -112,14 +113,14 @@ void ReadSensors (uint16_t *g_DataSensors)
       // computeEulerAngles can be used -- after updating the
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
+     
       Yaw = imu.yaw - g_YawOffset;
   
-      if (Yaw >=360){NewYaw = Yaw-360;}
-      else if (Yaw <0){NewYaw = Yaw+360;}
+      if (Yaw >=360){NewYaw = Yaw-360.0;}
+      else if (Yaw <0){NewYaw = Yaw+360.0;}
       else { NewYaw = Yaw;}
-      NewYaw = NewYaw*10; // *10 to see decimal value
 
-      g_DataSensors[6] =  (uint16_t) NewYaw;
+      g_DataSensors[6] =  (uint16_t) (NewYaw *10); // *10 to see decimal value;
 
     }
   }//end if imu.fifoAvailable()
@@ -184,6 +185,11 @@ void ReadSensors (uint16_t *g_DataSensors)
 //  float ARef = 2.23; //Reference Voltage for analog inputs. Ised Internal AR_INTERNAL2V23
 
 //Serial.print ("ZERO : "); Serial.print (0); Serial.print (" ");
+
+Serial.print ("Yaw raw: "); Serial.print (imu.yaw); Serial.print(" raw, ");
+
+Serial.print ("Yaw angle: "); Serial.print (g_DataSensors[6]/10); Serial.print(" degree, "); 
+
 //Serial.print ("Raw X: "); Serial.print (RawX); Serial.print(" bit, ");
 //Serial.print ("Raw Y: "); Serial.print (RawY); Serial.print(" bit, ");
 //Serial.print ("Raw Z: "); Serial.print (RawZ); Serial.print(" bit, ");
@@ -191,7 +197,7 @@ void ReadSensors (uint16_t *g_DataSensors)
 //Serial.print ("Battery: "); Serial.print ((RawVbat) * 2.23 /4096*2); Serial.print(" V, ");
 //Serial.print ("Battery: "); Serial.print (RawVbat); Serial.print(" bits, ");
 //Serial.print ("MAX : "); Serial.print (4100);
-//Serial.println (" ");
+Serial.println (" ");
 
 
     g_DataSensors[1] = (uint16_t)(RawX);
@@ -199,5 +205,8 @@ void ReadSensors (uint16_t *g_DataSensors)
     g_DataSensors[3] = (uint16_t)(RawZ);
     g_DataSensors[8] = (uint16_t)(RawTclip);
     g_DataSensors[9] = (uint16_t)(RawVbat);
+
+
+    Watchdog.reset();
 
 }//end ReadSensors

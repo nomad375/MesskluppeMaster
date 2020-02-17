@@ -15,7 +15,7 @@ void IRQ2() {
 
   if (IamAtInlet == true) {
         IamAtInlet = false;
-        g_YawOffset = imu.yaw - 90;
+        g_YawOffset = imu.yaw - 90.0;
         IamInOven = true;
         Serial.print("<<--Yaw Offset --> " ); Serial.println(g_YawOffset);
 }
